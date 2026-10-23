@@ -78,21 +78,100 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Sanidhya Naturopathy Center | Jankipuram, Lucknow" },
+      {
+        name: "description",
+        content:
+          "Find Sanidhya Naturopathy Center in Sector I, Jankipuram, Lucknow. View location, opening hours, contact details, and appointment enquiry options.",
+      },
+      {
+        name: "keywords",
+        content:
+          "Naturopathy center in Jankipuram Lucknow, Natural wellness clinic in Jankipuram, Naturopathy clinic in Lucknow, Holistic wellness consultation in Lucknow",
+      },
+      { property: "og:title", content: "Sanidhya Naturopathy Center | Jankipuram, Lucknow" },
+      {
+        property: "og:description",
+        content:
+          "Find Sanidhya Naturopathy Center in Sector I, Jankipuram, Lucknow. View location, opening hours, contact details, and appointment enquiry options.",
+      },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "en_IN" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Sanidhya Naturopathy Center | Jankipuram, Lucknow" },
+      {
+        name: "twitter:description",
+        content:
+          "Find Sanidhya Naturopathy Center in Sector I, Jankipuram, Lucknow. View location, opening hours, contact details, and appointment enquiry options.",
+      },
     ],
     links: [
+      {
+        rel: "preconnect",
+        href: "https://fonts.googleapis.com",
+      },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Manrope:wght@400;500;600;700&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "MedicalBusiness",
+          "name": "Sanidhya Naturopathy Center",
+          "description":
+            "Find Sanidhya Naturopathy Center in Sector I, Jankipuram, Lucknow. View location, opening hours, contact details, and appointment enquiry options.",
+          "telephone": "+919415026684",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "H-D/98, Sector I Main Road, Sector I, Janki Vihar Colony",
+            "addressLocality": "Jankipuram, Lucknow",
+            "addressRegion": "Uttar Pradesh",
+            "postalCode": "226021",
+            "addressCountry": "IN"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.7",
+            "reviewCount": "48",
+            "bestRating": "5"
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+              ],
+              "opens": "10:00",
+              "closes": "21:30"
+            },
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Sunday"],
+              "opens": "10:00",
+              "closes": "14:00"
+            }
+          ]
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -103,7 +182,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en-IN">
       <head>
         <HeadContent />
       </head>
