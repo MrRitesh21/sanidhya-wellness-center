@@ -47,14 +47,18 @@ export const hours = [
 
 /** Formats a 24h "HH:mm" string as e.g. "9:30 PM" (en-IN). */
 export function formatTime(hhmm: string): string {
-  const [h, m] = hhmm.split(":").map(Number);
+  const bits = hhmm.split(":");
+  const h = Number(bits[0] ?? 0);
+  const m = Number(bits[1] ?? 0);
   const ampm = h >= 12 ? "PM" : "AM";
   const hour12 = h % 12 === 0 ? 12 : h % 12;
   return `${hour12}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
 const dayMinutes = (hhmm: string) => {
-  const [h, m] = hhmm.split(":").map(Number);
+  const bits = hhmm.split(":");
+  const h = Number(bits[0] ?? 0);
+  const m = Number(bits[1] ?? 0);
   return h * 60 + m;
 };
 
@@ -73,10 +77,10 @@ export function getOpenStatus(now: Date = new Date()): {
   const parts = Object.fromEntries(
     fmt.formatToParts(now).map((p) => [p.type, p.value]),
   );
-  const weekday = parts.weekday as string;
-  let h = Number(parts.hour);
+  const weekday = parts["weekday"] as string;
+  let h = Number(parts["hour"]);
   if (h === 24) h = 0; // some engines return "24" at midnight
-  const nowMins = h * 60 + Number(parts.minute);
+  const nowMins = h * 60 + Number(parts["minute"]);
 
   const today = hours.find((d) => d.day === weekday);
   if (today) {
