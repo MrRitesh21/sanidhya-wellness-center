@@ -68,6 +68,21 @@ const FAQS: FAQItem[] = [
     answer:
       "Yes. In accordance with our commitment to accessible healthcare for every visitor, Sanidhya Naturopathy Center features a wheelchair-accessible entrance and convenient parking space.",
   },
+  {
+    question: "What natural therapies and facilities are available at the center?",
+    answer:
+      "Our center is equipped for a wide range of traditional natural modalities including Hydrotherapy (hip baths, spinal sprays), solar-prepared Mud Therapy, herbal Steam Baths, Acupressure, Sujok reflexology, therapeutic Yoga, Yoga Nidra, and guided Meditation sessions.",
+  },
+  {
+    question: "Do you offer certified Reiki training courses?",
+    answer:
+      "Yes. We offer authentic Usui Reiki Level I (basic self-healing, attunement, energy sensing) and Level II (sacred symbols, distance healing, practitioner protocols) certificate courses. Official certificates of completion are awarded upon finishing the training.",
+  },
+  {
+    question: "Can I consult for chronic issues like cervical spondylosis, back pain, or diabetes?",
+    answer:
+      "Yes. We welcome consultations for cervical spondylosis, lumbar back pain, slip disc, sciatica, digestive imbalances, high/low blood pressure, and diabetes lifestyle support. Our natural therapies and dietary protocols serve as complementary lifestyle and yogic care to restore systemic balance alongside your conventional medical treatments.",
+  },
 ];
 
 export function FAQ() {

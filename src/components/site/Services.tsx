@@ -1,18 +1,32 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
+  Award,
+  Brain,
   CalendarCheck,
   Compass,
+  Droplets,
+  Flame,
   Flower2,
+  Hand,
   HeartHandshake,
+  History,
+  Layers,
   Leaf,
+  Moon,
   Salad,
+  Shield,
+  Smile,
+  Sparkles,
   Sprout,
+  Sun,
   Wind,
   type LucideIcon,
 } from "lucide-react";
 import { services } from "@/lib/clinic";
 import { Reveal, SectionHeading } from "./primitives";
+import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, LucideIcon> = {
   leaf: Leaf,
@@ -23,9 +37,63 @@ const ICONS: Record<string, LucideIcon> = {
   wind: Wind,
   compass: Compass,
   calendar: CalendarCheck,
+  droplets: Droplets,
+  layers: Layers,
+  flame: Flame,
+  hand: Hand,
+  sparkles: Sparkles,
+  sun: Sun,
+  moon: Moon,
+  brain: Brain,
+  award: Award,
+  history: History,
+  shield: Shield,
+  "heart-handshake": HeartHandshake,
+  smile: Smile,
+};
+
+const HOME_CATEGORIES = [
+  { id: "all", label: "All Services" },
+  { id: "naturopathy", label: "Naturopathy Therapies" },
+  { id: "yoga", label: "Yoga & Relaxation" },
+  { id: "reiki", label: "Reiki & Spiritual" },
+  { id: "consultation", label: "Consultation & Diet" },
+] as const;
+
+const SERVICE_CATEGORY_MAP: Record<string, string> = {
+  consultation: "consultation",
+  "wellness-guidance": "consultation",
+  "lifestyle-counselling": "consultation",
+  "yoga-relaxation": "yoga",
+  "diet-nutrition": "consultation",
+  "stress-mindfulness": "yoga",
+  "holistic-planning": "consultation",
+  followups: "consultation",
+  hydrotherapy: "naturopathy",
+  "mud-therapy": "naturopathy",
+  "steam-bath": "naturopathy",
+  acupressure: "naturopathy",
+  sujok: "naturopathy",
+  "yoga-classes": "yoga",
+  "yoga-nidra": "yoga",
+  meditation: "yoga",
+  "reiki-healing": "reiki",
+  "reiki-training": "reiki",
+  "past-life-regression": "reiki",
+  srt: "reiki",
+  "spiritual-therapy": "reiki",
+  "mental-wellbeing": "consultation",
+  "stress-management": "consultation",
 };
 
 export function Services() {
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+
+  const filteredServices =
+    activeCategory === "all"
+      ? services
+      : services.filter((s) => SERVICE_CATEGORY_MAP[s.id] === activeCategory);
+
   return (
     <section id="services" className="relative overflow-hidden bg-cream py-24 sm:py-32">
       <div
@@ -43,8 +111,27 @@ export function Services() {
           description="Wellness areas the centre can guide you through — each beginning with a conversation about what you need."
         />
 
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {services.map((service, i) => {
+        {/* Filter categories */}
+        <Reveal delay={0.08} className="mt-8 flex flex-wrap justify-center gap-2">
+          {HOME_CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setActiveCategory(cat.id)}
+              className={cn(
+                "rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all duration-300",
+                activeCategory === cat.id
+                  ? "bg-primary text-primary-foreground shadow-soft"
+                  : "border border-forest/15 bg-white/70 text-forest hover:bg-white",
+              )}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </Reveal>
+
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {filteredServices.map((service, i) => {
             const Icon = ICONS[service.icon] ?? Leaf;
             return (
               <Reveal key={service.id} delay={(i % 4) * 0.08}>

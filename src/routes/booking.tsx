@@ -81,6 +81,14 @@ const BOOKING_FAQS = [
     q: "Are Sunday appointments available?",
     a: "Yes, we are open on Sundays from 10:00 AM to 2:00 PM for morning consultations.",
   },
+  {
+    q: "Can I book specialized therapies like Hydrotherapy, Mud Therapy, or Steam Baths?",
+    a: "Yes. After an initial assessment to determine the most suitable temperature, duration, and application, our practitioners will schedule your individual therapy sessions in our dedicated suites.",
+  },
+  {
+    q: "How do I enquire for Reiki Level I or Level II Certificate Courses?",
+    a: "You can select 'Reiki Healing & Training Courses' in the booking form, or call/WhatsApp us directly at +91 94150 26684. We will share upcoming weekend batch dates, syllabus details, and registration procedures.",
+  },
 ];
 
 function BookingPage() {

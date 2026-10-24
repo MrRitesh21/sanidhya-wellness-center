@@ -175,4 +175,133 @@ export const services: ServiceItem[] = [
       "Ongoing check-ins to review how you're doing and adjust your wellness plan as your needs evolve.",
     icon: "calendar",
   },
+  // Newly integrated services from clinic brochures:
+  {
+    id: "hydrotherapy",
+    title: "Hydrotherapy",
+    description:
+      "Targeted water-based natural applications — hip baths, spinal sprays, and compresses designed to stimulate circulation and metabolic vitality.",
+    icon: "droplets",
+  },
+  {
+    id: "mud-therapy",
+    title: "Mud Therapy",
+    description:
+      "Therapeutic natural earth and clay applications that absorb excess body heat, cool inflammation, and soothe the skin and digestive tract.",
+    icon: "layers",
+  },
+  {
+    id: "steam-bath",
+    title: "Steam Bath",
+    description:
+      "Warm herbal and natural perspiration baths that release accumulated toxins, relax tense muscle groups, and invigorate skin pores.",
+    icon: "flame",
+  },
+  {
+    id: "acupressure",
+    title: "Acupressure",
+    description:
+      "Gentle manual pressure on reflex meridian points to alleviate localized discomfort, release energy blockages, and promote neuromuscular balance.",
+    icon: "hand",
+  },
+  {
+    id: "sujok",
+    title: "Sujok Therapy",
+    description:
+      "Oriental micro-reflex therapy utilizing responsive correspondence points on hands and feet to harmonize systemic organ functions.",
+    icon: "sparkles",
+  },
+  {
+    id: "yoga-classes",
+    title: "Regular Yoga Classes",
+    description:
+      "Structured group and personal asana practice focusing on joint mobility, gentle spinal stretches, posture alignment, and steady stamina.",
+    icon: "sun",
+  },
+  {
+    id: "yoga-nidra",
+    title: "Yoga Nidra",
+    description:
+      "Guided conscious yogic relaxation that systematically unwinds deep physical, emotional, and mental tensions to restore profound rest.",
+    icon: "moon",
+  },
+  {
+    id: "meditation",
+    title: "Meditation & Breathwork",
+    description:
+      "Mindful stillness practices and rhythmic Pranayama designed to clear cognitive clutter, enhance attention, and stabilize emotional balance.",
+    icon: "brain",
+  },
+  {
+    id: "reiki-healing",
+    title: "Reiki Healing",
+    description:
+      "Gentle, non-invasive bio-field energy harmonization that channels universal life force to dissolve stress, harmonize chakras, and aid recovery.",
+    icon: "sparkles",
+  },
+  {
+    id: "reiki-training",
+    title: "Reiki Training (Level I & II)",
+    description:
+      "Comprehensive certification courses covering traditional attunements, self-healing techniques, hand placements, and practitioner protocols.",
+    icon: "award",
+  },
+  {
+    id: "past-life-regression",
+    title: "Past Life Regression",
+    description:
+      "Deeply guided meditative introspection exploring subconscious impressions to gain emotional clarity, resolve deep-seated patterns, and find inner peace.",
+    icon: "history",
+  },
+  {
+    id: "srt",
+    title: "S.R.T. (Spiritual Response Therapy)",
+    description:
+      "A systematic spiritual research and energy-clearing modality designed to release recurring subconscious blocks and discordant emotional patterns.",
+    icon: "shield",
+  },
+  {
+    id: "spiritual-therapy",
+    title: "Spiritual Therapy",
+    description:
+      "Holistic soul-level counselling fostering deeper self-awareness, emotional grounding, harmonious purpose, and inner tranquility.",
+    icon: "heart-handshake",
+  },
+  {
+    id: "mental-wellbeing",
+    title: "Mental Wellbeing Consultation",
+    description:
+      "A confidential, supportive space exploring anxiety, mental fatigue, and emotional burnout through natural lifestyle coping approaches.",
+    icon: "smile",
+  },
+  {
+    id: "stress-management",
+    title: "Stress Management Guidance",
+    description:
+      "Personalized daily protocols combining breathing, restorative evening habits, and relaxation techniques to mitigate chronic stress.",
+    icon: "wind",
+  },
 ];
+
+/**
+ * Health-concern enquiry categories from the clinic brochure.
+ * Note: These are enquiry categories for natural, lifestyle, and yogic guidance,
+ * not medical diagnoses, promises of cure, or replacements for conventional care.
+ */
+export const HEALTH_CONCERN_ENQUIRIES = [
+  "Cervical Spondylosis",
+  "Back Pain",
+  "Polio-related Concerns",
+  "Parkinson's Disease",
+  "High and Low Blood Pressure",
+  "Digestive Concerns",
+  "Diabetes / Blood Sugar Support",
+  "Numbness or Tingling in Hands and Feet",
+  "Slip Disc",
+  "Sciatica",
+  "Mental Health Concerns",
+  "Stress, Fatigue & Sleep",
+  "Weight Management & Detox",
+  "Reiki Healing & Training Courses",
+  "Hydrotherapy & Steam Bath Enquiry",
+] as const;

@@ -1,19 +1,35 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  Activity,
+  AlertCircle,
   ArrowRight,
+  Award,
+  BookOpen,
+  Brain,
   CalendarCheck,
   CheckCircle2,
   Clock,
   Compass,
+  Droplets,
+  Flame,
   Flower2,
+  GraduationCap,
+  Hand,
   HeartHandshake,
+  History,
   Info,
+  Layers,
   Leaf,
+  Moon,
   Phone,
   Salad,
+  Shield,
+  Smile,
   Sparkles,
   Sprout,
+  Sun,
+  Waves,
   Wind,
   type LucideIcon,
 } from "lucide-react";
@@ -30,12 +46,12 @@ export const Route = createFileRoute("/services")({
       {
         name: "description",
         content:
-          "Explore holistic naturopathy services at Sanidhya Naturopathy Center, Jankipuram, Lucknow. Naturopathy consultations, yoga guidance, diet counselling, stress relief and wellness plans.",
+          "Explore holistic naturopathy services at Sanidhya Naturopathy Center, Jankipuram, Lucknow. Naturopathy consultations, hydrotherapy, mud therapy, steam bath, acupressure, sujok, yoga classes, meditation, and certified Reiki training.",
       },
       {
         name: "keywords",
         content:
-          "Naturopathy services Lucknow, Holistic healing Jankipuram, Diet nutrition guidance Lucknow, Stress management naturopathy, Yoga guidance Jankipuram",
+          "Naturopathy services Lucknow, Hydrotherapy Lucknow, Mud therapy Jankipuram, Steam bath, Acupressure, Sujok, Yoga classes, Reiki healing Lucknow, Reiki Level 1 2 courses, Past life regression Lucknow, Holistic health center",
       },
       {
         property: "og:title",
@@ -44,7 +60,7 @@ export const Route = createFileRoute("/services")({
       {
         property: "og:description",
         content:
-          "Explore our personalized naturopathic therapies and wellness consultations designed to restore energy, relieve chronic stress, and nurture natural balance.",
+          "Personalized naturopathic therapies, yoga, meditation, hydrotherapy, acupressure, and certified Reiki courses in Jankipuram, Lucknow.",
       },
     ],
   }),
@@ -52,13 +68,20 @@ export const Route = createFileRoute("/services")({
 });
 
 type ServiceDetail = ServiceItem & {
-  category: "consultation" | "mind-movement" | "diet-lifestyle";
+  category:
+    | "consultation"
+    | "mind-movement"
+    | "diet-lifestyle"
+    | "naturopathy-therapies"
+    | "yoga-relaxation"
+    | "reiki-spiritual";
   duration: string;
   benefits: string[];
   whatToExpect: string;
 };
 
 const DETAILED_SERVICES: ServiceDetail[] = [
+  // Original Services Preserved in Full:
   {
     id: "consultation",
     title: "Naturopathy Consultation",
@@ -187,6 +210,254 @@ const DETAILED_SERVICES: ServiceDetail[] = [
     whatToExpect:
       "A focused conversation reviewing what worked well, what felt challenging, and updating your plan for the coming weeks.",
   },
+
+  // Newly Added Natural Therapies & Modalities from Clinic Brochures:
+  {
+    id: "hydrotherapy",
+    title: "Hydrotherapy",
+    category: "naturopathy-therapies",
+    duration: "30–45 Minutes",
+    icon: "droplets",
+    description:
+      "Traditional water therapy using varied temperature applications — hip baths, spinal sprays, and localized compresses — to stimulate circulation and metabolic elimination.",
+    benefits: [
+      "Improves pelvic, spinal, and peripheral micro-circulation",
+      "Gentle natural relief for digestive sluggishness and abdominal congestion",
+      "Restores autonomic nervous balance and healthy thermoregulation",
+    ],
+    whatToExpect:
+      "Conducted in clean, dedicated hydrotherapy facilities under practitioner supervision, tailored precisely to your physical comfort.",
+  },
+  {
+    id: "mud-therapy",
+    title: "Mud Therapy",
+    category: "naturopathy-therapies",
+    duration: "30–45 Minutes",
+    icon: "layers",
+    description:
+      "Therapeutic natural clay and solar-enriched earth packs applied to specific areas to draw out metabolic heat, cool inflammation, and soothe the digestive tract.",
+    benefits: [
+      "Natural cooling relief for chronic acidity and abdominal heat",
+      "Draws out skin impurities and calms localized swelling",
+      "Soothes tension across the forehead, eyes, and lower abdomen",
+    ],
+    whatToExpect:
+      "Clean, solar-prepared therapeutic mud packs applied while you rest comfortably in a calm, ambient room.",
+  },
+  {
+    id: "steam-bath",
+    title: "Steam Bath & Herbal Fomentation",
+    category: "naturopathy-therapies",
+    duration: "20–30 Minutes",
+    icon: "flame",
+    description:
+      "Therapeutic herbal and aromatic steam chamber therapy designed to induce gentle perspiration, open pores, ease muscular stiffness, and boost circulation.",
+    benefits: [
+      "Promotes natural dermal pore cleansing and detoxification",
+      "Relieves deep muscular knots, lumbar tension, and stiffness",
+      "Helps clear nasal and upper respiratory passages",
+    ],
+    whatToExpect:
+      "You recline comfortably in a dedicated wooden steam chamber with your head kept outside in cool, fresh air, followed by a refreshing rinse.",
+  },
+  {
+    id: "acupressure",
+    title: "Acupressure Therapy",
+    category: "naturopathy-therapies",
+    duration: "35–45 Minutes",
+    icon: "hand",
+    description:
+      "Targeted manual pressure along key reflexive meridian channels to relieve chronic back pain, cervical stiffness, sciatica tension, and improve energetic vitality.",
+    benefits: [
+      "Relief for cervical spondylosis, lower back discomfort, and neck tightness",
+      "Improves nerve conductivity and neuromuscular responsiveness",
+      "Non-invasive, deeply relaxing technique that releases endorphins",
+    ],
+    whatToExpect:
+      "Patient, systematic thumb and finger pressure along meridian pathways by a trained practitioner, promoting instant localized relief.",
+  },
+  {
+    id: "sujok",
+    title: "Sujok Therapy",
+    category: "naturopathy-therapies",
+    duration: "30–40 Minutes",
+    icon: "sparkles",
+    description:
+      "An advanced oriental micro-reflexology modality that stimulates corresponding reflex zones on the palms and soles to harmonize organ functions.",
+    benefits: [
+      "Remote reflex stimulation for spinal, joint, and musculoskeletal pain",
+      "Aids in relieving numbness, tingling, and chronic localized tension",
+      "Provides accessible self-care knowledge you can practice at home",
+    ],
+    whatToExpect:
+      "Gentle diagnostic exploration and stimulation of hand/foot points using specialized probes, micro-magnets, or natural seeds.",
+  },
+
+  // Yoga & Relaxation Additions:
+  {
+    id: "yoga-classes",
+    title: "Regular Yoga Classes",
+    category: "yoga-relaxation",
+    duration: "60 Minutes",
+    icon: "sun",
+    description:
+      "Structured regular and daily asana sessions focusing on joint mobility (Sukshma Vyayama), spine flexibility, balance, and mindful breathing.",
+    benefits: [
+      "Builds spinal flexibility, core stability, and graceful posture",
+      "Supports cardiovascular endurance and metabolic balance",
+      "Adaptive modifications available for beginners and seniors",
+    ],
+    whatToExpect:
+      "Conducted in a tranquil, airy yoga hall with gentle pacing, posture corrections, and alignment adjustments suited to your body.",
+  },
+  {
+    id: "yoga-nidra",
+    title: "Yoga Nidra",
+    category: "yoga-relaxation",
+    duration: "45 Minutes",
+    icon: "moon",
+    description:
+      "Traditional yogic psychic sleep providing conscious, deep relaxation that releases deep-seated muscular, mental, and emotional holding patterns.",
+    benefits: [
+      "Profound relief for chronic insomnia, stress, and nervous fatigue",
+      "Systematically calms the sympathetic nervous system",
+      "Leaves the mind revitalized, clear, and serenely peaceful",
+    ],
+    whatToExpect:
+      "You recline comfortably on cushioned mats with closed eyes while a soothing voice guides your awareness through body-scan visualization.",
+  },
+  {
+    id: "meditation",
+    title: "Meditation & Breathwork",
+    category: "yoga-relaxation",
+    duration: "40–50 Minutes",
+    icon: "brain",
+    description:
+      "Mindful stillness practices (Dhyana) coupled with classical Pranayama (Anulom Vilom, Bhramari, Sheetali) to stabilize thoughts and reduce stress.",
+    benefits: [
+      "Calms mental racing and chronic anxiety loops",
+      "Regulates autonomic respiration and heart coherence",
+      "Builds emotional equanimity and centered concentration",
+    ],
+    whatToExpect:
+      "Step-by-step guidance in comfortable seating, breath pacing, and mental stillness in a quiet, distraction-free environment.",
+  },
+
+  // Reiki & Spiritual Wellness Additions:
+  {
+    id: "reiki-healing",
+    title: "Reiki Healing",
+    category: "reiki-spiritual",
+    duration: "45–60 Minutes",
+    icon: "sparkles",
+    description:
+      "Gentle, non-invasive bio-field energy harmonization channeling universal life energy to dissolve emotional stress, align chakras, and restore vitality.",
+    benefits: [
+      "Deep emotional pacification and nervous system soothing",
+      "Clears stagnant energy blocks and aligns spiritual centers",
+      "Completely gentle, non-contact or light-contact touch",
+    ],
+    whatToExpect:
+      "You rest comfortably fully clothed on a therapy bed in a peaceful room while the practitioner gently channels Reiki energy across vital centers.",
+  },
+  {
+    id: "reiki-training",
+    title: "Reiki Training (Level I & II Certificate Courses)",
+    category: "reiki-spiritual",
+    duration: "Weekend / Multi-Day Intensive",
+    icon: "award",
+    description:
+      "Formal certificate training programs in traditional Usui Reiki. Level I empowers personal self-healing and energy sensing; Level II teaches sacred symbols, distance healing, and practitioner ethics.",
+    benefits: [
+      "Receive authentic attunements from experienced Reiki Masters",
+      "Comprehensive manuals, practical self-treatment, and partner exchanges",
+      "Official Level I & Level II Certificate of Completion awarded",
+    ],
+    whatToExpect:
+      "Interactive classroom instruction, attunement ceremonies, guided practice sessions, and lifelong skills to heal yourself and your family.",
+  },
+  {
+    id: "past-life-regression",
+    title: "Past Life Regression",
+    category: "reiki-spiritual",
+    duration: "90–120 Minutes",
+    icon: "history",
+    description:
+      "A compassionate, guided meditative exploration of the subconscious mind to uncover spiritual impressions, resolve deep phobias, and understand relationship patterns.",
+    benefits: [
+      "Reveals the deeper roots of persistent emotional blockages",
+      "Brings closure to unexplained fears, guilt, and emotional heaviness",
+      "Provides expansive spiritual perspective on current life purpose",
+    ],
+    whatToExpect:
+      "An unhurried preparatory talk followed by safe, gentle hypnotherapy guidance where you stay conscious, aware, and relaxed throughout.",
+  },
+  {
+    id: "srt",
+    title: "S.R.T. (Spiritual Response Therapy)",
+    category: "reiki-spiritual",
+    duration: "60–90 Minutes",
+    icon: "shield",
+    description:
+      "A meticulous spiritual research and clearing methodology using specialized charts and ideomotor indicators to release subconscious limiting soul programming.",
+    benefits: [
+      "Identifies and clears subconscious discordant energies",
+      "Assists in resolving recurring patterns in career and wellbeing",
+      "Brings lightness, clarity, and renewed positive momentum",
+    ],
+    whatToExpect:
+      "A quiet consultative clearing session guided by certified charts, identifying soul records and replacing them with harmonious energy.",
+  },
+  {
+    id: "spiritual-therapy",
+    title: "Spiritual Therapy",
+    category: "reiki-spiritual",
+    duration: "45–60 Minutes",
+    icon: "heart-handshake",
+    description:
+      "Compassionate, soul-centered dialogue providing emotional grounding, forgiveness practices, and contemplative tools for profound inner tranquility.",
+    benefits: [
+      "Nurtures self-compassion, peace of mind, and purpose",
+      "Supportive guidance during life transitions or emotional grief",
+      "Harmonizes spiritual values with everyday domestic life",
+    ],
+    whatToExpect:
+      "A safe, non-judgmental sanctuary for private conversations, guided reflections, and practical spiritual lifestyle habits.",
+  },
+
+  // Wellness Consultation Additions:
+  {
+    id: "mental-wellbeing",
+    title: "Mental Wellbeing Consultation",
+    category: "consultation",
+    duration: "45–60 Minutes",
+    icon: "smile",
+    description:
+      "A dedicated, confidential consultation exploring mental stress, fatigue, and burnout through holistic lifestyle adjustments and natural coping mechanisms.",
+    benefits: [
+      "Safe space to express concerns without clinical coldness",
+      "Dietary and natural lifestyle routines supporting brain calm",
+      "Actionable boundaries and restorative evening habits",
+    ],
+    whatToExpect:
+      "An open, empathetic discussion analyzing lifestyle factors affecting mood, followed by a personalized, gentle action protocol.",
+  },
+  {
+    id: "stress-management",
+    title: "Stress Management Guidance",
+    category: "consultation",
+    duration: "45 Minutes",
+    icon: "wind",
+    description:
+      "Practical, tailored guidance targeting occupational and lifestyle stressors, combining 5-minute workplace breathing routines and restorative sleep hygiene.",
+    benefits: [
+      "Down-regulates high sympathetic nervous tension",
+      "Prevents physical symptoms like tension headaches and acidity",
+      "Sustainable habits designed to fit seamlessly into busy days",
+    ],
+    whatToExpect:
+      "A practical habit audit followed by the creation of realistic daily relaxation checkpoints you can practice anywhere.",
+  },
 ];
 
 const ICONS: Record<string, LucideIcon> = {
@@ -198,10 +469,26 @@ const ICONS: Record<string, LucideIcon> = {
   wind: Wind,
   compass: Compass,
   calendar: CalendarCheck,
+  droplets: Droplets,
+  layers: Layers,
+  flame: Flame,
+  hand: Hand,
+  sparkles: Sparkles,
+  sun: Sun,
+  moon: Moon,
+  brain: Brain,
+  award: Award,
+  history: History,
+  shield: Shield,
+  "heart-handshake": HeartHandshake,
+  smile: Smile,
 };
 
 const CATEGORIES = [
   { id: "all", label: "All Services" },
+  { id: "naturopathy-therapies", label: "Naturopathy Therapies" },
+  { id: "yoga-relaxation", label: "Yoga & Relaxation" },
+  { id: "reiki-spiritual", label: "Reiki & Spiritual Wellness" },
   { id: "consultation", label: "Consultations & Planning" },
   { id: "diet-lifestyle", label: "Diet & Lifestyle" },
   { id: "mind-movement", label: "Mind & Movement" },
@@ -379,6 +666,331 @@ function ServicesPage() {
               </p>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* Reiki Training & Certificate Courses Showcase */}
+      <section className="relative overflow-hidden bg-ivory py-20 sm:py-28 border-y border-beige">
+        <div
+          aria-hidden="true"
+          className="absolute -right-36 top-1/2 h-[28rem] w-[28rem] -translate-y-1/2 rounded-full bg-gold/10 blur-3xl"
+        />
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+          <SectionHeading
+            eyebrow="Certified Spiritual Learning"
+            title={
+              <>
+                Reiki Training & <em className="italic text-gold-deep">Certificate Courses</em>.
+              </>
+            }
+            description="Learn the authentic art of energy healing through structured Level I & Level II certificate training courses at Sanidhya Naturopathy Center."
+          />
+
+          <div className="mt-14 grid gap-8 lg:grid-cols-2">
+            {/* Level I Card */}
+            <Reveal delay={0.1}>
+              <div className="flex h-full flex-col justify-between rounded-4xl border border-beige bg-white p-8 sm:p-10 shadow-soft transition-all duration-300 hover:shadow-lift">
+                <div>
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sage-soft text-forest">
+                      <Sparkles className="h-6 w-6" aria-hidden="true" />
+                    </span>
+                    <span className="rounded-full bg-forest/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-forest">
+                      Beginner to Intermediate
+                    </span>
+                  </div>
+
+                  <h3 className="mt-6 font-display text-2xl font-semibold text-forest sm:text-3xl">
+                    Reiki Level I Course <span className="text-gold-deep">(1st Degree)</span>
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    The fundamental initiation into Usui Reiki. Focuses on opening personal energy
+                    channels, discovering energy sensitivity, and mastering self-healing protocols.
+                  </p>
+
+                  <div className="mt-6 space-y-3 border-t border-beige/60 pt-5 text-sm text-charcoal">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                      <span>Traditional sacred attunement ceremony by certified Reiki Masters</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                      <span>Complete 12 basic hand positions for self-treatment & family care</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                      <span>Chakra balancing techniques and energy clearing protocols</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                      <span>Comprehensive study manual and verified Certificate of Completion</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 border-t border-beige/60 pt-6 flex flex-wrap items-center justify-between gap-4">
+                  <Link
+                    to="/booking"
+                    className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep"
+                  >
+                    Enquire for Level I Batches
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Weekend & flexible schedules
+                  </span>
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Level II Card */}
+            <Reveal delay={0.2}>
+              <div className="flex h-full flex-col justify-between rounded-4xl border border-gold/30 bg-gradient-to-br from-white via-white to-gold/5 p-8 sm:p-10 shadow-soft transition-all duration-300 hover:shadow-lift">
+                <div>
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/20 text-gold-deep">
+                      <Award className="h-6 w-6" aria-hidden="true" />
+                    </span>
+                    <span className="rounded-full bg-gold/20 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-gold-deep">
+                      Advanced Practitioner
+                    </span>
+                  </div>
+
+                  <h3 className="mt-6 font-display text-2xl font-semibold text-forest sm:text-3xl">
+                    Reiki Level II Course <span className="text-gold-deep">(2nd Degree)</span>
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                    Deepen your healing potency significantly. Learn the three sacred Usui Reiki
+                    symbols, distance healing across space and time, and emotional release
+                    techniques.
+                  </p>
+
+                  <div className="mt-6 space-y-3 border-t border-beige/60 pt-5 text-sm text-charcoal">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                      <span>Advanced 2nd-degree attunements to amplify your channeled energy flow</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                      <span>Three sacred Usui symbols: Power (Cho Ku Rei), Mental/Emotional (Sei He Ki), and Distance (Hon Sha Ze Sho Nen)</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                      <span>Techniques for absent / remote healing across geographical distance</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
+                      <span>Professional practitioner ethics, client care protocols, and Level II Certificate</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 border-t border-beige/60 pt-6 flex flex-wrap items-center justify-between gap-4">
+                  <Link
+                    to="/booking"
+                    className="inline-flex items-center gap-2 rounded-full bg-forest px-6 py-3 text-sm font-semibold text-ivory shadow-soft transition-colors hover:bg-forest-deep"
+                  >
+                    Enquire for Level II Batches
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Prerequisite: Reiki Level I
+                  </span>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* Health-Concern Enquiry Categories Section */}
+      <section className="relative overflow-hidden bg-cream py-20 sm:py-28">
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+          <SectionHeading
+            eyebrow="Brochure Focus Areas"
+            title={
+              <>
+                Health Concerns We Offer <em className="italic text-gold-deep">Natural Guidance</em> For.
+              </>
+            }
+            description="Explore our specialized holistic consultation categories. Each enquiry receives an attentive assessment combining naturopathy, dietary correction, and gentle therapeutic routines."
+          />
+
+          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                title: "Cervical Spondylosis",
+                desc: "Gentle cervical traction routines, therapeutic acupressure, posture correction, and herbal fomentation for neck stiffness and radiating pain.",
+                tag: "Spine & Neck",
+              },
+              {
+                title: "Back Pain & Lumbar Stiffness",
+                desc: "Spinal hydrotherapy sprays, warm mud packs, and specialized restorative asanas to decompress lumbar tension and strengthen spinal muscles.",
+                tag: "Musculoskeletal",
+              },
+              {
+                title: "Slip Disc & Disc Bulge Care",
+                desc: "Carefully calibrated non-invasive alignments, gentle core-stabilizing movement, and anti-inflammatory naturopathic dietary guidance.",
+                tag: "Spinal Health",
+              },
+              {
+                title: "Sciatica Nerve Discomfort",
+                desc: "Targeted acupressure along the sciatic meridian, nerve-flossing yogic stretches, and warm steam applications to calm radiating leg pain.",
+                tag: "Nerve Relief",
+              },
+              {
+                title: "Numbness & Tingling in Hands / Feet",
+                desc: "Sujok micro-meridian stimulation, peripheral hydrotherapy foot/arm baths, and circulatory herbal packs to stimulate sluggish nerve signals.",
+                tag: "Circulation & Nerve",
+              },
+              {
+                title: "Digestive Concerns & Gut Sluggishness",
+                desc: "Abdominal mud packs, Satvik dietary redesign, therapeutic hip baths, and herbal teas to soothe chronic acidity, bloating, and constipation.",
+                tag: "Gut Health",
+              },
+              {
+                title: "Diabetes / Blood Sugar Support",
+                desc: "Lifestyle Dinacharya guidance, pancreatic stimulation through tailored asanas, seasonal low-glycemic dietary planning, and stress reduction.",
+                tag: "Metabolic Vitality",
+              },
+              {
+                title: "High & Low Blood Pressure",
+                desc: "Autonomic nervous balancing via Pranayama, gentle relaxation therapies, restorative hydro-packs, and sodium-balanced whole-food nutrition.",
+                tag: "Vascular Health",
+              },
+              {
+                title: "Parkinson's Disease Holistic Support",
+                desc: "Complementary gentle motor coordination exercises, soothing bio-field Reiki sessions, and nervous-system calming herbal lifestyle guidance.",
+                tag: "Neurological Care",
+              },
+              {
+                title: "Polio-related Mobility Concerns",
+                desc: "Supportive hydrotherapy, non-strenuous passive joint mobilization, and compassionate wellness routines to sustain daily ease of movement.",
+                tag: "Mobility Support",
+              },
+              {
+                title: "Mental Health & Emotional Burnout",
+                desc: "Yoga Nidra, confidential mental wellbeing consultations, meditation, and spiritual therapy to alleviate anxiety, chronic fatigue, and depression.",
+                tag: "Mental Wellbeing",
+              },
+              {
+                title: "Stress, Fatigue & Sleep Imbalances",
+                desc: "Rhythmic breathing techniques, evening digital detoxification rituals, and herbal relaxants to restore uninterrupted night-time sleep.",
+                tag: "Rest & Recovery",
+              },
+            ].map((concern, i) => (
+              <Reveal key={concern.title} delay={(i % 3) * 0.06}>
+                <div className="flex h-full flex-col justify-between rounded-3xl border border-beige bg-white p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
+                  <div>
+                    <span className="inline-block rounded-full bg-sage-soft/70 px-3 py-1 text-[0.7rem] font-bold uppercase tracking-wider text-forest">
+                      {concern.tag}
+                    </span>
+                    <h3 className="mt-3.5 font-display text-xl font-semibold text-forest">
+                      {concern.title}
+                    </h3>
+                    <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                      {concern.desc}
+                    </p>
+                  </div>
+                  <div className="mt-5 border-t border-beige/60 pt-4">
+                    <Link
+                      to="/booking"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold-deep transition-colors hover:text-forest"
+                    >
+                      Enquire for this concern &rarr;
+                    </Link>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Mandatory Medical Disclaimer Notice */}
+          <Reveal delay={0.15}>
+            <div className="mx-auto mt-12 flex max-w-4xl items-start gap-4 rounded-3xl border border-gold/30 bg-gold/10 p-6 shadow-soft">
+              <AlertCircle className="mt-1 h-6 w-6 shrink-0 text-gold-deep" aria-hidden="true" />
+              <div className="text-xs sm:text-sm leading-relaxed text-charcoal/85">
+                <strong className="font-semibold text-forest">
+                  Important Ethical & Medical Advisory:
+                </strong>{" "}
+                The health concerns listed above represent areas of enquiry for natural lifestyle,
+                dietary, yogic, and complementary naturopathic guidance. Sanidhya Naturopathy Center
+                promotes holistic wellness and the body’s innate healing capacity. Our therapies do
+                not replace qualified medical diagnosis, surgery, or emergency treatments. We do not
+                advise stopping any prescribed pharmaceutical medications without consulting your
+                primary physician.
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Center Facilities & Natural Therapy Suite */}
+      <section className="relative overflow-hidden bg-ivory py-20 sm:py-28 border-t border-beige">
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+          <SectionHeading
+            eyebrow="On-Site Infrastructure"
+            title={
+              <>
+                Therapy Suites & <em className="italic text-gold-deep">Clinic Facilities</em>.
+              </>
+            }
+            description="Our center in Sector I, Jankipuram is thoughtfully equipped with dedicated, clean, and private facilities for each traditional naturopathy modality."
+          />
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                title: "Hydrotherapy Suite",
+                desc: "Equipped with specialized spinal bath units, sitz/hip bath tubs, and temperature-controlled water application apparatus.",
+                icon: Droplets,
+              },
+              {
+                title: "Mud Therapy Station",
+                desc: "Hygienic natural earth preparation area utilizing mineral-rich, solar-treated clay packs prepared fresh daily.",
+                icon: Layers,
+              },
+              {
+                title: "Herbal Steam Bath Cabinet",
+                desc: "Traditional wooden steam chambers designed for comfortable individual sessions keeping the head pleasantly cool outside.",
+                icon: Flame,
+              },
+              {
+                title: "Yoga & Meditation Hall",
+                desc: "A serene, quiet practice sanctuary equipped with cushions, bolsters, and mats for asanas, pranayama, and Yoga Nidra.",
+                icon: Sun,
+              },
+              {
+                title: "Private Consultation Rooms",
+                desc: "Quiet, comfortable doctor-patient consultation chambers ensuring complete confidentiality for detailed health reviews.",
+                icon: HeartHandshake,
+              },
+              {
+                title: "Accessible & Peaceful Premises",
+                desc: "Located on Sector I Main Road with step-free wheelchair ramp, convenient parking, and tranquil ambiance away from noise.",
+                icon: Shield,
+              },
+            ].map((facility, i) => {
+              const Icon = facility.icon;
+              return (
+                <Reveal key={facility.title} delay={i * 0.08}>
+                  <div className="flex h-full flex-col justify-between rounded-3xl border border-beige bg-white p-7 shadow-soft">
+                    <div>
+                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sage-soft text-forest">
+                        <Icon className="h-6 w-6" aria-hidden="true" />
+                      </span>
+                      <h3 className="mt-4 font-display text-xl font-semibold text-forest">
+                        {facility.title}
+                      </h3>
+                      <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                        {facility.desc}
+                      </p>
+                    </div>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
         </div>
       </section>
 

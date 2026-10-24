@@ -88,6 +88,7 @@ export function Booking() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
@@ -180,6 +181,41 @@ export function Booking() {
                 Open WhatsApp chat
                 <Send className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
+            </div>
+
+            <div className="rounded-3xl border border-beige bg-white p-6 shadow-soft">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sage-soft text-forest">
+                <Sparkles className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <h3 className="mt-4 font-display text-xl font-semibold text-forest">
+                Brochure Focus Areas
+              </h3>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                Consultations, holistic guidance, and certificate courses available for:
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {[
+                  "Cervical Spondylosis",
+                  "Back Pain & Sciatica",
+                  "Slip Disc",
+                  "Digestive Concerns",
+                  "High & Low BP",
+                  "Diabetes Support",
+                  "Parkinson's Support",
+                  "Polio-related Support",
+                  "Numbness & Tingling",
+                  "Mental Wellbeing",
+                  "Hydrotherapy & Steam",
+                  "Reiki Training (Level I & II)",
+                ].map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-full bg-ivory px-2.5 py-1 text-[0.7rem] font-medium text-forest border border-beige"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
             </div>
 
             <div className="flex items-start gap-3 rounded-3xl border border-gold/30 bg-gold/10 p-5">
@@ -363,6 +399,29 @@ export function Booking() {
                           {errors.reason.message}
                         </p>
                       )}
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        <span className="text-[0.7rem] text-muted-foreground mr-1">
+                          Quick suggestions:
+                        </span>
+                        {[
+                          "Cervical Spondylosis",
+                          "Back Pain",
+                          "Slip Disc",
+                          "Sciatica",
+                          "Digestive Concerns",
+                          "Reiki Healing & Training",
+                          "Hydrotherapy & Steam Bath",
+                        ].map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            onClick={() => setValue("reason", c, { shouldValidate: true })}
+                            className="rounded-full border border-forest/15 bg-ivory/80 px-2.5 py-0.5 text-[0.7rem] font-medium text-forest transition-colors hover:border-forest/40 hover:bg-forest hover:text-ivory"
+                          >
+                            + {c}
+                          </button>
+                        ))}
+                      </div>
                     </div>
 
                     <div className="grid gap-5 sm:grid-cols-2">

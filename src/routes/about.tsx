@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Accessibility,
   ArrowRight,
+  Award,
   CheckCircle2,
   Compass,
   Droplets,
@@ -374,6 +375,30 @@ function AboutPage() {
                     <h4 className="font-semibold text-charcoal">Prime Jankipuram Spot</h4>
                     <p className="mt-0.5 text-xs text-muted-foreground">
                       Conveniently reached from Ring Road & Engineering College.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5 rounded-2xl border border-beige bg-white p-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sage-soft text-forest">
+                    <Sparkles className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h4 className="font-semibold text-charcoal">Natural Therapy Suites</h4>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      Equipped for hydrotherapy, steam bath, mud packs & yoga.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5 rounded-2xl border border-beige bg-white p-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sage-soft text-forest">
+                    <Award className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h4 className="font-semibold text-charcoal">Certified Reiki Training</h4>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      Level I & II certificate workshops and spiritual healing.
                     </p>
                   </div>
                 </div>
