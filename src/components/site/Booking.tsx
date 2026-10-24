@@ -234,7 +234,7 @@ export function Booking() {
                         href={clinic.phoneHref}
                         className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep active:scale-[0.98]"
                       >
-                        <Phone className="h-4 w-4 text-gold-soft" aria-hidden="true" />
+                        <Phone className="h-4 w-4" aria-hidden="true" />
                         Call {clinic.phoneDisplay}
                       </a>
                       <a
@@ -408,15 +408,24 @@ export function Booking() {
                       {errors.message && <p className={errorCls} role="alert">{errors.message.message}</p>}
                     </div>
 
+                    {submitError && (
+                      <div
+                        role="alert"
+                        className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
+                      >
+                        {submitError}
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      disabled={status === "preparing"}
+                      disabled={status === "submitting"}
                       className="mt-1 inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-soft transition-all hover:bg-forest-deep active:scale-[0.98] disabled:cursor-wait disabled:opacity-80"
                     >
-                      {status === "preparing" ? (
+                      {status === "submitting" ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                          Preparing your enquiry…
+                          Sending your enquiry…
                         </>
                       ) : (
                         <>
@@ -426,9 +435,8 @@ export function Booking() {
                       )}
                     </button>
                     <p className="text-center text-xs text-muted-foreground">
-                      Submitting prepares a WhatsApp message with your details —
-                      you review and send it yourself. The clinic confirms all
-                      appointments.
+                      Submitting sends your enquiry to the centre's appointment
+                      inbox — the clinic confirms all appointments personally.
                     </p>
                   </motion.form>
                 )}
