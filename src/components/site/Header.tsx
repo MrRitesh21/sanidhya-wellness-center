@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { Menu, Phone, X } from "lucide-react";
 import { clinic } from "@/lib/clinic";
@@ -6,20 +7,18 @@ import { cn } from "@/lib/utils";
 import { EASE } from "./primitives";
 
 const NAV = [
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Our Approach", href: "#approach" },
-  { label: "Reviews", href: "#reviews" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Contact", href: "/contact" },
 ] as const;
 
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
   return (
-    <a
-      href="#top"
+    <Link
+      to="/"
       className="flex items-center gap-2.5"
-      aria-label="Sanidhya Naturopathy Center — back to top"
+      aria-label="Sanidhya Naturopathy Center — Home"
     >
       <span
         className={cn(
@@ -60,13 +59,14 @@ export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
           Naturopathy Center
         </span>
       </span>
-    </a>
+    </Link>
   );
 }
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -88,9 +88,7 @@ export function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        scrolled
-          ? "bg-ivory/85 shadow-soft backdrop-blur-md"
-          : "bg-transparent",
+        scrolled ? "bg-ivory/90 shadow-soft backdrop-blur-md" : "bg-ivory/60 backdrop-blur-sm",
       )}
     >
       <div
@@ -102,30 +100,39 @@ export function Header() {
         <Logo />
 
         <nav aria-label="Main navigation" className="hidden items-center gap-7 lg:flex">
-          {NAV.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="group relative text-sm font-medium text-forest transition-colors hover:text-gold-deep"
-            >
-              {item.label}
-              <span
-                aria-hidden="true"
-                className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-gold-deep transition-transform duration-300 group-hover:scale-x-100"
-              />
-            </a>
-          ))}
+          {NAV.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={cn(
+                  "group relative text-sm font-medium transition-colors hover:text-gold-deep",
+                  isActive ? "text-gold-deep font-semibold" : "text-forest",
+                )}
+              >
+                {item.label}
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute -bottom-1 left-0 h-0.5 w-full origin-left bg-gold-deep transition-transform duration-300",
+                    isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+                  )}
+                />
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-3">
-          <a
-            href="#appointment"
+          <Link
+            to="/booking"
             className={cn(
               "hidden items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-all duration-300 hover:bg-forest-deep active:scale-[0.98] sm:inline-flex",
             )}
           >
             Book Appointment
-          </a>
+          </Link>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -147,28 +154,34 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25, ease: EASE }}
-            className="fixed inset-x-0 bottom-0 top-[4rem] z-40 overflow-y-auto bg-ivory/97 pb-8 pt-2 backdrop-blur-lg lg:hidden"
+            className="fixed inset-x-0 bottom-0 top-[4rem] z-40 overflow-y-auto bg-ivory/98 pb-8 pt-2 backdrop-blur-lg lg:hidden"
           >
             <nav aria-label="Mobile navigation" className="px-4">
-              {NAV.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={closeMenu}
-                  className="flex min-h-[56px] items-center border-b border-beige/70 font-display text-2xl text-forest transition-colors active:text-gold-deep"
-                >
-                  {item.label}
-                </a>
-              ))}
+              {NAV.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    onClick={closeMenu}
+                    className={cn(
+                      "flex min-h-[56px] items-center border-b border-beige/70 font-display text-2xl transition-colors active:text-gold-deep",
+                      isActive ? "text-gold-deep font-semibold" : "text-forest",
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </nav>
             <div className="mt-6 space-y-3 px-4">
-              <a
-                href="#appointment"
+              <Link
+                to="/booking"
                 onClick={closeMenu}
                 className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft active:scale-[0.98]"
               >
                 Book Appointment
-              </a>
+              </Link>
               <a
                 href={clinic.phoneHref}
                 className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-forest/20 px-6 text-base font-semibold text-forest active:scale-[0.98]"

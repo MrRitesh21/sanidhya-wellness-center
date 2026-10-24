@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  LEAD_API_KEY,
-  LEAD_ENDPOINT,
-  LEAD_PAGE_ID,
-  buildLeadPayload,
-} from "@/lib/leadCapture";
+import { LEAD_API_KEY, LEAD_ENDPOINT, LEAD_PAGE_ID, buildLeadPayload } from "@/lib/leadCapture";
 
 const base = {
   name: "Asha Verma",
@@ -34,9 +29,7 @@ describe("lead capture", () => {
   });
 
   it("labels child enquiries", () => {
-    expect(
-      buildLeadPayload({ ...base, ageGroup: "child" }).budget,
-    ).toBe("Child");
+    expect(buildLeadPayload({ ...base, ageGroup: "child" }).budget).toBe("Child");
   });
 
   it("appends the optional note to the message", () => {

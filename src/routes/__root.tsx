@@ -12,6 +12,9 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { Header } from "@/components/site/Header";
+import { Footer } from "@/components/site/Footer";
+import { LeadCapturePopup } from "@/components/site/LeadCapturePopup";
 
 function NotFoundComponent() {
   return (
@@ -131,45 +134,38 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "MedicalBusiness",
-          "name": "Sanidhya Naturopathy Center",
-          "description":
+          name: "Sanidhya Naturopathy Center",
+          description:
             "Find Sanidhya Naturopathy Center in Sector I, Jankipuram, Lucknow. View location, opening hours, contact details, and appointment enquiry options.",
-          "telephone": "+919415026684",
-          "address": {
+          telephone: "+919415026684",
+          address: {
             "@type": "PostalAddress",
-            "streetAddress": "H-D/98, Sector I Main Road, Sector I, Janki Vihar Colony",
-            "addressLocality": "Jankipuram, Lucknow",
-            "addressRegion": "Uttar Pradesh",
-            "postalCode": "226021",
-            "addressCountry": "IN"
+            streetAddress: "H-D/98, Sector I Main Road, Sector I, Janki Vihar Colony",
+            addressLocality: "Jankipuram, Lucknow",
+            addressRegion: "Uttar Pradesh",
+            postalCode: "226021",
+            addressCountry: "IN",
           },
-          "aggregateRating": {
+          aggregateRating: {
             "@type": "AggregateRating",
-            "ratingValue": "4.7",
-            "reviewCount": "48",
-            "bestRating": "5"
+            ratingValue: "4.7",
+            reviewCount: "48",
+            bestRating: "5",
           },
-          "openingHoursSpecification": [
+          openingHoursSpecification: [
             {
               "@type": "OpeningHoursSpecification",
-              "dayOfWeek": [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday"
-              ],
-              "opens": "10:00",
-              "closes": "21:30"
+              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+              opens: "10:00",
+              closes: "21:30",
             },
             {
               "@type": "OpeningHoursSpecification",
-              "dayOfWeek": ["Sunday"],
-              "opens": "10:00",
-              "closes": "14:00"
-            }
-          ]
+              dayOfWeek: ["Sunday"],
+              opens: "10:00",
+              closes: "14:00",
+            },
+          ],
         }),
       },
     ],
@@ -199,8 +195,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="flex min-h-screen flex-col bg-ivory font-sans text-charcoal antialiased selection:bg-sage-soft selection:text-forest">
+        <Header />
+        <main id="main-content" className="flex-1">
+          <Outlet />
+        </main>
+        <Footer />
+        <LeadCapturePopup />
+      </div>
     </QueryClientProvider>
   );
 }

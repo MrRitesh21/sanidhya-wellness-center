@@ -21,10 +21,7 @@ export function Stars({
         const fill = Math.max(0, Math.min(1, rating - i));
         return (
           <span key={i} className="relative inline-block h-4 w-4">
-            <Star
-              className={cn("h-4 w-4 text-gold", starClass)}
-              strokeWidth={1.5}
-            />
+            <Star className={cn("h-4 w-4 text-gold", starClass)} strokeWidth={1.5} />
             {fill > 0 && (
               <span
                 className="absolute inset-0 overflow-hidden"

@@ -29,6 +29,7 @@ Do not invent practitioner names, degrees, medical registrations, treatment succ
 Create a premium, nature-inspired visual identity that feels peaceful, contemporary, and refined.
 
 **Color palette:**
+
 - Forest green: `#183F35`
 - Sage green: `#91A995`
 - Warm ivory: `#FAF8F1`
@@ -40,11 +41,13 @@ Create a premium, nature-inspired visual identity that feels peaceful, contempor
 Use forest green for major headings and CTAs, warm ivory for backgrounds, sage green for subtle decorative elements, and muted gold sparingly for premium accents.
 
 **Typography:**
+
 - Headings: Cormorant Garamond or DM Serif Display.
 - Body text: Manrope or Inter.
 - Use generous whitespace, editorial layouts, refined typography, and a clear hierarchy.
 
 **Visual style:**
+
 - Premium wellness editorial design.
 - Organic curves and flowing shapes.
 - Natural textures and botanical imagery.
@@ -69,6 +72,7 @@ Primary CTA: **Book an Appointment**
 Secondary CTA: **Explore Our Approach**
 
 Include:
+
 - High-quality, natural photography featuring a peaceful wellness setting, botanical elements, or a professional consultation.
 - A layered nature-inspired background with subtle organic shapes.
 - Delicate animated leaves or flowing line illustrations.
@@ -85,6 +89,7 @@ The design must remain elegant and usable on mobile devices.
 Use Framer Motion or Motion for React, depending on the project setup.
 
 Implement:
+
 - Smooth page entrance transitions.
 - Scroll-triggered fade and reveal animations.
 - Staggered section and card appearances.
@@ -99,6 +104,7 @@ Implement:
 - Subtle header transformations on scroll.
 
 Motion rules:
+
 - Use natural easing and restrained durations.
 - Prefer opacity and transform animations for performance.
 - Avoid constant distracting movement, aggressive zooms, and excessive bouncing.
@@ -139,6 +145,7 @@ Possible service categories to include only after confirmation from the clinic:
 8. Follow-up Wellness Consultations
 
 Each service card should include:
+
 - An elegant icon or botanical illustration.
 - A clear title.
 - A short, patient-friendly description.
@@ -156,6 +163,7 @@ Create a clean, reassuring section with the headline:
 **“Wellness That Starts With Listening.”**
 
 Feature appropriate service principles:
+
 - Personalized conversations about wellness goals.
 - A welcoming and calm consultation environment.
 - Clear explanations of available wellness approaches.
@@ -172,6 +180,7 @@ Use a refined grid layout with subtle icons and gentle scroll animations.
 Build a premium appointment request section with a clean, accessible form.
 
 Include these fields:
+
 - Full name.
 - Mobile number.
 - Age group: Adult / Child.
@@ -183,6 +192,7 @@ Include these fields:
 Primary CTA: **Request an Appointment**
 
 Requirements:
+
 - Validate required fields and phone numbers.
 - Provide clear loading, success, and error states.
 - Do not claim an appointment is confirmed until the clinic confirms it.
@@ -204,6 +214,7 @@ Generate the WhatsApp enquiry link using the clinic number with country code 91 
 Create a beautifully designed contact and location section.
 
 Include:
+
 - Complete business address.
 - Embedded Google Map, if embedding is permitted.
 - A “Get Directions” button linking to the supplied Google Maps location.
@@ -212,6 +223,7 @@ Include:
 - Wheelchair-accessibility information.
 
 Opening hours:
+
 - Monday: 10:00 AM–9:30 PM
 - Tuesday: 10:00 AM–9:30 PM
 - Wednesday: 10:00 AM–9:30 PM
@@ -225,6 +237,7 @@ Present the hours in a clean weekly schedule. Do not show a real-time “Open No
 ## 10. Google Reviews and Trust Section
 
 Create a refined review section using the supplied information:
+
 - 4.7 out of 5 stars.
 - 48 Google reviews.
 - A button labelled “Read Google Reviews”.
@@ -256,6 +269,7 @@ Do not provide unsupported medical claims or advise users to discontinue prescri
 ## 12. Header and Navigation
 
 Build a premium sticky navigation bar containing:
+
 - A custom botanical logo or leaf-inspired symbol.
 - The name “Sanidhya Naturopathy Center”.
 - Home.
@@ -269,6 +283,7 @@ Build a premium sticky navigation bar containing:
 On scroll, transition to a slightly compact header with a subtle translucent background and soft blur.
 
 For mobile:
+
 - Use a clean, accessible menu.
 - Keep the booking CTA easy to access.
 - Ensure adequate tap-target sizes.
@@ -277,6 +292,7 @@ For mobile:
 ## 13. Footer Design
 
 Create a refined footer featuring:
+
 - Business name and a short description.
 - Complete address.
 - Clickable phone number.
@@ -293,6 +309,7 @@ Do not invent social media profiles, email addresses, or website URLs.
 ## 14. Technical Requirements
 
 Use this stack where supported:
+
 - React and TypeScript.
 - Next.js or the platform's recommended framework.
 - Tailwind CSS.
@@ -301,6 +318,7 @@ Use this stack where supported:
 - Reusable, maintainable components.
 
 Implementation requirements:
+
 - Fully responsive on mobile, tablet, laptop, and desktop.
 - Accessible semantic HTML.
 - Keyboard-accessible navigation.
@@ -319,6 +337,7 @@ Implementation requirements:
 ## 15. Local SEO Strategy
 
 Optimize naturally for relevant local search phrases:
+
 - Naturopathy center in Jankipuram, Lucknow.
 - Natural wellness clinic in Jankipuram.
 - Naturopathy clinic in Lucknow.
@@ -339,6 +358,7 @@ Implement appropriate LocalBusiness structured data only with accurate details. 
 The completed website must feel like a premium natural wellness brand designed by a professional creative studio.
 
 Prioritize:
+
 - Exceptional visual hierarchy.
 - Beautiful natural imagery.
 - Sophisticated typography.

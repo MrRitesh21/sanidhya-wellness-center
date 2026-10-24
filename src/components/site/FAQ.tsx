@@ -20,8 +20,8 @@ const FAQS: FAQItem[] = [
     question: "How can I enquire about a consultation?",
     answer: (
       <span>
-        You can request an appointment through our online enquiry form, reach out
-        directly via WhatsApp, or call the centre at{" "}
+        You can request an appointment through our online enquiry form, reach out directly via
+        WhatsApp, or call the centre at{" "}
         <a
           href={clinic.phoneHref}
           className="font-semibold text-forest underline decoration-gold-deep underline-offset-4 hover:text-gold-deep"
@@ -58,7 +58,8 @@ const FAQS: FAQItem[] = [
         >
           {clinic.phoneDisplay}
         </a>
-        , message us on WhatsApp, or visit the clinic in Jankipuram during opening hours. We are always happy to answer your questions before you book.
+        , message us on WhatsApp, or visit the clinic in Jankipuram during opening hours. We are
+        always happy to answer your questions before you book.
       </span>
     ),
   },
@@ -121,9 +122,7 @@ export function FAQ() {
                       <span
                         className={cn(
                           "flex h-8 w-8 shrink-0 items-center justify-center rounded-xl transition-colors",
-                          isOpen
-                            ? "bg-forest text-primary-foreground"
-                            : "bg-sage-soft text-forest",
+                          isOpen ? "bg-forest text-primary-foreground" : "bg-sage-soft text-forest",
                         )}
                       >
                         <HelpCircle className="h-4 w-4" aria-hidden="true" />

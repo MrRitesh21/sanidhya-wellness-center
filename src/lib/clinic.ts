@@ -29,8 +29,7 @@ export const clinic = {
   rating: 4.7,
   reviewCount: 48,
   timezone: "Asia/Kolkata",
-  accessibility:
-    "A wheelchair-accessible entrance and parking are available for visitors.",
+  accessibility: "A wheelchair-accessible entrance and parking are available for visitors.",
 } as const;
 
 export const fullAddress = `${clinic.address.line1}, ${clinic.address.line2}, ${clinic.address.area}, ${clinic.address.city}, ${clinic.address.state} ${clinic.address.pin}`;
@@ -74,9 +73,7 @@ export function getOpenStatus(now: Date = new Date()): {
     minute: "2-digit",
     hour12: false,
   });
-  const parts = Object.fromEntries(
-    fmt.formatToParts(now).map((p) => [p.type, p.value]),
-  );
+  const parts = Object.fromEntries(fmt.formatToParts(now).map((p) => [p.type, p.value]));
   const weekday = parts["weekday"] as string;
   let h = Number(parts["hour"]);
   if (h === 24) h = 0; // some engines return "24" at midnight

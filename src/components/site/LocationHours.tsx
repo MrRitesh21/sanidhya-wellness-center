@@ -1,17 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  Accessibility,
-  ArrowUpRight,
-  MapPin,
-  Phone,
-} from "lucide-react";
-import {
-  clinic,
-  formatTime,
-  fullAddress,
-  getOpenStatus,
-  hours,
-} from "@/lib/clinic";
+import { Link } from "@tanstack/react-router";
+import { Accessibility, ArrowUpRight, MapPin, Phone } from "lucide-react";
+import { clinic, formatTime, fullAddress, getOpenStatus, hours } from "@/lib/clinic";
 import { cn } from "@/lib/utils";
 import { Reveal, SectionHeading } from "./primitives";
 
@@ -20,9 +10,7 @@ const MAP_EMBED =
 
 export function LocationHours() {
   const [today, setToday] = useState<string | null>(null);
-  const [status, setStatus] = useState<{ open: boolean; label: string } | null>(
-    null,
-  );
+  const [status, setStatus] = useState<{ open: boolean; label: string } | null>(null);
 
   useEffect(() => {
     setToday(
@@ -56,14 +44,12 @@ export function LocationHours() {
                   <MapPin className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <div>
-                  <h3 className="font-display text-xl font-semibold text-forest">
-                    {clinic.name}
-                  </h3>
+                  <h3 className="font-display text-xl font-semibold text-forest">{clinic.name}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                     {clinic.address.line1}, {clinic.address.line2},
                     <br />
-                    {clinic.address.area}, {clinic.address.city},{" "}
-                    {clinic.address.state} {clinic.address.pin}
+                    {clinic.address.area}, {clinic.address.city}, {clinic.address.state}{" "}
+                    {clinic.address.pin}
                   </p>
                 </div>
               </div>
@@ -71,10 +57,7 @@ export function LocationHours() {
               {status && (
                 <div className="mt-4 inline-flex items-center gap-2.5 rounded-full bg-ivory px-4 py-2 text-sm font-medium text-charcoal">
                   <span
-                    className={cn(
-                      "h-2 w-2 rounded-full",
-                      status.open ? "bg-sage" : "bg-gold",
-                    )}
+                    className={cn("h-2 w-2 rounded-full", status.open ? "bg-sage" : "bg-gold")}
                     aria-hidden="true"
                   />
                   {status.label}
@@ -91,6 +74,12 @@ export function LocationHours() {
                   Get Directions
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </a>
+                <Link
+                  to="/contact"
+                  className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-forest/20 px-6 text-sm font-semibold text-forest transition-colors hover:border-forest/40 active:scale-[0.98]"
+                >
+                  Full Contact & Visiting Info &rarr;
+                </Link>
                 <a
                   href={clinic.phoneHref}
                   className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-forest/20 px-6 text-sm font-semibold text-forest transition-colors hover:border-forest/40 active:scale-[0.98]"
@@ -104,12 +93,8 @@ export function LocationHours() {
             {/* Weekly hours */}
             <div className="rounded-3xl border border-beige bg-white p-7 shadow-soft">
               <div className="flex items-center justify-between">
-                <h3 className="font-display text-xl font-semibold text-forest">
-                  Opening hours
-                </h3>
-                <span className="text-xs font-medium text-muted-foreground">
-                  Asia/Kolkata
-                </span>
+                <h3 className="font-display text-xl font-semibold text-forest">Opening hours</h3>
+                <span className="text-xs font-medium text-muted-foreground">Asia/Kolkata</span>
               </div>
               <ul className="mt-4 divide-y divide-beige/70">
                 {hours.map((row) => {
@@ -119,8 +104,7 @@ export function LocationHours() {
                       key={row.day}
                       className={cn(
                         "flex items-center justify-between px-3 py-2.5 text-sm transition-colors",
-                        isToday &&
-                          "rounded-xl bg-sage-soft/60 font-semibold text-forest",
+                        isToday && "rounded-xl bg-sage-soft/60 font-semibold text-forest",
                       )}
                     >
                       <span>
@@ -139,10 +123,11 @@ export function LocationHours() {
                 })}
               </ul>
               <div className="mt-4 flex items-start gap-3 rounded-2xl bg-ivory px-4 py-3">
-                <Accessibility className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" aria-hidden="true" />
-                <p className="text-xs leading-relaxed text-charcoal/80">
-                  {clinic.accessibility}
-                </p>
+                <Accessibility
+                  className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep"
+                  aria-hidden="true"
+                />
+                <p className="text-xs leading-relaxed text-charcoal/80">{clinic.accessibility}</p>
               </div>
             </div>
           </Reveal>

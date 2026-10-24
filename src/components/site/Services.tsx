@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   CalendarCheck,
@@ -57,8 +58,8 @@ export function Services() {
                   <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
                     {service.description}
                   </p>
-                  <a
-                    href="#appointment"
+                  <Link
+                    to="/booking"
                     className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-deep transition-colors hover:text-forest"
                     aria-label={`Enquire about ${service.title}`}
                   >
@@ -67,17 +68,34 @@ export function Services() {
                       className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
                       aria-hidden="true"
                     />
-                  </a>
+                  </Link>
                 </article>
               </Reveal>
             );
           })}
         </div>
 
+        <Reveal delay={0.12}>
+          <div className="mt-12 flex flex-wrap justify-center gap-4">
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/80 px-7 py-3.5 text-sm font-semibold text-forest shadow-soft transition-colors duration-300 hover:border-forest/40 hover:bg-white active:scale-[0.98]"
+            >
+              Explore Full Therapies & Consultation Guide &rarr;
+            </Link>
+            <Link
+              to="/booking"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep active:scale-[0.98]"
+            >
+              Book Consultation Now
+            </Link>
+          </div>
+        </Reveal>
+
         <Reveal delay={0.15}>
-          <p className="mx-auto mt-10 max-w-2xl text-center text-sm text-muted-foreground">
-            Service availability is confirmed directly with the clinic during
-            your enquiry — this list is indicative and may vary.
+          <p className="mx-auto mt-8 max-w-2xl text-center text-sm text-muted-foreground">
+            Service availability is confirmed directly with the clinic during your enquiry — this
+            list is indicative and may vary.
           </p>
         </Reveal>
       </div>

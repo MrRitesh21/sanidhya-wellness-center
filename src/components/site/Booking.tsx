@@ -3,14 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AnimatePresence, motion } from "motion/react";
-import {
-  CheckCircle2,
-  Loader2,
-  MessageCircle,
-  Phone,
-  Send,
-  ShieldCheck,
-} from "lucide-react";
+import { CheckCircle2, Loader2, MessageCircle, Phone, Send, ShieldCheck } from "lucide-react";
 import { clinic, whatsappLink } from "@/lib/clinic";
 import { prettyDate, submitLead, timeLabel } from "@/lib/leadCapture";
 import { EASE, Reveal, SectionHeading } from "./primitives";
@@ -31,11 +24,7 @@ const validMobile = (v: string) => {
 
 const schema = z
   .object({
-    name: z
-      .string()
-      .trim()
-      .min(2, "Please enter your full name")
-      .max(80, "Name is too long"),
+    name: z.string().trim().min(2, "Please enter your full name").max(80, "Name is too long"),
     mobile: z
       .string()
       .trim()
@@ -84,7 +73,6 @@ function kolkataToday(): string {
     timeZone: clinic.timezone,
   }).format(new Date());
 }
-
 
 export function Booking() {
   const [status, setStatus] = useState<"idle" | "submitting" | "ready">("idle");
@@ -197,10 +185,9 @@ export function Booking() {
             <div className="flex items-start gap-3 rounded-3xl border border-gold/30 bg-gold/10 p-5">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-gold-deep" aria-hidden="true" />
               <p className="text-xs leading-relaxed text-charcoal/80">
-                Your enquiry is sent securely to the centre's appointment
-                inbox, where the team reviews every request personally. An
-                appointment is confirmed only when the clinic confirms it with
-                you directly.
+                Your enquiry is sent securely to the centre's appointment inbox, where the team
+                reviews every request personally. An appointment is confirmed only when the clinic
+                confirms it with you directly.
               </p>
             </div>
           </Reveal>
@@ -225,9 +212,9 @@ export function Booking() {
                       Enquiry received
                     </h3>
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-                      Thank you — the centre has received your request and will
-                      confirm your appointment with you personally. For a
-                      quicker reply, call the clinic or follow up on WhatsApp.
+                      Thank you — the centre has received your request and will confirm your
+                      appointment with you personally. For a quicker reply, call the clinic or
+                      follow up on WhatsApp.
                     </p>
                     <div className="mt-7 flex w-full max-w-sm flex-col gap-3">
                       <a
@@ -269,7 +256,10 @@ export function Booking() {
                     <div className="grid gap-5 sm:grid-cols-2">
                       <div>
                         <label htmlFor="name" className={labelCls}>
-                          Full name <span aria-hidden="true" className="text-gold-deep">*</span>
+                          Full name{" "}
+                          <span aria-hidden="true" className="text-gold-deep">
+                            *
+                          </span>
                         </label>
                         <input
                           id="name"
@@ -281,11 +271,18 @@ export function Booking() {
                           className={inputCls}
                           aria-invalid={!!errors.name}
                         />
-                        {errors.name && <p className={errorCls} role="alert">{errors.name.message}</p>}
+                        {errors.name && (
+                          <p className={errorCls} role="alert">
+                            {errors.name.message}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <label htmlFor="mobile" className={labelCls}>
-                          Mobile number <span aria-hidden="true" className="text-gold-deep">*</span>
+                          Mobile number{" "}
+                          <span aria-hidden="true" className="text-gold-deep">
+                            *
+                          </span>
                         </label>
                         <input
                           id="mobile"
@@ -298,13 +295,20 @@ export function Booking() {
                           className={inputCls}
                           aria-invalid={!!errors.mobile}
                         />
-                        {errors.mobile && <p className={errorCls} role="alert">{errors.mobile.message}</p>}
+                        {errors.mobile && (
+                          <p className={errorCls} role="alert">
+                            {errors.mobile.message}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     <div>
                       <span className={labelCls} id="age-group-label">
-                        Age group <span aria-hidden="true" className="text-gold-deep">*</span>
+                        Age group{" "}
+                        <span aria-hidden="true" className="text-gold-deep">
+                          *
+                        </span>
                       </span>
                       <div
                         role="radiogroup"
@@ -332,14 +336,18 @@ export function Booking() {
                         ))}
                       </div>
                       {errors.ageGroup && (
-                        <p className={errorCls} role="alert">{errors.ageGroup.message}</p>
+                        <p className={errorCls} role="alert">
+                          {errors.ageGroup.message}
+                        </p>
                       )}
                     </div>
 
                     <div>
                       <label htmlFor="reason" className={labelCls}>
                         Reason for consultation{" "}
-                        <span aria-hidden="true" className="text-gold-deep">*</span>
+                        <span aria-hidden="true" className="text-gold-deep">
+                          *
+                        </span>
                       </label>
                       <textarea
                         id="reason"
@@ -350,13 +358,20 @@ export function Booking() {
                         className={`${inputCls} resize-none`}
                         aria-invalid={!!errors.reason}
                       />
-                      {errors.reason && <p className={errorCls} role="alert">{errors.reason.message}</p>}
+                      {errors.reason && (
+                        <p className={errorCls} role="alert">
+                          {errors.reason.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="grid gap-5 sm:grid-cols-2">
                       <div>
                         <label htmlFor="date" className={labelCls}>
-                          Preferred date <span aria-hidden="true" className="text-gold-deep">*</span>
+                          Preferred date{" "}
+                          <span aria-hidden="true" className="text-gold-deep">
+                            *
+                          </span>
                         </label>
                         <input
                           id="date"
@@ -366,11 +381,18 @@ export function Booking() {
                           className={inputCls}
                           aria-invalid={!!errors.date}
                         />
-                        {errors.date && <p className={errorCls} role="alert">{errors.date.message}</p>}
+                        {errors.date && (
+                          <p className={errorCls} role="alert">
+                            {errors.date.message}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <label htmlFor="time" className={labelCls}>
-                          Preferred time <span aria-hidden="true" className="text-gold-deep">*</span>
+                          Preferred time{" "}
+                          <span aria-hidden="true" className="text-gold-deep">
+                            *
+                          </span>
                         </label>
                         <select
                           id="time"
@@ -388,7 +410,11 @@ export function Booking() {
                             </option>
                           ))}
                         </select>
-                        {errors.time && <p className={errorCls} role="alert">{errors.time.message}</p>}
+                        {errors.time && (
+                          <p className={errorCls} role="alert">
+                            {errors.time.message}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -405,7 +431,11 @@ export function Booking() {
                         {...register("message")}
                         className={`${inputCls} resize-none`}
                       />
-                      {errors.message && <p className={errorCls} role="alert">{errors.message.message}</p>}
+                      {errors.message && (
+                        <p className={errorCls} role="alert">
+                          {errors.message.message}
+                        </p>
+                      )}
                     </div>
 
                     {submitError && (
@@ -435,8 +465,8 @@ export function Booking() {
                       )}
                     </button>
                     <p className="text-center text-xs text-muted-foreground">
-                      Submitting sends your enquiry to the centre's appointment
-                      inbox — the clinic confirms all appointments personally.
+                      Submitting sends your enquiry to the centre's appointment inbox — the clinic
+                      confirms all appointments personally.
                     </p>
                   </motion.form>
                 )}

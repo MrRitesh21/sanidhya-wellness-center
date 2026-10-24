@@ -1,11 +1,4 @@
-import {
-  Accessibility,
-  Armchair,
-  MapPin,
-  MessagesSquare,
-  NotebookPen,
-  Phone,
-} from "lucide-react";
+import { Accessibility, Armchair, MapPin, MessagesSquare, NotebookPen, Phone } from "lucide-react";
 import approachImg from "@/assets/approach-detail.jpg";
 import { LeafSprig, Reveal, SectionHeading } from "./primitives";
 
@@ -46,12 +39,8 @@ export function Approach() {
   return (
     <section id="approach" className="relative overflow-hidden bg-primary py-24 sm:py-32">
       {/* Soft botanical texture */}
-      <LeafSprig
-        className="absolute -right-8 top-10 h-24 w-48 text-ivory/10"
-      />
-      <LeafSprig
-        className="absolute bottom-8 left-8 h-16 w-32 -scale-x-100 text-ivory/10"
-      />
+      <LeafSprig className="absolute -right-8 top-10 h-24 w-48 text-ivory/10" />
+      <LeafSprig className="absolute bottom-8 left-8 h-16 w-32 -scale-x-100 text-ivory/10" />
       <div
         aria-hidden="true"
         className="absolute right-1/3 top-1/2 h-[26rem] w-[26rem] -translate-y-1/2 rounded-full bg-forest-deep/60 blur-3xl"
@@ -79,8 +68,7 @@ export function Approach() {
               eyebrow="Our approach"
               title={
                 <>
-                  Wellness That Starts With{" "}
-                  <em className="italic text-gold">Listening</em>.
+                  Wellness That Starts With <em className="italic text-gold">Listening</em>.
                 </>
               }
               description="The way we intend to care for every visitor who walks through our door."
@@ -94,9 +82,7 @@ export function Approach() {
                     </span>
                     <div>
                       <h3 className="font-semibold text-ivory">{title}</h3>
-                      <p className="mt-1 text-sm leading-relaxed text-ivory/70">
-                        {text}
-                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-ivory/70">{text}</p>
                     </div>
                   </div>
                 </Reveal>

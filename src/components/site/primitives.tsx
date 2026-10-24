@@ -101,12 +101,7 @@ export function SectionHeading({
 /** Hand-drawn botanical sprig used as a decorative accent. */
 export function LeafSprig({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 140 70"
-      fill="none"
-      aria-hidden="true"
-      className={className}
-    >
+    <svg viewBox="0 0 140 70" fill="none" aria-hidden="true" className={className}>
       <path
         d="M4 62 C 34 58, 66 46, 92 26 C 100 20, 110 12, 122 8"
         stroke="currentColor"

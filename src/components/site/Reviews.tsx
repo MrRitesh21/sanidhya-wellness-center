@@ -18,10 +18,7 @@ export function Reviews() {
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-ivory/85"
-      />
+      <div aria-hidden="true" className="absolute inset-0 bg-ivory/85" />
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHeading

@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Accessibility, Clock, MapPin, Phone } from "lucide-react";
 import aboutImg from "@/assets/about-clinic.jpg";
 import { clinic, fullAddress } from "@/lib/clinic";
@@ -42,21 +43,21 @@ export function About() {
               eyebrow="About the centre"
               title={
                 <>
-                  A More Thoughtful Approach to{" "}
-                  <em className="italic text-gold-deep">Wellbeing</em>.
+                  A More Thoughtful Approach to <em className="italic text-gold-deep">Wellbeing</em>
+                  .
                 </>
               }
             />
             <Reveal delay={0.1}>
               <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-                At Sanidhya Naturopathy Center, discover a welcoming space to
-                learn about natural wellness approaches and discuss your
-                individual health and wellbeing goals with the clinic.
+                At Sanidhya Naturopathy Center, discover a welcoming space to learn about natural
+                wellness approaches and discuss your individual health and wellbeing goals with the
+                clinic.
               </p>
               <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                Every visit begins with listening — to your concerns, your
-                routine and what you would like to change — so any guidance can
-                be shaped around you, one conversation at a time.
+                Every visit begins with listening — to your concerns, your routine and what you
+                would like to change — so any guidance can be shaped around you, one conversation at
+                a time.
               </p>
             </Reveal>
 
@@ -75,18 +76,18 @@ export function About() {
             </Reveal>
 
             <Reveal delay={0.26} className="mt-10 flex flex-wrap gap-4">
-              <a
-                href="#appointment"
+              <Link
+                to="/booking"
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep active:scale-[0.98]"
               >
                 Request an Appointment
-              </a>
-              <a
-                href={clinic.phoneHref}
+              </Link>
+              <Link
+                to="/about"
                 className="inline-flex items-center gap-2 rounded-full border border-forest/20 px-7 py-3.5 text-base font-semibold text-forest transition-colors duration-300 hover:border-forest/40 active:scale-[0.98]"
               >
-                Call the Clinic
-              </a>
+                Our Philosophy & Centre &rarr;
+              </Link>
             </Reveal>
             <Reveal delay={0.3}>
               <p className="mt-4 text-xs text-muted-foreground">{fullAddress}</p>

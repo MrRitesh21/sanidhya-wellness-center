@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   Accessibility,
   ArrowUpRight,
@@ -68,38 +69,42 @@ export function Footer() {
               </h3>
               <ul className="mt-4 space-y-2.5 text-sm text-ivory/75">
                 <li>
-                  <a href="#about" className="transition-colors hover:text-gold">
+                  <Link to="/" className="transition-colors hover:text-gold">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/about" className="transition-colors hover:text-gold">
                     About the Centre
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#services" className="transition-colors hover:text-gold">
-                    Services
-                  </a>
+                  <Link to="/services" className="transition-colors hover:text-gold">
+                    Services & Therapies
+                  </Link>
                 </li>
                 <li>
-                  <a href="#approach" className="transition-colors hover:text-gold">
-                    Our Approach
-                  </a>
+                  <Link to="/contact" className="transition-colors hover:text-gold">
+                    Contact & Location
+                  </Link>
                 </li>
                 <li>
-                  <a href="#reviews" className="transition-colors hover:text-gold">
-                    Google Reviews
-                  </a>
-                </li>
-                <li>
-                  <a href="#faq" className="transition-colors hover:text-gold">
-                    FAQ
-                  </a>
-                </li>
-                <li>
-                  <a href="#contact" className="transition-colors hover:text-gold">
-                    Location & Map
-                  </a>
-                </li>
-                <li>
-                  <a href="#appointment" className="font-semibold text-gold transition-colors hover:text-ivory">
+                  <Link
+                    to="/booking"
+                    className="font-semibold text-gold transition-colors hover:text-ivory"
+                  >
                     Book Appointment
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href={clinic.reviewsUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 transition-colors hover:text-gold"
+                  >
+                    Google Reviews
+                    <ArrowUpRight className="h-3 w-3 opacity-60" aria-hidden="true" />
                   </a>
                 </li>
               </ul>
@@ -113,12 +118,9 @@ export function Footer() {
               <ul className="mt-4 space-y-2 text-xs text-ivory/70">
                 {services.map((s) => (
                   <li key={s.id}>
-                    <a
-                      href="#services"
-                      className="line-clamp-1 transition-colors hover:text-gold"
-                    >
+                    <Link to="/services" className="line-clamp-1 transition-colors hover:text-gold">
                       {s.title}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -141,9 +143,7 @@ export function Footer() {
                   <span>Sunday:</span>
                   <span className="font-medium text-ivory">10:00 AM – 2:00 PM</span>
                 </li>
-                <li className="pt-1 text-[0.7rem] text-gold/80">
-                  Timezone: Asia/Kolkata
-                </li>
+                <li className="pt-1 text-[0.7rem] text-gold/80">Timezone: Asia/Kolkata</li>
               </ul>
 
               <div className="mt-6 flex flex-col gap-2">
@@ -182,10 +182,7 @@ export function Footer() {
               >
                 Privacy Notice & Patient Ethics
               </button>
-              <a
-                href="#top"
-                className="transition-colors hover:text-gold"
-              >
+              <a href="#top" className="transition-colors hover:text-gold">
                 Back to Top ↑
               </a>
             </div>
@@ -219,7 +216,10 @@ export function Footer() {
                   <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sage-soft text-forest">
                     <ShieldCheck className="h-5 w-5" />
                   </span>
-                  <h3 id="privacy-title" className="font-display text-2xl font-semibold text-forest">
+                  <h3
+                    id="privacy-title"
+                    className="font-display text-2xl font-semibold text-forest"
+                  >
                     Privacy Notice & Principles
                   </h3>
                 </div>
@@ -235,16 +235,27 @@ export function Footer() {
 
               <div className="mt-5 space-y-4 text-sm leading-relaxed text-muted-foreground">
                 <p>
-                  <strong>No Tracking or Server-Side Data Storage:</strong> This website does not require an account, store cookies for advertising, or maintain a database of personal medical records.
+                  <strong>No Tracking or Server-Side Data Storage:</strong> This website does not
+                  require an account, store cookies for advertising, or maintain a database of
+                  personal medical records.
                 </p>
                 <p>
-                  <strong>Appointment Inquiries:</strong> When you fill out the appointment enquiry form, the details are compiled strictly inside your browser into a draft WhatsApp message. No personal data is transmitted to an external tracking server. You have complete control over whether to send the prepared message to the clinic.
+                  <strong>Appointment Inquiries:</strong> When you fill out the appointment enquiry
+                  form, the details are compiled strictly inside your browser into a draft WhatsApp
+                  message. No personal data is transmitted to an external tracking server. You have
+                  complete control over whether to send the prepared message to the clinic.
                 </p>
                 <p>
-                  <strong>Direct Communication:</strong> All healthcare conversations, appointment confirmations, and consultations take place directly between you and the practitioner at Sanidhya Naturopathy Center via official clinic telephone or in-person consultation in Jankipuram, Lucknow.
+                  <strong>Direct Communication:</strong> All healthcare conversations, appointment
+                  confirmations, and consultations take place directly between you and the
+                  practitioner at Sanidhya Naturopathy Center via official clinic telephone or
+                  in-person consultation in Jankipuram, Lucknow.
                 </p>
                 <p>
-                  <strong>Ethical Practice Notice:</strong> Naturopathy and lifestyle counselling provided by the center are complementary wellness approaches designed to support overall wellbeing. They do not replace emergency medical interventions or prescribed pharmaceuticals without consultation with your primary physician.
+                  <strong>Ethical Practice Notice:</strong> Naturopathy and lifestyle counselling
+                  provided by the center are complementary wellness approaches designed to support
+                  overall wellbeing. They do not replace emergency medical interventions or
+                  prescribed pharmaceuticals without consultation with your primary physician.
                 </p>
               </div>
 

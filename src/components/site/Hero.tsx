@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowRight, ArrowUpRight, MapPin, Phone } from "lucide-react";
 import heroImg from "@/assets/hero-wellness.jpg";
 import { clinic, getOpenStatus } from "@/lib/clinic";
-import {
-  EASE,
-  FloatingLeaf,
-  LeafSprig,
-  fadeUp,
-  staggerContainer,
-} from "./primitives";
+import { EASE, FloatingLeaf, LeafSprig, fadeUp, staggerContainer } from "./primitives";
 import { Stars } from "./Stars";
 
 export function Hero() {
@@ -85,8 +80,7 @@ export function Hero() {
               variants={fadeUp}
               className="mt-6 font-display text-5xl font-medium leading-[1.06] text-forest sm:text-6xl xl:text-[4.4rem]"
             >
-              Reconnect With{" "}
-              <em className="font-medium italic text-gold-deep">Nature</em>.
+              Reconnect With <em className="font-medium italic text-gold-deep">Nature</em>.
               <br className="hidden sm:block" /> Rediscover Your{" "}
               <em className="font-medium italic text-gold-deep">Wellbeing</em>.
             </motion.h1>
@@ -95,26 +89,24 @@ export function Hero() {
               variants={fadeUp}
               className="mt-6 max-w-xl text-lg leading-relaxed text-charcoal/80"
             >
-              Explore a thoughtful approach to wellness at Sanidhya Naturopathy
-              Center in Jankipuram, Lucknow.
+              Explore a thoughtful approach to wellness at Sanidhya Naturopathy Center in
+              Jankipuram, Lucknow.
             </motion.p>
 
             <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-4">
-              <motion.a
-                href="#appointment"
-                whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep"
+              <Link
+                to="/booking"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep active:scale-95"
               >
                 Book an Appointment
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </motion.a>
-              <motion.a
-                href="#approach"
-                whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/50 px-7 py-3.5 text-base font-semibold text-forest backdrop-blur-sm transition-colors duration-300 hover:border-forest/40 hover:bg-white"
+              </Link>
+              <Link
+                to="/about"
+                className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/50 px-7 py-3.5 text-base font-semibold text-forest backdrop-blur-sm transition-colors duration-300 hover:border-forest/40 hover:bg-white active:scale-95"
               >
-                Explore Our Approach
-              </motion.a>
+                Explore Our Philosophy
+              </Link>
             </motion.div>
 
             <motion.div
@@ -152,9 +144,7 @@ export function Hero() {
               transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
               className="relative"
             >
-              <LeafSprig
-                className="absolute -right-4 -top-12 hidden h-14 w-28 text-sage md:block"
-              />
+              <LeafSprig className="absolute -right-4 -top-12 hidden h-14 w-28 text-sage md:block" />
               <div className="relative w-full max-w-sm rounded-3xl border border-white/70 bg-white/80 p-6 shadow-lift backdrop-blur-md">
                 <div className="flex items-start gap-4">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sage-soft text-forest">
@@ -165,17 +155,13 @@ export function Hero() {
                       Visit us in Jankipuram
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                      {clinic.address.line1}, {clinic.address.line2},{" "}
-                      {clinic.address.area}, {clinic.address.city}{" "}
-                      {clinic.address.pin}
+                      {clinic.address.line1}, {clinic.address.line2}, {clinic.address.area},{" "}
+                      {clinic.address.city} {clinic.address.pin}
                     </p>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center gap-2.5 rounded-2xl bg-ivory px-4 py-3 text-sm">
-                  <span
-                    className="h-2 w-2 shrink-0 rounded-full bg-gold"
-                    aria-hidden="true"
-                  />
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-gold" aria-hidden="true" />
                   <span className="font-medium text-charcoal">
                     {status ?? "Mon–Sat 10 AM–9:30 PM · Sun 10 AM–2 PM"}
                   </span>

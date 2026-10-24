@@ -58,7 +58,8 @@
 
   --shadow-soft: 0 10px 40px -12px oklch(0.3361 0.0479 174 / 0.14);
   --shadow-lift: 0 24px 60px -20px oklch(0.3361 0.0479 174 / 0.28);
-  --shadow-glow: 0 0 0 1px oklch(0.7006 0.082 82.3 / 0.25), 0 8px 30px -8px oklch(0.7006 0.082 82.3 / 0.35);
+  --shadow-glow:
+    0 0 0 1px oklch(0.7006 0.082 82.3 / 0.25), 0 8px 30px -8px oklch(0.7006 0.082 82.3 / 0.35);
 }
 
 :root {
