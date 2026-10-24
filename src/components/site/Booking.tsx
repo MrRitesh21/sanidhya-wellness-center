@@ -12,6 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { clinic, whatsappLink } from "@/lib/clinic";
+import { prettyDate, submitLead, timeLabel } from "@/lib/leadCapture";
 import { EASE, Reveal, SectionHeading } from "./primitives";
 
 const TIME_OPTIONS = [
@@ -84,17 +85,10 @@ function kolkataToday(): string {
   }).format(new Date());
 }
 
-function prettyDate(iso: string): string {
-  return new Date(`${iso}T00:00:00`).toLocaleDateString("en-IN", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
 
 export function Booking() {
-  const [status, setStatus] = useState<"idle" | "preparing" | "ready">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "ready">("idle");
+  const [submitError, setSubmitError] = useState("");
   const [waLink, setWaLink] = useState("");
   const [minDate, setMinDate] = useState("");
 
@@ -109,31 +103,35 @@ export function Booking() {
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  const onSubmit = (data: FormData) => {
-    setStatus("preparing");
-    const lines = [
-      "Hello Sanidhya Naturopathy Center, I would like to request an appointment.",
-      `Name: ${data.name}`,
-      `Mobile: ${data.mobile}`,
-      `Age group: ${data.ageGroup === "adult" ? "Adult" : "Child"}`,
-      `Reason for consultation: ${data.reason}`,
-      `Preferred date: ${prettyDate(data.date)}`,
-      `Preferred time: ${
-        TIME_OPTIONS.find((t) => t.value === data.time)?.label ?? data.time
-      }`,
-    ];
-    if (data.message) lines.push(`Message: ${data.message}`);
-    const link = whatsappLink(lines.join("\n"));
-    // Preparing the message happens locally — nothing is sent or stored yet.
-    window.setTimeout(() => {
-      setWaLink(link);
+  const onSubmit = async (data: FormData) => {
+    setStatus("submitting");
+    setSubmitError("");
+    try {
+      await submitLead(data);
+      const lines = [
+        "Hello Sanidhya Naturopathy Center, I requested an appointment on your website.",
+        `Name: ${data.name}`,
+        `Mobile: ${data.mobile}`,
+        `Age group: ${data.ageGroup === "adult" ? "Adult" : "Child"}`,
+        `Reason for consultation: ${data.reason}`,
+        `Preferred date: ${prettyDate(data.date)}`,
+        `Preferred time: ${timeLabel(data.time)}`,
+      ];
+      if (data.message) lines.push(`Message: ${data.message}`);
+      setWaLink(whatsappLink(lines.join("\n")));
       setStatus("ready");
-    }, 600);
+    } catch {
+      setStatus("idle");
+      setSubmitError(
+        "Your enquiry could not be sent just now — please check your connection and try again, or call the clinic directly.",
+      );
+    }
   };
 
   const startNew = () => {
     reset();
     setWaLink("");
+    setSubmitError("");
     setStatus("idle");
   };
 
@@ -199,10 +197,10 @@ export function Booking() {
             <div className="flex items-start gap-3 rounded-3xl border border-gold/30 bg-gold/10 p-5">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-gold-deep" aria-hidden="true" />
               <p className="text-xs leading-relaxed text-charcoal/80">
-                Your details are not sent to or stored by this website — the
-                form simply prepares a WhatsApp message for you to review and
-                send. An appointment is confirmed only when the clinic
-                confirms it with you directly.
+                Your enquiry is sent securely to the centre's appointment
+                inbox, where the team reviews every request personally. An
+                appointment is confirmed only when the clinic confirms it with
+                you directly.
               </p>
             </div>
           </Reveal>
@@ -224,30 +222,29 @@ export function Booking() {
                       <CheckCircle2 className="h-8 w-8 text-forest" aria-hidden="true" />
                     </span>
                     <h3 className="mt-5 font-display text-3xl font-semibold text-forest">
-                      Your enquiry is ready to send
+                      Enquiry received
                     </h3>
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-                      Nothing is booked yet — the clinic confirms every
-                      appointment personally. Send your enquiry on WhatsApp
-                      (you'll be leaving this website) or simply call the
-                      clinic.
+                      Thank you — the centre has received your request and will
+                      confirm your appointment with you personally. For a
+                      quicker reply, call the clinic or follow up on WhatsApp.
                     </p>
                     <div className="mt-7 flex w-full max-w-sm flex-col gap-3">
+                      <a
+                        href={clinic.phoneHref}
+                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep active:scale-[0.98]"
+                      >
+                        <Phone className="h-4 w-4" aria-hidden="true" />
+                        Call {clinic.phoneDisplay}
+                      </a>
                       <a
                         href={waLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep active:scale-[0.98]"
-                      >
-                        <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                        Send via WhatsApp
-                      </a>
-                      <a
-                        href={clinic.phoneHref}
                         className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full border border-forest/20 px-6 text-base font-semibold text-forest transition-colors hover:border-forest/40 active:scale-[0.98]"
                       >
-                        <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
-                        Call {clinic.phoneDisplay}
+                        <MessageCircle className="h-4 w-4 text-gold-deep" aria-hidden="true" />
+                        Follow up on WhatsApp
                       </a>
                       <button
                         type="button"
@@ -411,15 +408,24 @@ export function Booking() {
                       {errors.message && <p className={errorCls} role="alert">{errors.message.message}</p>}
                     </div>
 
+                    {submitError && (
+                      <div
+                        role="alert"
+                        className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
+                      >
+                        {submitError}
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      disabled={status === "preparing"}
+                      disabled={status === "submitting"}
                       className="mt-1 inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-soft transition-all hover:bg-forest-deep active:scale-[0.98] disabled:cursor-wait disabled:opacity-80"
                     >
-                      {status === "preparing" ? (
+                      {status === "submitting" ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                          Preparing your enquiry…
+                          Sending your enquiry…
                         </>
                       ) : (
                         <>
@@ -429,9 +435,8 @@ export function Booking() {
                       )}
                     </button>
                     <p className="text-center text-xs text-muted-foreground">
-                      Submitting prepares a WhatsApp message with your details —
-                      you review and send it yourself. The clinic confirms all
-                      appointments.
+                      Submitting sends your enquiry to the centre's appointment
+                      inbox — the clinic confirms all appointments personally.
                     </p>
                   </motion.form>
                 )}
