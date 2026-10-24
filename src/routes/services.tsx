@@ -768,19 +768,29 @@ function ServicesPage() {
                   <div className="mt-6 space-y-3 border-t border-beige/60 pt-5 text-sm text-charcoal">
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
-                      <span>Advanced 2nd-degree attunements to amplify your channeled energy flow</span>
+                      <span>
+                        Advanced 2nd-degree attunements to amplify your channeled energy flow
+                      </span>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
-                      <span>Three sacred Usui symbols: Power (Cho Ku Rei), Mental/Emotional (Sei He Ki), and Distance (Hon Sha Ze Sho Nen)</span>
+                      <span>
+                        Three sacred Usui symbols: Power (Cho Ku Rei), Mental/Emotional (Sei He Ki),
+                        and Distance (Hon Sha Ze Sho Nen)
+                      </span>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
-                      <span>Techniques for absent / remote healing across geographical distance</span>
+                      <span>
+                        Techniques for absent / remote healing across geographical distance
+                      </span>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-deep" />
-                      <span>Professional practitioner ethics, client care protocols, and Level II Certificate</span>
+                      <span>
+                        Professional practitioner ethics, client care protocols, and Level II
+                        Certificate
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -810,7 +820,8 @@ function ServicesPage() {
             eyebrow="Brochure Focus Areas"
             title={
               <>
-                Health Concerns We Offer <em className="italic text-gold-deep">Natural Guidance</em> For.
+                Health Concerns We Offer <em className="italic text-gold-deep">Natural Guidance</em>{" "}
+                For.
               </>
             }
             description="Explore our specialized holistic consultation categories. Each enquiry receives an attentive assessment combining naturopathy, dietary correction, and gentle therapeutic routines."

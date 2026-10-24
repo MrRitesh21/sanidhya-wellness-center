@@ -3,7 +3,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AnimatePresence, motion } from "motion/react";
-import { CheckCircle2, Loader2, MessageCircle, Phone, Send, ShieldCheck } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  MessageCircle,
+  Phone,
+  Send,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { clinic, whatsappLink } from "@/lib/clinic";
 import { prettyDate, submitLead, timeLabel } from "@/lib/leadCapture";
 import { EASE, Reveal, SectionHeading } from "./primitives";
