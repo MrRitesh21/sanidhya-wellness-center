@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "motion/react";
-import { ArrowRight, ArrowUpRight, MapPin, Phone } from "lucide-react";
+import { ArrowRight, ArrowUpRight, MapPin, MessageCircle, Phone } from "lucide-react";
 import heroImg from "@/assets/hero-wellness.jpg";
-import { clinic, getOpenStatus } from "@/lib/clinic";
+import { clinic, getOpenStatus, whatsappLink } from "@/lib/clinic";
 import { EASE, FloatingLeaf, LeafSprig, fadeUp, staggerContainer } from "./primitives";
 import { Stars } from "./Stars";
 import { openBookingModal } from "@/lib/bookingModal";
@@ -134,6 +134,18 @@ export function Hero() {
               >
                 <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
                 {clinic.phoneDisplay}
+              </a>
+              <span aria-hidden="true" className="hidden h-4 w-px bg-border sm:block" />
+              <a
+                href={whatsappLink(
+                  "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-sm font-semibold text-emerald-800 transition-colors hover:text-emerald-600"
+              >
+                <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                WhatsApp
               </a>
             </motion.div>
           </motion.div>

@@ -21,6 +21,7 @@ import {
   Info,
   Layers,
   Leaf,
+  MessageCircle,
   Moon,
   Phone,
   Salad,
@@ -33,7 +34,7 @@ import {
   Wind,
   type LucideIcon,
 } from "lucide-react";
-import { clinic, services, type ServiceItem } from "@/lib/clinic";
+import { clinic, services, whatsappLink, type ServiceItem } from "@/lib/clinic";
 import { LeafSprig, Reveal, SectionHeading } from "@/components/site/primitives";
 import { cn } from "@/lib/utils";
 
@@ -1064,6 +1065,17 @@ function ServicesPage() {
             >
               <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
               Call {clinic.phoneDisplay}
+            </a>
+            <a
+              href={whatsappLink(
+                "Hello Sanidhya Naturopathy Center, I would like to enquire about therapies.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-8 py-4 text-base font-semibold text-emerald-800 shadow-soft transition-colors hover:bg-emerald-600 hover:text-white active:scale-95"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+              WhatsApp Us
             </a>
           </Reveal>
         </div>

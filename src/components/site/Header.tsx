@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { Menu, Phone, X } from "lucide-react";
-import { clinic } from "@/lib/clinic";
+import { Menu, MessageCircle, Phone, X } from "lucide-react";
+import { clinic, whatsappLink } from "@/lib/clinic";
 import { cn } from "@/lib/utils";
 import { EASE } from "./primitives";
 import { openBookingModal } from "@/lib/bookingModal";
@@ -125,7 +125,53 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Desktop Call Direct Button */}
+          <a
+            href={clinic.phoneHref}
+            className="hidden xl:inline-flex items-center gap-1.5 rounded-full border border-forest/15 bg-forest/5 px-3.5 py-2 text-xs font-semibold text-forest transition-colors hover:border-forest/40 hover:bg-forest hover:text-ivory"
+            aria-label={`Call ${clinic.phoneDisplay}`}
+          >
+            <Phone className="h-3.5 w-3.5 text-gold-deep" />
+            <span>{clinic.phoneDisplay}</span>
+          </a>
+
+          {/* Desktop/Tablet WhatsApp Direct Button */}
+          <a
+            href={whatsappLink(
+              "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden md:inline-flex items-center gap-1.5 rounded-full border border-emerald-600/30 bg-emerald-50 px-3.5 py-2 text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-600 hover:text-white"
+            aria-label="Chat on WhatsApp"
+          >
+            <MessageCircle className="h-3.5 w-3.5 text-emerald-600 group-hover:text-white" />
+            <span>WhatsApp</span>
+          </a>
+
+          {/* Mobile Quick Call Button */}
+          <a
+            href={clinic.phoneHref}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-forest/20 text-forest hover:bg-forest/5 sm:hidden"
+            aria-label={`Call ${clinic.phoneDisplay}`}
+          >
+            <Phone className="h-4 w-4 text-gold-deep" />
+          </a>
+
+          {/* Mobile Quick WhatsApp Button */}
+          <a
+            href={whatsappLink(
+              "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-600/30 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white sm:hidden"
+            aria-label="WhatsApp"
+          >
+            <MessageCircle className="h-4 w-4 text-emerald-600" />
+          </a>
+
           <button
             type="button"
             onClick={() => openBookingModal()}
@@ -192,7 +238,18 @@ export function Header() {
                 className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-forest/20 px-6 text-base font-semibold text-forest active:scale-[0.98]"
               >
                 <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
-                {clinic.phoneDisplay}
+                Call {clinic.phoneDisplay}
+              </a>
+              <a
+                href={whatsappLink(
+                  "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-6 text-base font-semibold text-emerald-800 active:scale-[0.98]"
+              >
+                <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                Chat on WhatsApp
               </a>
             </div>
           </motion.div>

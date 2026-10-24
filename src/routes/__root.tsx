@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { LeadCapturePopup } from "@/components/site/LeadCapturePopup";
+import { FloatingContactButtons } from "@/components/site/FloatingContactButtons";
 
 function NotFoundComponent() {
   return (
@@ -195,13 +196,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col bg-ivory font-sans text-charcoal antialiased selection:bg-sage-soft selection:text-forest">
+      <div className="flex min-h-screen flex-col bg-ivory font-sans text-charcoal antialiased selection:bg-sage-soft selection:text-forest pb-14 sm:pb-0">
         <Header />
         <main id="main-content" className="flex-1">
           <Outlet />
         </main>
         <Footer />
         <LeadCapturePopup />
+        <FloatingContactButtons />
       </div>
     </QueryClientProvider>
   );
