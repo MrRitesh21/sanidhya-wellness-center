@@ -5,6 +5,7 @@ import { Menu, Phone, X } from "lucide-react";
 import { clinic } from "@/lib/clinic";
 import { cn } from "@/lib/utils";
 import { EASE } from "./primitives";
+import { openBookingModal } from "@/lib/bookingModal";
 
 const NAV = [
   { label: "Home", href: "/" },
@@ -125,14 +126,15 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            to="/booking"
+          <button
+            type="button"
+            onClick={() => openBookingModal()}
             className={cn(
               "hidden items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-all duration-300 hover:bg-forest-deep active:scale-[0.98] sm:inline-flex",
             )}
           >
             Book Appointment
-          </Link>
+          </button>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -175,13 +177,16 @@ export function Header() {
               })}
             </nav>
             <div className="mt-6 space-y-3 px-4">
-              <Link
-                to="/booking"
-                onClick={closeMenu}
+              <button
+                type="button"
+                onClick={() => {
+                  closeMenu();
+                  openBookingModal();
+                }}
                 className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft active:scale-[0.98]"
               >
                 Book Appointment
-              </Link>
+              </button>
               <a
                 href={clinic.phoneHref}
                 className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-forest/20 px-6 text-base font-semibold text-forest active:scale-[0.98]"

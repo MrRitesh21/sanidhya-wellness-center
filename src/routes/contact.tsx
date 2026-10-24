@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Accessibility,
   ArrowRight,
@@ -9,6 +12,7 @@ import {
   CheckCircle2,
   Clock,
   Compass,
+  Loader2,
   Mail,
   MapPin,
   MessageCircle,
@@ -21,6 +25,35 @@ import { clinic, formatTime, fullAddress, getOpenStatus, hours, whatsappLink } f
 import { submitLead } from "@/lib/leadCapture";
 import { LeafSprig, Reveal, SectionHeading } from "@/components/site/primitives";
 import { cn } from "@/lib/utils";
+
+const validMobile = (v: string) => {
+  const d = v.replace(/\D/g, "");
+  if (d.length === 12 && d.startsWith("91")) return /^[6-9]/.test(d.slice(2));
+  if (d.length === 11 && d.startsWith("0")) return /^[6-9]/.test(d.slice(1));
+  if (d.length === 10) return /^[6-9]/.test(d);
+  return false;
+};
+
+const contactSchema = z.object({
+  name: z
+    .string({ required_error: "Please enter your full name" })
+    .trim()
+    .min(2, "Please enter your full name (at least 2 letters)")
+    .max(80, "Name must not exceed 80 characters")
+    .regex(/^[a-zA-Z\s.'-]+$/, "Please enter a valid name using letters and spaces only"),
+  phone: z
+    .string({ required_error: "Please enter your mobile number" })
+    .trim()
+    .min(10, "Mobile number must be at least 10 digits")
+    .refine(validMobile, "Enter a valid 10-digit Indian mobile number (e.g. 94150 26684)"),
+  message: z
+    .string({ required_error: "Please enter your message or enquiry" })
+    .trim()
+    .min(5, "Please enter your message (at least 5 characters)")
+    .max(1000, "Message must not exceed 1000 characters"),
+});
+
+type ContactFormData = z.infer<typeof contactSchema>;
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -77,13 +110,19 @@ function ContactPage() {
   const [today, setToday] = useState<string | null>(null);
   const [status, setStatus] = useState<{ open: boolean; label: string } | null>(null);
 
-  // Quick enquiry form state
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [message, setMessage] = useState("");
+  // Quick enquiry form state with Zod validation
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+  });
 
   useEffect(() => {
     setToday(
@@ -95,12 +134,7 @@ function ContactPage() {
     setStatus(getOpenStatus());
   }, []);
 
-  const handleQuickSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !phone.trim() || phone.replace(/\D/g, "").length < 10) {
-      setError("Please provide your name and a valid 10-digit mobile number.");
-      return;
-    }
+  const onQuickSubmit = async (data: ContactFormData) => {
     setSubmitting(true);
     setError("");
     try {
@@ -110,18 +144,16 @@ function ContactPage() {
       }).format(new Date());
 
       await submitLead({
-        name: name.trim(),
-        mobile: phone.trim(),
+        name: data.name,
+        mobile: data.phone,
         ageGroup: "adult",
-        reason: "General Inquiry / Callback Request",
+        reason: "General Inquiry / Contact Form",
         date: todayIso,
         time: "morning",
-        message: message.trim() || "Contact page enquiry",
+        message: data.message,
       });
       setSubmitted(true);
-      setName("");
-      setPhone("");
-      setMessage("");
+      reset();
     } catch {
       setError("Unable to submit enquiry right now. Please call us directly.");
     } finally {
@@ -452,9 +484,12 @@ function ContactPage() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleQuickSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit(onQuickSubmit)} noValidate className="space-y-5">
                   {error && (
-                    <div className="rounded-2xl bg-destructive/10 p-4 text-xs font-medium text-destructive">
+                    <div
+                      role="alert"
+                      className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4 text-xs font-medium text-destructive"
+                    >
                       {error}
                     </div>
                   )}
@@ -464,17 +499,23 @@ function ContactPage() {
                       htmlFor="contact-name"
                       className="block text-sm font-semibold text-forest"
                     >
-                      Your Full Name
+                      Your Full Name <span className="text-gold-deep">*</span>
                     </label>
                     <input
                       id="contact-name"
                       type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      autoComplete="name"
+                      maxLength={80}
+                      {...register("name")}
                       placeholder="e.g. Rahul Sharma"
                       className="mt-1.5 w-full rounded-2xl border border-input bg-ivory/60 px-4 py-3 text-base text-charcoal transition-colors focus:border-forest/40 focus:outline-none focus:ring-2 focus:ring-gold/40"
+                      aria-invalid={!!errors.name}
                     />
+                    {errors.name && (
+                      <p className="mt-1.5 text-xs font-medium text-destructive" role="alert">
+                        {errors.name.message}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -482,17 +523,24 @@ function ContactPage() {
                       htmlFor="contact-phone"
                       className="block text-sm font-semibold text-forest"
                     >
-                      Mobile Number
+                      Mobile Number <span className="text-gold-deep">*</span>
                     </label>
                     <input
                       id="contact-phone"
                       type="tel"
-                      required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      inputMode="tel"
+                      autoComplete="tel"
+                      maxLength={16}
+                      {...register("phone")}
                       placeholder="e.g. 94150 26684"
                       className="mt-1.5 w-full rounded-2xl border border-input bg-ivory/60 px-4 py-3 text-base text-charcoal transition-colors focus:border-forest/40 focus:outline-none focus:ring-2 focus:ring-gold/40"
+                      aria-invalid={!!errors.phone}
                     />
+                    {errors.phone && (
+                      <p className="mt-1.5 text-xs font-medium text-destructive" role="alert">
+                        {errors.phone.message}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -500,32 +548,69 @@ function ContactPage() {
                       htmlFor="contact-message"
                       className="block text-sm font-semibold text-forest"
                     >
-                      Message or Inquiry
+                      Message or Inquiry <span className="text-gold-deep">*</span>
                     </label>
                     <textarea
                       id="contact-message"
                       rows={4}
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
+                      maxLength={1000}
+                      {...register("message")}
                       placeholder="Tell us what you'd like to ask or enquire about..."
-                      className="mt-1.5 w-full rounded-2xl border border-input bg-ivory/60 px-4 py-3 text-base text-charcoal transition-colors focus:border-forest/40 focus:outline-none focus:ring-2 focus:ring-gold/40"
+                      className="mt-1.5 w-full rounded-2xl border border-input bg-ivory/60 px-4 py-3 text-base text-charcoal transition-colors focus:border-forest/40 focus:outline-none focus:ring-2 focus:ring-gold/40 resize-none"
+                      aria-invalid={!!errors.message}
                     />
+                    {errors.message && (
+                      <p className="mt-1.5 text-xs font-medium text-destructive" role="alert">
+                        {errors.message.message}
+                      </p>
+                    )}
                   </div>
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex w-full min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep active:scale-[0.98] disabled:opacity-60"
+                    className="flex w-full min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep active:scale-[0.98] disabled:opacity-60 disabled:cursor-wait"
                   >
                     {submitting ? (
-                      "Sending enquiry..."
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                        Sending enquiry...
+                      </>
                     ) : (
                       <>
                         Send Message / Callback Request
-                        <Send className="h-4 w-4" />
+                        <Send className="h-4 w-4" aria-hidden="true" />
                       </>
                     )}
                   </button>
+
+                  {/* Direct Contact Options: Call & WhatsApp */}
+                  <div className="relative my-2 flex items-center py-1">
+                    <div className="flex-grow border-t border-beige"></div>
+                    <span className="mx-3 shrink-0 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Or Connect Directly
+                    </span>
+                    <div className="flex-grow border-t border-beige"></div>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <a
+                      href={clinic.phoneHref}
+                      className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-forest/20 bg-forest/5 px-4 text-sm font-semibold text-forest shadow-sm transition-colors hover:bg-forest hover:text-primary-foreground active:scale-[0.98]"
+                    >
+                      <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
+                      Call {clinic.phoneDisplay}
+                    </a>
+                    <a
+                      href={whatsappLink("Hello Sanidhya Naturopathy Center, I have an enquiry.")}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-emerald-600/30 bg-emerald-50 px-4 text-sm font-semibold text-emerald-800 shadow-sm transition-colors hover:bg-emerald-600 hover:text-white active:scale-[0.98]"
+                    >
+                      <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                      WhatsApp Us Directly
+                    </a>
+                  </div>
 
                   <div className="flex items-center justify-center gap-2 pt-2 text-xs text-muted-foreground">
                     <ShieldCheck className="h-4 w-4 text-gold-deep" />

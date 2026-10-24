@@ -55,6 +55,8 @@ const TIME_OPTIONS = [
   { value: "evening", label: "Evening · 5:30 PM – 9:30 PM" },
 ] as const;
 
+import { OPEN_BOOKING_EVENT } from "@/lib/bookingModal";
+
 const validMobile = (v: string) => {
   const d = v.replace(/\D/g, "");
   if (d.length === 12 && d.startsWith("91")) return /^[6-9]/.test(d.slice(2));
@@ -63,19 +65,43 @@ const validMobile = (v: string) => {
   return false;
 };
 
-const popupSchema = z.object({
-  name: z.string().trim().min(2, "Please enter your name").max(80, "Name is too long"),
-  mobile: z
-    .string()
-    .trim()
-    .refine(validMobile, "Enter a valid Indian mobile number, e.g. 94150 26684"),
-  ageGroup: z.enum(["adult", "child"], {
-    required_error: "Select an age group",
-  }),
-  concern: z.string().min(1, "Please select your primary health concern"),
-  customConcern: z.string().trim().max(300, "Details are too long").optional(),
-  time: z.string().min(1, "Choose your preferred time slot"),
-});
+const popupSchema = z
+  .object({
+    name: z
+      .string({ required_error: "Please enter your full name" })
+      .trim()
+      .min(2, "Name must be at least 2 characters")
+      .max(80, "Name must not exceed 80 characters")
+      .regex(/^[a-zA-Z\s.'-]+$/, "Please enter a valid name (letters and spaces only)"),
+    mobile: z
+      .string({ required_error: "Please enter your mobile number" })
+      .trim()
+      .min(10, "Mobile number must be at least 10 digits")
+      .refine(validMobile, "Enter a valid 10-digit Indian mobile number (e.g. 94150 26684)"),
+    ageGroup: z.enum(["adult", "child"], {
+      required_error: "Please select whether consultation is for an adult or child",
+      invalid_type_error: "Please select whether consultation is for an adult or child",
+    }),
+    concern: z
+      .string({ required_error: "Please select your primary health concern" })
+      .min(1, "Please select your primary health concern"),
+    customConcern: z.string().trim().max(300, "Details must not exceed 300 characters").optional(),
+    time: z
+      .string({ required_error: "Please select a preferred callback time" })
+      .min(1, "Please choose your preferred time slot"),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.concern === "Other Health Concern" &&
+      (!data.customConcern || data.customConcern.trim().length < 3)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["customConcern"],
+        message: "Please briefly describe your health concern (at least 3 characters)",
+      });
+    }
+  });
 
 type PopupFormData = z.infer<typeof popupSchema>;
 
@@ -115,9 +141,15 @@ export function LeadCapturePopup() {
 
   const selectedConcern = watch("concern");
 
-  // Mount & Auto-triggers
+  // Mount, Event Listener & Auto-triggers
   useEffect(() => {
     setMounted(true);
+
+    // Direct programmatic trigger when visitor clicks "Book Appointment" anywhere
+    const handleOpenModal = () => {
+      setOpen(true);
+    };
+    window.addEventListener(OPEN_BOOKING_EVENT, handleOpenModal);
 
     const isSuppressed = () => {
       try {
@@ -134,7 +166,11 @@ export function LeadCapturePopup() {
       }
     };
 
-    if (isSuppressed()) return;
+    if (isSuppressed()) {
+      return () => {
+        window.removeEventListener(OPEN_BOOKING_EVENT, handleOpenModal);
+      };
+    }
 
     // 1. Timer Trigger: 12 seconds
     const timer = setTimeout(() => {
@@ -153,6 +189,7 @@ export function LeadCapturePopup() {
     document.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
+      window.removeEventListener(OPEN_BOOKING_EVENT, handleOpenModal);
       clearTimeout(timer);
       document.removeEventListener("mouseleave", handleMouseLeave);
     };
@@ -234,13 +271,13 @@ export function LeadCapturePopup() {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.96 }}
-          aria-label="Request a consultation callback"
+          aria-label="Book an Appointment"
           className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 rounded-full border border-gold/40 bg-forest px-4 py-3 text-sm font-semibold text-ivory shadow-lift transition-colors hover:bg-forest-deep focus:outline-none focus:ring-2 focus:ring-gold/60 sm:bottom-6 sm:right-6 sm:px-5 sm:py-3.5"
         >
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gold/20 text-gold">
             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
-          <span className="tracking-wide">Quick Consultation</span>
+          <span className="tracking-wide">Book Appointment</span>
         </motion.button>
       )}
 
@@ -262,7 +299,7 @@ export function LeadCapturePopup() {
                 </span>
 
                 <DialogTitle className="mt-4 font-display text-2xl font-semibold text-forest sm:text-3xl">
-                  Consultation Request Received
+                  Appointment Request Received
                 </DialogTitle>
 
                 <DialogDescription className="mt-2 max-w-md text-sm leading-relaxed text-charcoal/80">
@@ -315,11 +352,11 @@ export function LeadCapturePopup() {
                     Sanidhya Naturopathy Center
                   </div>
                   <DialogTitle className="mt-1 font-display text-xl font-semibold leading-tight text-forest sm:text-2xl">
-                    Request a Consultation <em className="italic text-gold-deep">Callback</em>
+                    Book an <em className="italic text-gold-deep">Appointment</em>
                   </DialogTitle>
                   <DialogDescription className="mt-1 text-xs text-muted-foreground sm:text-xs">
-                    Connect with our natural healing specialists in Jankipuram, Lucknow. We'll guide
-                    you on personalized wellness approaches.
+                    Connect with our natural healing specialists in Jankipuram, Lucknow. Book an
+                    appointment or request a callback below.
                   </DialogDescription>
                 </DialogHeader>
 
@@ -340,7 +377,11 @@ export function LeadCapturePopup() {
                         className={inputCls}
                         aria-invalid={!!errors.name}
                       />
-                      {errors.name && <p className={errorCls}>{errors.name.message}</p>}
+                      {errors.name && (
+                        <p className={errorCls} role="alert">
+                          {errors.name.message}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -358,7 +399,11 @@ export function LeadCapturePopup() {
                         className={inputCls}
                         aria-invalid={!!errors.mobile}
                       />
-                      {errors.mobile && <p className={errorCls}>{errors.mobile.message}</p>}
+                      {errors.mobile && (
+                        <p className={errorCls} role="alert">
+                          {errors.mobile.message}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -379,7 +424,11 @@ export function LeadCapturePopup() {
                         </option>
                       ))}
                     </select>
-                    {errors.concern && <p className={errorCls}>{errors.concern.message}</p>}
+                    {errors.concern && (
+                      <p className={errorCls} role="alert">
+                        {errors.concern.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* Optional Custom Note if 'Other' is picked */}
@@ -390,7 +439,7 @@ export function LeadCapturePopup() {
                       exit={{ opacity: 0, height: 0 }}
                     >
                       <label htmlFor="popup-custom" className={labelCls}>
-                        Tell us briefly about your concern
+                        Tell us briefly about your concern <span className="text-gold-deep">*</span>
                       </label>
                       <input
                         id="popup-custom"
@@ -399,9 +448,12 @@ export function LeadCapturePopup() {
                         maxLength={300}
                         {...register("customConcern")}
                         className={inputCls}
+                        aria-invalid={!!errors.customConcern}
                       />
                       {errors.customConcern && (
-                        <p className={errorCls}>{errors.customConcern.message}</p>
+                        <p className={errorCls} role="alert">
+                          {errors.customConcern.message}
+                        </p>
                       )}
                     </motion.div>
                   )}
@@ -423,7 +475,11 @@ export function LeadCapturePopup() {
                         </option>
                       ))}
                     </select>
-                    {errors.time && <p className={errorCls}>{errors.time.message}</p>}
+                    {errors.time && (
+                      <p className={errorCls} role="alert">
+                        {errors.time.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* Age Group */}
@@ -456,6 +512,11 @@ export function LeadCapturePopup() {
                         </label>
                       ))}
                     </div>
+                    {errors.ageGroup && (
+                      <p className={errorCls} role="alert">
+                        {errors.ageGroup.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* Error Notification */}
@@ -481,11 +542,41 @@ export function LeadCapturePopup() {
                       </>
                     ) : (
                       <>
-                        Request Callback Now
+                        Book Appointment / Request Callback
                         <Send className="h-3.5 w-3.5" aria-hidden="true" />
                       </>
                     )}
                   </button>
+
+                  {/* Direct Contact Options: Call & WhatsApp */}
+                  <div className="relative my-0.5 flex items-center py-0.5">
+                    <div className="flex-grow border-t border-beige"></div>
+                    <span className="mx-2 shrink-0 text-[0.68rem] font-semibold uppercase tracking-wider text-muted-foreground">
+                      Or Connect Directly
+                    </span>
+                    <div className="flex-grow border-t border-beige"></div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <a
+                      href={clinic.phoneHref}
+                      className="flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl border border-forest/20 bg-forest/5 px-2.5 py-1.5 text-xs font-semibold text-forest transition-colors hover:bg-forest hover:text-ivory active:scale-[0.98]"
+                    >
+                      <Phone className="h-3.5 w-3.5 text-gold-deep" aria-hidden="true" />
+                      <span>Call {clinic.phoneDisplay}</span>
+                    </a>
+                    <a
+                      href={whatsappLink(
+                        "Hello Sanidhya Naturopathy Center, I would like to book an appointment.",
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl border border-emerald-600/30 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-800 transition-colors hover:bg-emerald-600 hover:text-white active:scale-[0.98]"
+                    >
+                      <MessageCircle className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                      <span>WhatsApp Us</span>
+                    </a>
+                  </div>
 
                   <div className="flex items-center justify-center gap-1.5 text-[0.7rem] text-muted-foreground">
                     <ShieldCheck

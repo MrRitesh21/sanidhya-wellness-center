@@ -27,6 +27,7 @@ import {
 import { services } from "@/lib/clinic";
 import { Reveal, SectionHeading } from "./primitives";
 import { cn } from "@/lib/utils";
+import { openBookingModal } from "@/lib/bookingModal";
 
 const ICONS: Record<string, LucideIcon> = {
   leaf: Leaf,
@@ -170,12 +171,13 @@ export function Services() {
             >
               Explore Full Therapies & Consultation Guide &rarr;
             </Link>
-            <Link
-              to="/booking"
+            <button
+              type="button"
+              onClick={() => openBookingModal()}
               className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep active:scale-[0.98]"
             >
               Book Consultation Now
-            </Link>
+            </button>
           </div>
         </Reveal>
 

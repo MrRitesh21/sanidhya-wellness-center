@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Accessibility,
@@ -14,6 +15,7 @@ import {
 import { Booking } from "@/components/site/Booking";
 import { clinic, formatTime, fullAddress, hours, whatsappLink } from "@/lib/clinic";
 import { LeafSprig, Reveal, SectionHeading } from "@/components/site/primitives";
+import { openBookingModal } from "@/lib/bookingModal";
 
 export const Route = createFileRoute("/booking")({
   head: () => ({
@@ -92,6 +94,28 @@ const BOOKING_FAQS = [
 ];
 
 function BookingPage() {
+  useEffect(() => {
+    // If arriving with hash or direct action, scroll directly to form
+    if (window.location.hash === "#appointment" || window.location.hash === "#booking-form") {
+      const el = document.getElementById("appointment");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, []);
+
+  const scrollToForm = () => {
+    const el = document.getElementById("appointment");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => {
+        document.getElementById("name")?.focus();
+      }, 400);
+    } else {
+      openBookingModal();
+    }
+  };
+
   return (
     <div className="pt-24 sm:pt-28">
       {/* Hero Header */}
@@ -122,23 +146,33 @@ function BookingPage() {
               </p>
             </Reveal>
 
-            {/* Quick Contact Bar */}
+            {/* Quick Contact Bar & Direct Form Opener */}
             <Reveal delay={0.12} className="mt-8 flex flex-wrap justify-center gap-4 text-sm">
+              <button
+                type="button"
+                onClick={scrollToForm}
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep active:scale-95"
+              >
+                <Calendar className="h-4 w-4" aria-hidden="true" />
+                Fill Appointment Form &darr;
+              </button>
               <a
                 href={clinic.phoneHref}
                 className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/80 px-6 py-2.5 font-semibold text-forest shadow-soft transition-colors hover:border-forest/40"
               >
                 <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
-                Call directly: {clinic.phoneDisplay}
+                Call: {clinic.phoneDisplay}
               </a>
               <a
-                href={whatsappLink()}
+                href={whatsappLink(
+                  "Hello Sanidhya Naturopathy Center, I would like to book an appointment.",
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/80 px-6 py-2.5 font-semibold text-forest shadow-soft transition-colors hover:border-forest/40"
+                className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-6 py-2.5 font-semibold text-emerald-800 shadow-soft transition-colors hover:bg-emerald-600 hover:text-white"
               >
-                <MessageCircle className="h-4 w-4 text-forest" aria-hidden="true" />
-                WhatsApp Enquiry
+                <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                WhatsApp Us
               </a>
             </Reveal>
           </div>

@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { clinic, formatTime, fullAddress, hours, services } from "@/lib/clinic";
 import { Logo } from "./Header";
 import { EASE, LeafSprig } from "./primitives";
+import { openBookingModal } from "@/lib/bookingModal";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -89,12 +90,13 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/booking"
+                  <button
+                    type="button"
+                    onClick={() => openBookingModal()}
                     className="font-semibold text-gold transition-colors hover:text-ivory"
                   >
                     Book Appointment
-                  </Link>
+                  </button>
                 </li>
                 <li>
                   <a

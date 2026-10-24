@@ -32,29 +32,44 @@ const validMobile = (v: string) => {
 
 const schema = z
   .object({
-    name: z.string().trim().min(2, "Please enter your full name").max(80, "Name is too long"),
-    mobile: z
-      .string()
+    name: z
+      .string({ required_error: "Please enter your full name" })
       .trim()
-      .refine(validMobile, "Enter a valid Indian mobile number, e.g. 94150 26684"),
+      .min(2, "Please enter your full name (at least 2 letters)")
+      .max(80, "Name must not exceed 80 characters")
+      .regex(/^[a-zA-Z\s.'-]+$/, "Please enter a valid name using letters and spaces only"),
+    mobile: z
+      .string({ required_error: "Please enter your mobile number" })
+      .trim()
+      .min(10, "Mobile number must be at least 10 digits")
+      .refine(validMobile, "Enter a valid 10-digit Indian mobile number, e.g. 94150 26684"),
     ageGroup: z.enum(["adult", "child"], {
-      required_error: "Select an age group",
+      required_error: "Please select whether consultation is for an adult or child",
+      invalid_type_error: "Please select whether consultation is for an adult or child",
     }),
     reason: z
-      .string()
+      .string({ required_error: "Please specify the reason for your consultation" })
       .trim()
-      .min(3, "Tell us briefly why you'd like to visit")
-      .max(500, "Reason is too long"),
+      .min(3, "Please describe your consultation reason or health concern (at least 3 characters)")
+      .max(500, "Reason must not exceed 500 characters"),
     date: z
-      .string()
-      .min(1, "Choose a preferred date")
+      .string({ required_error: "Please choose a preferred appointment date" })
+      .min(1, "Please choose a preferred appointment date")
       .refine((v) => {
+        if (!v) return false;
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        return new Date(`${v}T00:00:00`) >= today;
+        const chosen = new Date(`${v}T00:00:00`);
+        return !isNaN(chosen.getTime()) && chosen >= today;
       }, "Please choose today or a future date"),
-    time: z.string().min(1, "Choose a preferred time"),
-    message: z.string().trim().max(500, "Message is too long").optional(),
+    time: z
+      .string({ required_error: "Please choose a preferred time slot" })
+      .min(1, "Please choose a preferred time slot"),
+    message: z
+      .string()
+      .trim()
+      .max(500, "Additional message must not exceed 500 characters")
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (data.date && data.time) {
@@ -63,7 +78,7 @@ const schema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["time"],
-          message: "Sundays are 10:00 AM – 2:00 PM, so only a morning slot is possible.",
+          message: "Sundays are 10:00 AM – 2:00 PM, so only the morning slot is available.",
         });
       }
     }
@@ -531,6 +546,37 @@ export function Booking() {
                         </>
                       )}
                     </button>
+
+                    {/* Direct Contact Options: Call & WhatsApp */}
+                    <div className="relative my-1 flex items-center py-1">
+                      <div className="flex-grow border-t border-beige"></div>
+                      <span className="mx-3 shrink-0 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Or Connect Directly
+                      </span>
+                      <div className="flex-grow border-t border-beige"></div>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <a
+                        href={clinic.phoneHref}
+                        className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-forest/20 bg-forest/5 px-4 text-sm font-semibold text-forest shadow-sm transition-colors hover:bg-forest hover:text-primary-foreground active:scale-[0.98]"
+                      >
+                        <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
+                        Call {clinic.phoneDisplay}
+                      </a>
+                      <a
+                        href={whatsappLink(
+                          "Hello Sanidhya Naturopathy Center, I would like to book an appointment.",
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-emerald-600/30 bg-emerald-50 px-4 text-sm font-semibold text-emerald-800 shadow-sm transition-colors hover:bg-emerald-600 hover:text-white active:scale-[0.98]"
+                      >
+                        <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                        WhatsApp Us Directly
+                      </a>
+                    </div>
+
                     <p className="text-center text-xs text-muted-foreground">
                       Submitting sends your enquiry to the centre's appointment inbox — the clinic
                       confirms all appointments personally.

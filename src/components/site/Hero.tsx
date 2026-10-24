@@ -6,6 +6,7 @@ import heroImg from "@/assets/hero-wellness.jpg";
 import { clinic, getOpenStatus } from "@/lib/clinic";
 import { EASE, FloatingLeaf, LeafSprig, fadeUp, staggerContainer } from "./primitives";
 import { Stars } from "./Stars";
+import { openBookingModal } from "@/lib/bookingModal";
 
 export function Hero() {
   // Open/closed is computed after mount to avoid SSR/client text mismatch.
@@ -94,13 +95,14 @@ export function Hero() {
             </motion.p>
 
             <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-4">
-              <Link
-                to="/booking"
+              <button
+                type="button"
+                onClick={() => openBookingModal()}
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep active:scale-95"
               >
                 Book an Appointment
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
+              </button>
               <Link
                 to="/about"
                 className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/50 px-7 py-3.5 text-base font-semibold text-forest backdrop-blur-sm transition-colors duration-300 hover:border-forest/40 hover:bg-white active:scale-95"

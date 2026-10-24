@@ -3,6 +3,7 @@ import { Accessibility, Clock, MapPin, Phone } from "lucide-react";
 import aboutImg from "@/assets/about-clinic.jpg";
 import { clinic, fullAddress } from "@/lib/clinic";
 import { LeafSprig, Reveal, SectionHeading } from "./primitives";
+import { openBookingModal } from "@/lib/bookingModal";
 
 const FACTS = [
   { icon: MapPin, label: "Sector I, Jankipuram, Lucknow" },
@@ -76,12 +77,13 @@ export function About() {
             </Reveal>
 
             <Reveal delay={0.26} className="mt-10 flex flex-wrap gap-4">
-              <Link
-                to="/booking"
+              <button
+                type="button"
+                onClick={() => openBookingModal()}
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep active:scale-[0.98]"
               >
                 Request an Appointment
-              </Link>
+              </button>
               <Link
                 to="/about"
                 className="inline-flex items-center gap-2 rounded-full border border-forest/20 px-7 py-3.5 text-base font-semibold text-forest transition-colors duration-300 hover:border-forest/40 active:scale-[0.98]"
