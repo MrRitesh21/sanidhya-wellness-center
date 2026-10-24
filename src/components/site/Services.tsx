@@ -17,6 +17,8 @@ import {
   Moon,
   Salad,
   Shield,
+  MessageCircle,
+  Phone,
   Smile,
   Sparkles,
   Sprout,
@@ -24,7 +26,7 @@ import {
   Wind,
   type LucideIcon,
 } from "lucide-react";
-import { services } from "@/lib/clinic";
+import { clinic, services, whatsappLink } from "@/lib/clinic";
 import { Reveal, SectionHeading } from "./primitives";
 import { cn } from "@/lib/utils";
 import { openBookingModal } from "@/lib/bookingModal";
@@ -164,13 +166,7 @@ export function Services() {
         </div>
 
         <Reveal delay={0.12}>
-          <div className="mt-12 flex flex-wrap justify-center gap-4">
-            <Link
-              to="/services"
-              className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/80 px-7 py-3.5 text-sm font-semibold text-forest shadow-soft transition-colors duration-300 hover:border-forest/40 hover:bg-white active:scale-[0.98]"
-            >
-              Explore Full Therapies & Consultation Guide &rarr;
-            </Link>
+          <div className="mt-12 flex flex-wrap justify-center gap-3.5 sm:gap-4">
             <button
               type="button"
               onClick={() => openBookingModal()}
@@ -178,6 +174,30 @@ export function Services() {
             >
               Book Consultation Now
             </button>
+            <a
+              href={whatsappLink(
+                "Hello Sanidhya Naturopathy Center, I would like to consult regarding therapies.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-7 py-3.5 text-sm font-semibold text-emerald-900 shadow-soft transition-colors hover:bg-emerald-600 hover:text-white active:scale-[0.98]"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+              WhatsApp Us
+            </a>
+            <a
+              href={clinic.phoneHref}
+              className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/80 px-7 py-3.5 text-sm font-semibold text-forest shadow-soft transition-colors hover:bg-forest hover:text-ivory active:scale-[0.98]"
+            >
+              <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
+              Call {clinic.phoneDisplay}
+            </a>
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/80 px-7 py-3.5 text-sm font-semibold text-forest shadow-soft transition-colors duration-300 hover:border-forest/40 hover:bg-white active:scale-[0.98]"
+            >
+              Explore Full Therapies Guide &rarr;
+            </Link>
           </div>
         </Reveal>
 

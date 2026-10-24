@@ -89,13 +89,17 @@ export function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        scrolled ? "bg-ivory/90 shadow-soft backdrop-blur-md" : "bg-ivory/60 backdrop-blur-sm",
+        open
+          ? "bg-ivory border-b border-beige/80 shadow-sm"
+          : scrolled
+            ? "bg-ivory/95 shadow-soft backdrop-blur-md"
+            : "bg-ivory/80 backdrop-blur-sm",
       )}
     >
       <div
         className={cn(
           "mx-auto flex max-w-6xl items-center justify-between px-4 transition-all duration-300 sm:px-6",
-          scrolled ? "h-16" : "h-20",
+          scrolled || open ? "h-16" : "h-16 sm:h-20",
         )}
       >
         <Logo />
@@ -129,7 +133,7 @@ export function Header() {
           {/* Desktop Call Direct Button */}
           <a
             href={clinic.phoneHref}
-            className="hidden xl:inline-flex items-center gap-1.5 rounded-full border border-forest/15 bg-forest/5 px-3.5 py-2 text-xs font-semibold text-forest transition-colors hover:border-forest/40 hover:bg-forest hover:text-ivory"
+            className="hidden lg:inline-flex items-center gap-1.5 rounded-full border border-forest/15 bg-forest/5 px-3.5 py-2 text-xs font-semibold text-forest transition-colors hover:border-forest/40 hover:bg-forest hover:text-ivory"
             aria-label={`Call ${clinic.phoneDisplay}`}
           >
             <Phone className="h-3.5 w-3.5 text-gold-deep" />
@@ -150,27 +154,31 @@ export function Header() {
             <span>WhatsApp</span>
           </a>
 
-          {/* Mobile Quick Call Button */}
-          <a
-            href={clinic.phoneHref}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-forest/20 text-forest hover:bg-forest/5 sm:hidden"
-            aria-label={`Call ${clinic.phoneDisplay}`}
-          >
-            <Phone className="h-4 w-4 text-gold-deep" />
-          </a>
+          {/* Mobile Quick Call Button (hidden when menu drawer is open) */}
+          {!open && (
+            <a
+              href={clinic.phoneHref}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-forest/20 text-forest hover:bg-forest/5 sm:hidden"
+              aria-label={`Call ${clinic.phoneDisplay}`}
+            >
+              <Phone className="h-4 w-4 text-gold-deep" />
+            </a>
+          )}
 
-          {/* Mobile Quick WhatsApp Button */}
-          <a
-            href={whatsappLink(
-              "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-600/30 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white sm:hidden"
-            aria-label="WhatsApp"
-          >
-            <MessageCircle className="h-4 w-4 text-emerald-600" />
-          </a>
+          {/* Mobile Quick WhatsApp Button (hidden when menu drawer is open) */}
+          {!open && (
+            <a
+              href={whatsappLink(
+                "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-600/30 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white sm:hidden"
+              aria-label="WhatsApp"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-600" />
+            </a>
+          )}
 
           <button
             type="button"
@@ -181,15 +189,20 @@ export function Header() {
           >
             Book Appointment
           </button>
+
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-forest transition-colors hover:bg-forest/5 lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-forest transition-colors hover:bg-forest/10 lg:hidden"
           >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {open ? (
+              <X className="h-6 w-6 text-forest" />
+            ) : (
+              <Menu className="h-6 w-6 text-forest" />
+            )}
           </button>
         </div>
       </div>
@@ -198,13 +211,13 @@ export function Header() {
         {open && (
           <motion.div
             id="mobile-menu"
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25, ease: EASE }}
-            className="fixed inset-x-0 bottom-0 top-[4rem] z-40 overflow-y-auto bg-ivory/98 pb-8 pt-2 backdrop-blur-lg lg:hidden"
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: EASE }}
+            className="fixed inset-x-0 bottom-0 top-16 z-50 flex flex-col justify-between overflow-y-auto bg-ivory px-5 pb-10 pt-6 shadow-2xl lg:hidden"
           >
-            <nav aria-label="Mobile navigation" className="px-4">
+            <nav aria-label="Mobile navigation" className="space-y-1">
               {NAV.map((item) => {
                 const isActive = pathname === item.href;
                 return (
@@ -213,8 +226,10 @@ export function Header() {
                     to={item.href}
                     onClick={closeMenu}
                     className={cn(
-                      "flex min-h-[56px] items-center border-b border-beige/70 font-display text-2xl transition-colors active:text-gold-deep",
-                      isActive ? "text-gold-deep font-semibold" : "text-forest",
+                      "flex min-h-[52px] items-center rounded-2xl px-4 font-display text-2xl transition-colors",
+                      isActive
+                        ? "bg-sage-soft/70 text-forest font-semibold"
+                        : "text-forest hover:bg-forest/5 active:text-gold-deep",
                     )}
                   >
                     {item.label}
@@ -222,7 +237,8 @@ export function Header() {
                 );
               })}
             </nav>
-            <div className="mt-6 space-y-3 px-4">
+
+            <div className="mt-8 space-y-3 pt-6 border-t border-beige">
               <button
                 type="button"
                 onClick={() => {
@@ -235,7 +251,7 @@ export function Header() {
               </button>
               <a
                 href={clinic.phoneHref}
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-forest/20 px-6 text-base font-semibold text-forest active:scale-[0.98]"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-forest/20 bg-white/80 px-6 text-base font-semibold text-forest active:scale-[0.98]"
               >
                 <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
                 Call {clinic.phoneDisplay}
@@ -246,9 +262,9 @@ export function Header() {
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-6 text-base font-semibold text-emerald-800 active:scale-[0.98]"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-[#25D366] px-6 text-base font-bold text-white shadow-sm active:scale-[0.98]"
               >
-                <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                <MessageCircle className="h-4 w-4 fill-white text-white" />
                 Chat on WhatsApp
               </a>
             </div>

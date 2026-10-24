@@ -6,12 +6,13 @@ import {
   Clock,
   Heart,
   MapPin,
+  MessageCircle,
   Phone,
   ShieldCheck,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { clinic, formatTime, fullAddress, hours, services } from "@/lib/clinic";
+import { clinic, formatTime, fullAddress, hours, services, whatsappLink } from "@/lib/clinic";
 import { Logo } from "./Header";
 import { EASE, LeafSprig } from "./primitives";
 import { openBookingModal } from "@/lib/bookingModal";
@@ -45,6 +46,20 @@ export function Footer() {
                     <Phone className="h-4 w-4" aria-hidden="true" />
                   </span>
                   {clinic.phoneDisplay}
+                </a>
+
+                <a
+                  href={whatsappLink(
+                    "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2.5 font-semibold text-emerald-400 transition-colors hover:text-emerald-300"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  Chat on WhatsApp
                 </a>
 
                 <div className="flex items-start gap-2.5 text-xs text-ivory/70">

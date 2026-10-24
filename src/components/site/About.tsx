@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Accessibility, Clock, MapPin, Phone } from "lucide-react";
+import { Accessibility, Clock, MapPin, MessageCircle, Phone } from "lucide-react";
 import aboutImg from "@/assets/about-clinic.jpg";
-import { clinic, fullAddress } from "@/lib/clinic";
+import { clinic, fullAddress, whatsappLink } from "@/lib/clinic";
 import { LeafSprig, Reveal, SectionHeading } from "./primitives";
 import { openBookingModal } from "@/lib/bookingModal";
 
@@ -76,7 +76,7 @@ export function About() {
               ))}
             </Reveal>
 
-            <Reveal delay={0.26} className="mt-10 flex flex-wrap gap-4">
+            <Reveal delay={0.26} className="mt-10 flex flex-wrap gap-3.5 sm:gap-4">
               <button
                 type="button"
                 onClick={() => openBookingModal()}
@@ -84,9 +84,27 @@ export function About() {
               >
                 Request an Appointment
               </button>
+              <a
+                href={whatsappLink(
+                  "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-6 py-3.5 text-base font-semibold text-emerald-900 transition-colors hover:bg-emerald-600 hover:text-white active:scale-[0.98]"
+              >
+                <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                WhatsApp
+              </a>
+              <a
+                href={clinic.phoneHref}
+                className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/70 px-6 py-3.5 text-base font-semibold text-forest transition-colors hover:bg-forest hover:text-ivory active:scale-[0.98]"
+              >
+                <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
+                Call {clinic.phoneDisplay}
+              </a>
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 rounded-full border border-forest/20 px-7 py-3.5 text-base font-semibold text-forest transition-colors duration-300 hover:border-forest/40 active:scale-[0.98]"
+                className="inline-flex items-center gap-2 rounded-full border border-forest/20 px-6 py-3.5 text-base font-semibold text-forest transition-colors duration-300 hover:border-forest/40 active:scale-[0.98]"
               >
                 Our Philosophy & Centre &rarr;
               </Link>

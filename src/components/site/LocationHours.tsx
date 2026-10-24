@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Accessibility, ArrowUpRight, MapPin, Phone } from "lucide-react";
-import { clinic, formatTime, fullAddress, getOpenStatus, hours } from "@/lib/clinic";
+import { Accessibility, ArrowUpRight, MapPin, MessageCircle, Phone } from "lucide-react";
+import { clinic, formatTime, fullAddress, getOpenStatus, hours, whatsappLink } from "@/lib/clinic";
 import { cn } from "@/lib/utils";
 import { Reveal, SectionHeading } from "./primitives";
 
@@ -74,12 +74,17 @@ export function LocationHours() {
                   Get Directions
                   <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 </a>
-                <Link
-                  to="/contact"
-                  className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-forest/20 px-6 text-sm font-semibold text-forest transition-colors hover:border-forest/40 active:scale-[0.98]"
+                <a
+                  href={whatsappLink(
+                    "Hello Sanidhya Naturopathy Center, I need assistance with directions or appointments.",
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-6 text-sm font-semibold text-emerald-900 shadow-soft transition-colors hover:bg-emerald-600 hover:text-white active:scale-[0.98]"
                 >
-                  Full Contact & Visiting Info &rarr;
-                </Link>
+                  <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                  Chat on WhatsApp
+                </a>
                 <a
                   href={clinic.phoneHref}
                   className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-forest/20 px-6 text-sm font-semibold text-forest transition-colors hover:border-forest/40 active:scale-[0.98]"
@@ -87,6 +92,12 @@ export function LocationHours() {
                   <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
                   {clinic.phoneDisplay}
                 </a>
+                <Link
+                  to="/contact"
+                  className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-forest/20 px-6 text-sm font-semibold text-forest transition-colors hover:border-forest/40 active:scale-[0.98]"
+                >
+                  Full Contact & Visiting Info &rarr;
+                </Link>
               </div>
             </div>
 

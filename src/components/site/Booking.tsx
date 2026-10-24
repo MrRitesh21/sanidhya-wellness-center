@@ -165,8 +165,8 @@ export function Booking() {
         />
 
         <div className="mt-14 grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
-          {/* Reassurance column */}
-          <Reveal className="flex flex-col gap-4">
+          {/* Reassurance column (shown after form on mobile, on left on desktop) */}
+          <Reveal className="order-2 flex flex-col gap-4 lg:order-1">
             <div className="rounded-3xl border border-beige bg-white p-6 shadow-soft">
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sage-soft text-forest">
                 <Phone className="h-5 w-5" aria-hidden="true" />
@@ -251,8 +251,8 @@ export function Booking() {
             </div>
           </Reveal>
 
-          {/* Form column */}
-          <Reveal delay={0.1}>
+          {/* Form column (shown first on mobile, on right on desktop) */}
+          <Reveal delay={0.1} className="order-1 lg:order-2">
             <div className="rounded-4xl border border-beige bg-white p-6 shadow-lift sm:p-8">
               <AnimatePresence mode="wait" initial={false}>
                 {status === "ready" ? (

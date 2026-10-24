@@ -466,7 +466,7 @@ function AboutPage() {
             }
             description="Book your unhurried consultation with our naturopathy professionals in Jankipuram, Lucknow."
           />
-          <Reveal delay={0.15} className="mt-8 flex flex-wrap justify-center gap-4">
+          <Reveal delay={0.15} className="mt-8 flex flex-wrap justify-center gap-3.5 sm:gap-4">
             <Link
               to="/booking"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lift transition-colors hover:bg-forest-deep active:scale-95"
@@ -474,6 +474,17 @@ function AboutPage() {
               Request an Appointment Online
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
+            <a
+              href={whatsappLink(
+                "Hello Sanidhya Naturopathy Center, I would like to enquire about consultations and treatments.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-8 py-4 text-base font-semibold text-emerald-800 shadow-soft transition-colors hover:bg-emerald-600 hover:text-white active:scale-95"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+              WhatsApp Us
+            </a>
             <a
               href={clinic.phoneHref}
               className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white px-8 py-4 text-base font-semibold text-forest shadow-soft transition-colors hover:border-forest/40 active:scale-95"

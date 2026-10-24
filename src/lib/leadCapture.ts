@@ -25,13 +25,20 @@ export type LeadInput = {
 };
 
 /** Formats a "YYYY-MM-DD" date as e.g. "Mon, 2 Nov 2026" (en-IN). */
-export function prettyDate(iso: string): string {
-  return new Date(`${iso}T00:00:00`).toLocaleDateString("en-IN", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+export function prettyDate(iso?: string | null | undefined): string {
+  if (!iso) return "";
+  try {
+    const d = new Date(`${iso}T00:00:00`);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleDateString("en-IN", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  } catch {
+    return iso ?? "";
+  }
 }
 
 export function timeLabel(value: string): string {

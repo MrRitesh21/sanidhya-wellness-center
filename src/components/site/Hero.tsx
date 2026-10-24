@@ -94,7 +94,10 @@ export function Hero() {
               Jankipuram, Lucknow.
             </motion.p>
 
-            <motion.div variants={fadeUp} className="mt-8 flex flex-wrap items-center gap-4">
+            <motion.div
+              variants={fadeUp}
+              className="mt-8 flex flex-wrap items-center gap-3.5 sm:gap-4"
+            >
               <button
                 type="button"
                 onClick={() => openBookingModal()}
@@ -103,11 +106,34 @@ export function Hero() {
                 Book an Appointment
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
+
+              <a
+                href={whatsappLink(
+                  "Hello Sanidhya Naturopathy Center, I would like to enquire about consultations and treatments.",
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-50 px-6 py-3.5 text-base font-semibold text-emerald-900 shadow-soft transition-all duration-300 hover:bg-[#25D366] hover:text-white hover:border-[#25D366] active:scale-95"
+                aria-label="Chat on WhatsApp"
+              >
+                <MessageCircle className="h-4 w-4 text-emerald-600 group-hover:text-white transition-colors" />
+                <span>WhatsApp Us</span>
+              </a>
+
+              <a
+                href={clinic.phoneHref}
+                className="group inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/70 px-6 py-3.5 text-base font-semibold text-forest shadow-soft transition-all duration-300 hover:bg-forest hover:text-ivory active:scale-95"
+                aria-label={`Call ${clinic.phoneDisplay}`}
+              >
+                <Phone className="h-4 w-4 text-gold-deep group-hover:text-gold transition-colors" />
+                <span>Call Now</span>
+              </a>
+
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/50 px-7 py-3.5 text-base font-semibold text-forest backdrop-blur-sm transition-colors duration-300 hover:border-forest/40 hover:bg-white active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/50 px-6 py-3.5 text-base font-semibold text-forest backdrop-blur-sm transition-colors duration-300 hover:border-forest/40 hover:bg-white active:scale-95"
               >
-                Explore Our Philosophy
+                Explore Philosophy
               </Link>
             </motion.div>
 

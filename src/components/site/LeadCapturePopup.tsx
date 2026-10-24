@@ -262,25 +262,6 @@ export function LeadCapturePopup() {
 
   return (
     <>
-      {/* Floating trigger button allowing visitors to manually open the modal anytime */}
-      {mounted && !open && (
-        <motion.button
-          type="button"
-          onClick={() => setOpen(true)}
-          initial={{ opacity: 0, scale: 0.9, y: 16 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          aria-label="Book an Appointment"
-          className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 rounded-full border border-gold/40 bg-forest px-4 py-3 text-sm font-semibold text-ivory shadow-lift transition-colors hover:bg-forest-deep focus:outline-none focus:ring-2 focus:ring-gold/60 sm:bottom-6 sm:right-6 sm:px-5 sm:py-3.5"
-        >
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gold/20 text-gold">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-          </span>
-          <span className="tracking-wide">Book Appointment</span>
-        </motion.button>
-      )}
-
       {/* Main Lead Capture Dialog */}
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="max-h-[94vh] w-[94vw] max-w-lg overflow-y-auto no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden rounded-3xl border border-beige bg-white p-5 shadow-lift sm:max-w-lg sm:rounded-4xl sm:p-6 sm:py-6">
