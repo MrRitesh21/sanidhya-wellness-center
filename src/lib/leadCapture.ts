@@ -21,7 +21,7 @@ export type LeadInput = {
   reason: string;
   date: string;
   time: string;
-  message?: string;
+  message?: string | undefined;
 };
 
 /** Formats a "YYYY-MM-DD" date as e.g. "Mon, 2 Nov 2026" (en-IN). */
