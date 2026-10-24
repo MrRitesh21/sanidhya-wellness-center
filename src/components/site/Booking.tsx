@@ -355,7 +355,7 @@ export function Booking() {
                         maxLength={500}
                         placeholder="Briefly, what would you like help with?"
                         {...register("reason")}
-                        className={`${inputCls} resize-none`}
+                        className={`${inputCls} resize-none no-scrollbar`}
                         aria-invalid={!!errors.reason}
                       />
                       {errors.reason && (
@@ -429,7 +429,7 @@ export function Booking() {
                         maxLength={500}
                         placeholder="Anything else the clinic should know?"
                         {...register("message")}
-                        className={`${inputCls} resize-none`}
+                        className={`${inputCls} resize-none no-scrollbar`}
                       />
                       {errors.message && (
                         <p className={errorCls} role="alert">
