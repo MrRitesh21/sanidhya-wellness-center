@@ -15,6 +15,7 @@ import {
 import { clinic, whatsappLink } from "@/lib/clinic";
 import { submitLead, timeLabel } from "@/lib/leadCapture";
 import { EASE, LeafSprig } from "./primitives";
+import { CLINIC_LOGO_SRC } from "./logoAsset";
 import {
   Dialog,
   DialogContent,
@@ -328,8 +329,13 @@ export function LeadCapturePopup() {
                 transition={{ duration: 0.35, ease: EASE }}
               >
                 <DialogHeader className="text-left">
-                  <div className="flex items-center gap-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
-                    <LeafSprig className="h-3 w-5" />
+                  <div className="flex items-center gap-2 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-gold-deep">
+                    <img
+                      src={CLINIC_LOGO_SRC}
+                      alt=""
+                      aria-hidden="true"
+                      className="h-5 w-auto object-contain"
+                    />
                     Sanidhya Naturopathy Center
                   </div>
                   <DialogTitle className="mt-1 font-display text-xl font-semibold leading-tight text-forest sm:text-2xl">

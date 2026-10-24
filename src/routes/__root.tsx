@@ -16,6 +16,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { LeadCapturePopup } from "@/components/site/LeadCapturePopup";
 import { FloatingContactButtons } from "@/components/site/FloatingContactButtons";
+import { CLINIC_LOGO_SRC } from "@/components/site/logoAsset";
 
 function NotFoundComponent() {
   return (
@@ -129,8 +130,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         rel: "icon",
-        href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' fill='%23183F35'/><path d='M6 18 C 6 11, 10 7, 18 6 C 17 14, 13 18, 6 18 Z' fill='%2391A995'/><path d='M7.5 16.5 C 10 13.5, 13.5 10, 16.5 7.5' stroke='%23EDE5D6' stroke-width='1.2' stroke-linecap='round'/></svg>",
-        type: "image/svg+xml",
+        href: CLINIC_LOGO_SRC,
+        type: "image/png",
       },
     ],
     scripts: [

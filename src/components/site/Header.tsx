@@ -6,6 +6,7 @@ import { clinic, whatsappLink } from "@/lib/clinic";
 import { cn } from "@/lib/utils";
 import { EASE } from "./primitives";
 import { openBookingModal } from "@/lib/bookingModal";
+import { CLINIC_LOGO_SRC } from "./logoAsset";
 
 const NAV = [
   { label: "Home", href: "/" },
@@ -15,48 +16,52 @@ const NAV = [
 ] as const;
 
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
+  if (tone === "light") {
+    return (
+      <Link
+        to="/"
+        className="group inline-flex items-center gap-3 transition-opacity hover:opacity-95"
+        aria-label="Sanidhya Naturopathy Center — Home"
+      >
+        <span className="flex items-center justify-center rounded-xl bg-ivory/95 p-1.5 shadow-sm transition-transform duration-300 group-hover:scale-105">
+          <img
+            src={CLINIC_LOGO_SRC}
+            alt="Sanidhya Naturopathy Center Logo"
+            width={360}
+            height={254}
+            className="h-9 sm:h-10 w-auto object-contain"
+          />
+        </span>
+        <span className="flex flex-col leading-tight">
+          <span className="font-display text-xl font-semibold tracking-wide text-ivory">
+            Sanidhya
+          </span>
+          <span className="mt-0.5 text-[0.6rem] font-bold uppercase tracking-[0.28em] text-gold">
+            Naturopathy Center
+          </span>
+        </span>
+      </Link>
+    );
+  }
+
   return (
     <Link
       to="/"
-      className="group flex items-center gap-2.5 transition-opacity hover:opacity-95"
+      className="group flex items-center gap-2.5 sm:gap-3 transition-opacity hover:opacity-95"
       aria-label="Sanidhya Naturopathy Center — Home"
     >
-      <span
-        className={cn(
-          "flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full shadow-xs transition-transform duration-300 group-hover:scale-105",
-          tone === "dark" ? "bg-sage-soft text-forest" : "bg-ivory/15 text-ivory",
-        )}
-      >
-        <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true">
-          <path
-            d="M4 20 C 4 11, 10 5, 20 4 C 19 14, 13 20, 4 20 Z"
-            fill="currentColor"
-            opacity="0.85"
-          />
-          <path
-            d="M5.5 18.5 C 9 15, 13.5 10.5, 18.5 5.5"
-            stroke={tone === "dark" ? "var(--color-forest)" : "var(--color-ivory)"}
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            opacity="0.9"
-          />
-        </svg>
-      </span>
-      <span className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "font-display text-[1.25rem] sm:text-[1.4rem] font-semibold tracking-wide",
-            tone === "dark" ? "text-forest" : "text-ivory",
-          )}
-        >
+      <img
+        src={CLINIC_LOGO_SRC}
+        alt="Sanidhya Naturopathy Center Logo"
+        width={360}
+        height={254}
+        className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+      />
+      <span className="flex flex-col leading-tight">
+        <span className="font-display text-[1.25rem] sm:text-[1.4rem] font-semibold tracking-wide text-forest">
           Sanidhya
         </span>
-        <span
-          className={cn(
-            "mt-1 text-[0.55rem] sm:text-[0.6rem] font-bold uppercase tracking-[0.28em]",
-            tone === "dark" ? "text-gold-deep" : "text-gold",
-          )}
-        >
+        <span className="mt-0.5 text-[0.55rem] sm:text-[0.6rem] font-bold uppercase tracking-[0.28em] text-gold-deep">
           Naturopathy Center
         </span>
       </span>
