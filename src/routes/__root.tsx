@@ -101,7 +101,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "en_IN" },
-      { property: "og:image", content: "/logo/logo-full-transparent.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Sanidhya Naturopathy Center | Jankipuram, Lucknow" },
       {
@@ -109,7 +108,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Find Sanidhya Naturopathy Center in Sector I, Jankipuram, Lucknow. View location, opening hours, contact details, and appointment enquiry options.",
       },
-      { name: "twitter:image", content: "/logo/logo-full-transparent.png" },
     ],
     links: [
       {
@@ -129,9 +127,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/logo/favicon.ico", type: "image/x-icon" },
-      { rel: "shortcut icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "apple-touch-icon", href: "/logo/logo-navbar.png" },
+      {
+        rel: "icon",
+        href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' fill='%23183F35'/><path d='M6 18 C 6 11, 10 7, 18 6 C 17 14, 13 18, 6 18 Z' fill='%2391A995'/><path d='M7.5 16.5 C 10 13.5, 13.5 10, 16.5 7.5' stroke='%23EDE5D6' stroke-width='1.2' stroke-linecap='round'/></svg>",
+        type: "image/svg+xml",
+      },
     ],
     scripts: [
       {
