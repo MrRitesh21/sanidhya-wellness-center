@@ -87,15 +87,14 @@ export function Header() {
   }, [pathname]);
 
   useEffect(() => {
-    if (open) {
-      document.body.classList.add("mobile-menu-open");
-      const original = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.classList.remove("mobile-menu-open");
-        document.body.style.overflow = original;
-      };
-    }
+    if (!open) return;
+    document.body.classList.add("mobile-menu-open");
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.classList.remove("mobile-menu-open");
+      document.body.style.overflow = original;
+    };
   }, [open]);
 
   const closeMenu = () => setOpen(false);
