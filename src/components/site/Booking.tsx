@@ -197,10 +197,10 @@ export function Booking() {
             <div className="flex items-start gap-3 rounded-3xl border border-gold/30 bg-gold/10 p-5">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-gold-deep" aria-hidden="true" />
               <p className="text-xs leading-relaxed text-charcoal/80">
-                Your details are not sent to or stored by this website — the
-                form simply prepares a WhatsApp message for you to review and
-                send. An appointment is confirmed only when the clinic
-                confirms it with you directly.
+                Your enquiry is sent securely to the centre's appointment
+                inbox, where the team reviews every request personally. An
+                appointment is confirmed only when the clinic confirms it with
+                you directly.
               </p>
             </div>
           </Reveal>
@@ -222,30 +222,29 @@ export function Booking() {
                       <CheckCircle2 className="h-8 w-8 text-forest" aria-hidden="true" />
                     </span>
                     <h3 className="mt-5 font-display text-3xl font-semibold text-forest">
-                      Your enquiry is ready to send
+                      Enquiry received
                     </h3>
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-                      Nothing is booked yet — the clinic confirms every
-                      appointment personally. Send your enquiry on WhatsApp
-                      (you'll be leaving this website) or simply call the
-                      clinic.
+                      Thank you — the centre has received your request and will
+                      confirm your appointment with you personally. For a
+                      quicker reply, call the clinic or follow up on WhatsApp.
                     </p>
                     <div className="mt-7 flex w-full max-w-sm flex-col gap-3">
+                      <a
+                        href={clinic.phoneHref}
+                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep active:scale-[0.98]"
+                      >
+                        <Phone className="h-4 w-4 text-gold-soft" aria-hidden="true" />
+                        Call {clinic.phoneDisplay}
+                      </a>
                       <a
                         href={waLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep active:scale-[0.98]"
-                      >
-                        <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                        Send via WhatsApp
-                      </a>
-                      <a
-                        href={clinic.phoneHref}
                         className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full border border-forest/20 px-6 text-base font-semibold text-forest transition-colors hover:border-forest/40 active:scale-[0.98]"
                       >
-                        <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
-                        Call {clinic.phoneDisplay}
+                        <MessageCircle className="h-4 w-4 text-gold-deep" aria-hidden="true" />
+                        Follow up on WhatsApp
                       </a>
                       <button
                         type="button"
