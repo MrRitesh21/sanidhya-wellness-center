@@ -154,32 +154,6 @@ export function Header() {
             <span>WhatsApp</span>
           </a>
 
-          {/* Mobile Quick Call Button (hidden when menu drawer is open) */}
-          {!open && (
-            <a
-              href={clinic.phoneHref}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-forest/20 text-forest hover:bg-forest/5 sm:hidden"
-              aria-label={`Call ${clinic.phoneDisplay}`}
-            >
-              <Phone className="h-4 w-4 text-gold-deep" />
-            </a>
-          )}
-
-          {/* Mobile Quick WhatsApp Button (hidden when menu drawer is open) */}
-          {!open && (
-            <a
-              href={whatsappLink(
-                "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-600/30 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white sm:hidden"
-              aria-label="WhatsApp"
-            >
-              <MessageCircle className="h-4 w-4 text-emerald-600" />
-            </a>
-          )}
-
           <button
             type="button"
             onClick={() => openBookingModal()}
