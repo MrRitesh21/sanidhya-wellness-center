@@ -88,9 +88,11 @@ export function Header() {
 
   useEffect(() => {
     if (open) {
+      document.body.classList.add("mobile-menu-open");
       const original = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return () => {
+        document.body.classList.remove("mobile-menu-open");
         document.body.style.overflow = original;
       };
     }
@@ -101,7 +103,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-200",
+        "fixed inset-x-0 top-0 z-[60] transition-[background-color,border-color,box-shadow] duration-200",
         open
           ? "bg-ivory border-b border-beige/80 shadow-sm"
           : scrolled
@@ -220,7 +222,7 @@ export function Header() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             style={{ willChange: "transform, opacity" }}
-            className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col justify-between overflow-y-auto overscroll-contain bg-ivory px-5 pb-10 pt-6 shadow-2xl lg:hidden"
+            className="fixed inset-x-0 bottom-0 top-16 z-[60] flex flex-col justify-between overflow-y-auto overscroll-contain bg-ivory px-5 pb-14 pt-6 shadow-2xl lg:hidden"
           >
             <nav aria-label="Mobile navigation" className="space-y-1">
               {NAV.map((item, index) => {

@@ -180,3 +180,8 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera, Edge */
 }
+
+/* Hide sticky mobile bottom action bar when mobile navigation drawer is open */
+body.mobile-menu-open #mobile-bottom-bar {
+  display: none !important;
+}

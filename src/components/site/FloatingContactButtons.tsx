@@ -6,48 +6,59 @@ import { openBookingModal } from "@/lib/bookingModal";
 
 export function FloatingContactButtons() {
   const [mounted, setMounted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    const checkMenu = () => setMenuOpen(document.body.classList.contains("mobile-menu-open"));
+    checkMenu();
+    const observer = new MutationObserver(checkMenu);
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
   }, []);
 
   if (!mounted) return null;
 
   return (
     <>
-      {/* Mobile Sticky Bottom Action Bar (always visible on mobile) */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-2 border-t border-beige/80 bg-white/95 px-3 py-2.5 shadow-lift backdrop-blur-md sm:hidden">
-        <a
-          href={clinic.phoneHref}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-forest/20 bg-forest/5 py-2.5 text-xs font-semibold text-forest active:scale-95 transition-transform"
-          aria-label={`Call ${clinic.phoneDisplay}`}
+      {/* Mobile Sticky Bottom Action Bar (hidden when mobile navigation drawer is open) */}
+      {!menuOpen && (
+        <div
+          id="mobile-bottom-bar"
+          className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-2 border-t border-beige/80 bg-white/95 px-3 py-2.5 shadow-lift backdrop-blur-md sm:hidden"
         >
-          <Phone className="h-3.5 w-3.5 text-gold-deep" />
-          <span>Call Now</span>
-        </a>
+          <a
+            href={clinic.phoneHref}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-forest/20 bg-forest/5 py-2.5 text-xs font-semibold text-forest active:scale-95 transition-transform"
+            aria-label={`Call ${clinic.phoneDisplay}`}
+          >
+            <Phone className="h-3.5 w-3.5 text-gold-deep" />
+            <span>Call Now</span>
+          </a>
 
-        <a
-          href={whatsappLink(
-            "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
-          )}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-emerald-500/30 bg-[#25D366] py-2.5 text-xs font-bold text-white shadow-sm active:scale-95 transition-transform"
-          aria-label="Chat on WhatsApp"
-        >
-          <MessageCircle className="h-3.5 w-3.5 fill-white text-white" />
-          <span>WhatsApp</span>
-        </a>
+          <a
+            href={whatsappLink(
+              "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-emerald-500/30 bg-[#25D366] py-2.5 text-xs font-bold text-white shadow-sm active:scale-95 transition-transform"
+            aria-label="Chat on WhatsApp"
+          >
+            <MessageCircle className="h-3.5 w-3.5 fill-white text-white" />
+            <span>WhatsApp</span>
+          </a>
 
-        <button
-          type="button"
-          onClick={() => openBookingModal()}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground shadow-sm active:scale-95 transition-transform"
-        >
-          <Sparkles className="h-3.5 w-3.5 text-gold" />
-          <span>Book</span>
-        </button>
-      </div>
+          <button
+            type="button"
+            onClick={() => openBookingModal()}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground shadow-sm active:scale-95 transition-transform"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-gold" />
+            <span>Book</span>
+          </button>
+        </div>
+      )}
 
       {/* Desktop Floating Action Stack (Bottom-Right for Call, WhatsApp & Book) */}
       <div className="fixed bottom-6 right-6 z-40 hidden flex-col items-end gap-2.5 sm:flex">
