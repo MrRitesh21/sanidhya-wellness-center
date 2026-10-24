@@ -12,6 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { clinic, whatsappLink } from "@/lib/clinic";
+import { prettyDate, submitLead, timeLabel } from "@/lib/leadCapture";
 import { EASE, Reveal, SectionHeading } from "./primitives";
 
 const TIME_OPTIONS = [
@@ -84,17 +85,10 @@ function kolkataToday(): string {
   }).format(new Date());
 }
 
-function prettyDate(iso: string): string {
-  return new Date(`${iso}T00:00:00`).toLocaleDateString("en-IN", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
 
 export function Booking() {
-  const [status, setStatus] = useState<"idle" | "preparing" | "ready">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "ready">("idle");
+  const [submitError, setSubmitError] = useState("");
   const [waLink, setWaLink] = useState("");
   const [minDate, setMinDate] = useState("");
 
@@ -109,31 +103,35 @@ export function Booking() {
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  const onSubmit = (data: FormData) => {
-    setStatus("preparing");
-    const lines = [
-      "Hello Sanidhya Naturopathy Center, I would like to request an appointment.",
-      `Name: ${data.name}`,
-      `Mobile: ${data.mobile}`,
-      `Age group: ${data.ageGroup === "adult" ? "Adult" : "Child"}`,
-      `Reason for consultation: ${data.reason}`,
-      `Preferred date: ${prettyDate(data.date)}`,
-      `Preferred time: ${
-        TIME_OPTIONS.find((t) => t.value === data.time)?.label ?? data.time
-      }`,
-    ];
-    if (data.message) lines.push(`Message: ${data.message}`);
-    const link = whatsappLink(lines.join("\n"));
-    // Preparing the message happens locally — nothing is sent or stored yet.
-    window.setTimeout(() => {
-      setWaLink(link);
+  const onSubmit = async (data: FormData) => {
+    setStatus("submitting");
+    setSubmitError("");
+    try {
+      await submitLead(data);
+      const lines = [
+        "Hello Sanidhya Naturopathy Center, I requested an appointment on your website.",
+        `Name: ${data.name}`,
+        `Mobile: ${data.mobile}`,
+        `Age group: ${data.ageGroup === "adult" ? "Adult" : "Child"}`,
+        `Reason for consultation: ${data.reason}`,
+        `Preferred date: ${prettyDate(data.date)}`,
+        `Preferred time: ${timeLabel(data.time)}`,
+      ];
+      if (data.message) lines.push(`Message: ${data.message}`);
+      setWaLink(whatsappLink(lines.join("\n")));
       setStatus("ready");
-    }, 600);
+    } catch {
+      setStatus("idle");
+      setSubmitError(
+        "Your enquiry could not be sent just now — please check your connection and try again, or call the clinic directly.",
+      );
+    }
   };
 
   const startNew = () => {
     reset();
     setWaLink("");
+    setSubmitError("");
     setStatus("idle");
   };
 
