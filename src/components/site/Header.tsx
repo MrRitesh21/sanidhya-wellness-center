@@ -170,13 +170,31 @@ export function Header() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-forest transition-colors hover:bg-forest/10 lg:hidden"
+            className="relative flex h-11 w-11 items-center justify-center rounded-full text-forest transition-colors hover:bg-forest/10 active:scale-95 lg:hidden"
           >
-            {open ? (
-              <X className="h-6 w-6 text-forest" />
-            ) : (
-              <Menu className="h-6 w-6 text-forest" />
-            )}
+            <AnimatePresence mode="wait" initial={false}>
+              {open ? (
+                <motion.div
+                  key="close-icon"
+                  initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
+                  transition={{ duration: 0.22, ease: EASE }}
+                >
+                  <X className="h-6 w-6 text-forest" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu-icon"
+                  initial={{ opacity: 0, rotate: 90, scale: 0.7 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: -90, scale: 0.7 }}
+                  transition={{ duration: 0.22, ease: EASE }}
+                >
+                  <Menu className="h-6 w-6 text-forest" />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </div>
@@ -185,47 +203,62 @@ export function Header() {
         {open && (
           <motion.div
             id="mobile-menu"
-            initial={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: -14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: EASE }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-x-0 bottom-0 top-16 z-50 flex flex-col justify-between overflow-y-auto bg-ivory px-5 pb-10 pt-6 shadow-2xl lg:hidden"
           >
             <nav aria-label="Mobile navigation" className="space-y-1">
-              {NAV.map((item) => {
+              {NAV.map((item, index) => {
                 const isActive = pathname === item.href;
                 return (
-                  <Link
+                  <motion.div
                     key={item.href}
-                    to={item.href}
-                    onClick={closeMenu}
-                    className={cn(
-                      "flex min-h-[52px] items-center rounded-2xl px-4 font-display text-2xl transition-colors",
-                      isActive
-                        ? "bg-sage-soft/70 text-forest font-semibold"
-                        : "text-forest hover:bg-forest/5 active:text-gold-deep",
-                    )}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      delay: 0.05 + index * 0.045,
+                      duration: 0.28,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
-                    {item.label}
-                  </Link>
+                    <Link
+                      to={item.href}
+                      onClick={closeMenu}
+                      className={cn(
+                        "flex min-h-[52px] items-center rounded-2xl px-4 font-display text-2xl transition-all duration-200",
+                        isActive
+                          ? "bg-sage-soft/70 text-forest font-semibold shadow-xs"
+                          : "text-forest hover:bg-forest/5 active:text-gold-deep",
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
                 );
               })}
             </nav>
 
-            <div className="mt-8 space-y-3 pt-6 border-t border-beige">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-8 space-y-3 pt-6 border-t border-beige"
+            >
               <button
                 type="button"
                 onClick={() => {
                   closeMenu();
                   openBookingModal();
                 }}
-                className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft active:scale-[0.98]"
+                className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft transition-transform active:scale-[0.98]"
               >
                 Book Appointment
               </button>
               <a
                 href={clinic.phoneHref}
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-forest/20 bg-white/80 px-6 text-base font-semibold text-forest active:scale-[0.98]"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-forest/20 bg-white/80 px-6 text-base font-semibold text-forest transition-colors hover:bg-forest/5 active:scale-[0.98]"
               >
                 <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
                 Call {clinic.phoneDisplay}
@@ -236,12 +269,12 @@ export function Header() {
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-[#25D366] px-6 text-base font-bold text-white shadow-sm active:scale-[0.98]"
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-[#25D366] px-6 text-base font-bold text-white shadow-sm transition-all hover:bg-[#20bd5a] active:scale-[0.98]"
               >
                 <MessageCircle className="h-4 w-4 fill-white text-white" />
                 Chat on WhatsApp
               </a>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
