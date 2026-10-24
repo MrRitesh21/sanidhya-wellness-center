@@ -127,10 +127,13 @@ describe("Zod validation rules across forms", () => {
   });
 
   it("fails Sunday non-morning booking appointment time", () => {
-    // Find next Sunday
+    // Find next Sunday (in local time)
     const sunday = new Date();
     sunday.setDate(sunday.getDate() + ((7 - sunday.getDay()) % 7 || 7));
-    const sundayStr = sunday.toISOString().split("T")[0];
+    const y = sunday.getFullYear();
+    const m = String(sunday.getMonth() + 1).padStart(2, "0");
+    const d = String(sunday.getDate()).padStart(2, "0");
+    const sundayStr = `${y}-${m}-${d}`;
 
     const result = bookingSchema.safeParse({
       name: "Aarti Verma",

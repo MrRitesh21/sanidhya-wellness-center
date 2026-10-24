@@ -15,48 +15,52 @@ const NAV = [
 ] as const;
 
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
+  if (tone === "light") {
+    return (
+      <Link
+        to="/"
+        className="group inline-flex items-center gap-3.5 transition-opacity hover:opacity-95"
+        aria-label="Sanidhya Naturopathy Center — Home"
+      >
+        <span className="flex items-center justify-center rounded-2xl bg-ivory/95 p-1.5 shadow-sm transition-transform duration-300 group-hover:scale-105">
+          <img
+            src="/logo/logo-footer.png"
+            alt="Sanidhya Naturopathy Center Logo"
+            width={600}
+            height={423}
+            className="h-9 sm:h-10 w-auto object-contain"
+          />
+        </span>
+        <span className="flex flex-col leading-tight">
+          <span className="font-display text-xl font-semibold tracking-wide text-ivory">
+            Sanidhya
+          </span>
+          <span className="mt-0.5 text-[0.6rem] font-bold uppercase tracking-[0.28em] text-gold">
+            Naturopathy Center
+          </span>
+        </span>
+      </Link>
+    );
+  }
+
   return (
     <Link
       to="/"
-      className="flex items-center gap-2.5"
+      className="group flex items-center gap-3 transition-opacity hover:opacity-95"
       aria-label="Sanidhya Naturopathy Center — Home"
     >
-      <span
-        className={cn(
-          "flex h-10 w-10 items-center justify-center rounded-full",
-          tone === "dark" ? "bg-sage-soft text-forest" : "bg-ivory/10 text-ivory",
-        )}
-      >
-        <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
-          <path
-            d="M4 20 C 4 11, 10 5, 20 4 C 19 14, 13 20, 4 20 Z"
-            fill="currentColor"
-            opacity="0.85"
-          />
-          <path
-            d="M5.5 18.5 C 9 15, 13.5 10.5, 18.5 5.5"
-            stroke={tone === "dark" ? "var(--color-forest)" : "var(--color-ivory)"}
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            opacity="0.9"
-          />
-        </svg>
-      </span>
-      <span className="flex flex-col leading-none">
-        <span
-          className={cn(
-            "font-display text-[1.35rem] font-semibold tracking-wide",
-            tone === "dark" ? "text-forest" : "text-ivory",
-          )}
-        >
+      <img
+        src="/logo/logo-navbar.png"
+        alt="Sanidhya Naturopathy Center Logo"
+        width={900}
+        height={635}
+        className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+      />
+      <span className="flex flex-col leading-tight">
+        <span className="font-display text-[1.25rem] sm:text-[1.4rem] font-semibold tracking-wide text-forest">
           Sanidhya
         </span>
-        <span
-          className={cn(
-            "mt-1 text-[0.55rem] font-bold uppercase tracking-[0.32em]",
-            tone === "dark" ? "text-gold-deep" : "text-gold",
-          )}
-        >
+        <span className="mt-0.5 text-[0.55rem] sm:text-[0.6rem] font-bold uppercase tracking-[0.28em] text-gold-deep">
           Naturopathy Center
         </span>
       </span>
@@ -76,11 +80,19 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close mobile menu whenever the route changes
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (open) {
+      const original = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = original;
+      };
+    }
   }, [open]);
 
   const closeMenu = () => setOpen(false);
@@ -88,7 +100,7 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+        "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-200",
         open
           ? "bg-ivory border-b border-beige/80 shadow-sm"
           : scrolled
@@ -98,7 +110,7 @@ export function Header() {
     >
       <div
         className={cn(
-          "mx-auto flex max-w-6xl items-center justify-between px-4 transition-all duration-300 sm:px-6",
+          "mx-auto flex max-w-6xl items-center justify-between px-4 transition-[height] duration-200 sm:px-6",
           scrolled || open ? "h-16" : "h-16 sm:h-20",
         )}
       >
@@ -170,31 +182,30 @@ export function Header() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="relative flex h-11 w-11 items-center justify-center rounded-full text-forest transition-colors hover:bg-forest/10 active:scale-95 lg:hidden"
+            className="relative flex h-11 w-11 touch-manipulation items-center justify-center rounded-full text-forest transition-colors hover:bg-forest/10 active:scale-95 lg:hidden"
           >
-            <AnimatePresence mode="wait" initial={false}>
-              {open ? (
-                <motion.div
-                  key="close-icon"
-                  initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
-                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                  exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
-                  transition={{ duration: 0.22, ease: EASE }}
-                >
-                  <X className="h-6 w-6 text-forest" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu-icon"
-                  initial={{ opacity: 0, rotate: 90, scale: 0.7 }}
-                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                  exit={{ opacity: 0, rotate: -90, scale: 0.7 }}
-                  transition={{ duration: 0.22, ease: EASE }}
-                >
-                  <Menu className="h-6 w-6 text-forest" />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="relative h-6 w-6">
+              <span
+                className={cn(
+                  "absolute inset-0 flex items-center justify-center transition-all duration-200 ease-out",
+                  open
+                    ? "opacity-100 rotate-0 scale-100"
+                    : "opacity-0 -rotate-90 scale-75 pointer-events-none",
+                )}
+              >
+                <X className="h-6 w-6 text-forest" />
+              </span>
+              <span
+                className={cn(
+                  "absolute inset-0 flex items-center justify-center transition-all duration-200 ease-out",
+                  !open
+                    ? "opacity-100 rotate-0 scale-100"
+                    : "opacity-0 rotate-90 scale-75 pointer-events-none",
+                )}
+              >
+                <Menu className="h-6 w-6 text-forest" />
+              </span>
+            </div>
           </button>
         </div>
       </div>
@@ -203,11 +214,12 @@ export function Header() {
         {open && (
           <motion.div
             id="mobile-menu"
-            initial={{ opacity: 0, y: -14 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-0 bottom-0 top-16 z-50 flex flex-col justify-between overflow-y-auto bg-ivory px-5 pb-10 pt-6 shadow-2xl lg:hidden"
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            style={{ willChange: "transform, opacity" }}
+            className="fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col justify-between overflow-y-auto overscroll-contain bg-ivory px-5 pb-10 pt-6 shadow-2xl lg:hidden"
           >
             <nav aria-label="Mobile navigation" className="space-y-1">
               {NAV.map((item, index) => {
@@ -215,19 +227,19 @@ export function Header() {
                 return (
                   <motion.div
                     key={item.href}
-                    initial={{ opacity: 0, x: -12 }}
+                    initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{
-                      delay: 0.05 + index * 0.045,
-                      duration: 0.28,
-                      ease: [0.22, 1, 0.36, 1],
+                      delay: 0.02 + index * 0.03,
+                      duration: 0.18,
+                      ease: "easeOut",
                     }}
                   >
                     <Link
                       to={item.href}
                       onClick={closeMenu}
                       className={cn(
-                        "flex min-h-[52px] items-center rounded-2xl px-4 font-display text-2xl transition-all duration-200",
+                        "flex min-h-[52px] items-center rounded-2xl px-4 font-display text-2xl transition-colors duration-150",
                         isActive
                           ? "bg-sage-soft/70 text-forest font-semibold shadow-xs"
                           : "text-forest hover:bg-forest/5 active:text-gold-deep",
@@ -241,9 +253,9 @@ export function Header() {
             </nav>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.12, duration: 0.2, ease: "easeOut" }}
               className="mt-8 space-y-3 pt-6 border-t border-beige"
             >
               <button
