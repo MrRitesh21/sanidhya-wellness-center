@@ -25,6 +25,7 @@ import {
   Moon,
   Phone,
   Salad,
+  Search,
   Shield,
   Smile,
   Sparkles,
@@ -32,6 +33,7 @@ import {
   Sun,
   Waves,
   Wind,
+  X,
   type LucideIcon,
 } from "lucide-react";
 import { clinic, services, whatsappLink, type ServiceItem } from "@/lib/clinic";
@@ -494,6 +496,42 @@ const CATEGORIES = [
   { id: "diet-lifestyle", label: "Diet & Lifestyle" },
   { id: "mind-movement", label: "Mind & Movement" },
 ] as const;
+
+/**
+ * Lay-person search keywords (including common Hindi/Hinglish terms) mapped to
+ * each service id, so customers can find a therapy with everyday words like
+ * "kamar dard", "neend", "sugar" or "steam".
+ */
+const SEARCH_KEYWORDS: Record<string, string> = {
+  consultation: "doctor checkup first visit appointment report discussion nidan",
+  "wellness-guidance": "routine dincharya habit energy tiredness fatigue weakness",
+  "lifestyle-counselling": "habit motivation burnout counselling support guidance",
+  "yoga-relaxation": "gentle yoga beginner stretching flexibility relaxation",
+  "diet-nutrition":
+    "food aahar weight motapa obesity acidity digestion constipation kabz sugar diabetes thyroid diet",
+  "stress-mindfulness": "stress tention anxiety mind calm breathing pranayama panic peace",
+  "holistic-planning": "plan roadmap full body complete program package monthly",
+  followups: "review revisit progress follow up second visit",
+  hydrotherapy:
+    "water paani hip bath spinal bath sitz jet circulation chakkar",
+  "mud-therapy": "mud mitti clay pack cooling skin acidity heat rash",
+  "steam-bath":
+    "steam bhaap sauna sweat detox fomentation swedana sinus cold cough stiffness",
+  acupressure:
+    "pressure point back pain kamar dard cervical neck sciatica joint ghutna spondylosis",
+  sujok: "hand foot palm hath pair seed magnet correspondence numbness tingling sunn pan",
+  "yoga-classes": "asana class morning flexibility strength balance obesity weight posture",
+  "yoga-nidra": "sleep neend insomnia nidra guided rest deep relaxation",
+  meditation: "dhyan meditation breathing anulom vilom bhramari sheetali focus anxiety",
+  "reiki-healing": "energy healing aura chakra touch relaxation positive",
+  "reiki-training":
+    "course certificate class level 1 level 2 attunement training learn degree master",
+  "past-life-regression": "hypnosis hypnotherapy past life regression fear phobia subconscious purva janam",
+  srt: "srt clearing charts subconscious patterns blocks response therapy",
+  "spiritual-therapy": "spiritual aatma soul counselling peace grief purpose forgiveness",
+  "mental-wellbeing": "mental health depression mood sadness burnout anxiety mind counselling",
+  "stress-management": "stress workplace tension headache sleep relief relaxation",
+};
 
 const STEPS = [
   {
