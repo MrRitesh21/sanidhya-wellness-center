@@ -655,19 +655,20 @@ function ServicesPage() {
                       </div>
                     </div>
 
-                    {/* Bottom Action */}
-                    <div className="mt-8 flex items-center justify-between border-t border-beige/60 pt-5">
+                    {/* Bottom Action — stacked & full-width on mobile */}
+                    <div className="mt-6 flex flex-col gap-3 border-t border-beige/60 pt-5 sm:mt-8 sm:flex-row sm:items-center sm:justify-between">
                       <Link
                         to="/booking"
-                        className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep"
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep"
                       >
                         Enquire for this Service
                         <ArrowRight className="h-4 w-4" aria-hidden="true" />
                       </Link>
                       <a
                         href={clinic.phoneHref}
-                        className="text-xs font-semibold text-forest hover:text-gold-deep transition-colors"
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 text-sm font-semibold text-forest transition-colors hover:text-gold-deep"
                       >
+                        <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
                         Ask by Phone
                       </a>
                     </div>
