@@ -1009,7 +1009,7 @@ function ServicesPage() {
               const Icon = facility.icon;
               return (
                 <Reveal key={facility.title} delay={i * 0.08}>
-                  <div className="flex h-full flex-col justify-between rounded-3xl border border-beige bg-white p-7 shadow-soft">
+                  <div className="flex h-full flex-col justify-between rounded-3xl border border-beige bg-white p-5 shadow-soft sm:p-7">
                     <div>
                       <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sage-soft text-forest">
                         <Icon className="h-6 w-6" aria-hidden="true" />
@@ -1046,10 +1046,10 @@ function ServicesPage() {
             description="A clear, progressive approach ensuring that health changes feel natural, gradual, and enduring."
           />
 
-          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
             {STEPS.map((step, i) => (
               <Reveal key={step.num} delay={i * 0.1}>
-                <div className="relative rounded-3xl border border-ivory/15 bg-white/5 p-7 backdrop-blur-sm transition-all duration-300 hover:border-ivory/30 hover:bg-white/10">
+                <div className="relative rounded-3xl border border-ivory/15 bg-white/5 p-6 backdrop-blur-sm transition-all duration-300 hover:border-ivory/30 hover:bg-white/10 sm:p-7">
                   <span className="font-display text-4xl font-semibold text-gold">{step.num}</span>
                   <h3 className="mt-3 font-display text-xl font-semibold text-ivory">
                     {step.title}
@@ -1074,17 +1074,17 @@ function ServicesPage() {
             }
             description="Our practitioners will happily listen to your concerns and guide you toward the most appropriate starting consultation."
           />
-          <Reveal delay={0.15} className="mt-8 flex flex-wrap justify-center gap-4">
+          <Reveal delay={0.15} className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
             <Link
               to="/booking"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lift transition-colors hover:bg-forest-deep active:scale-95"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lift transition-colors hover:bg-forest-deep active:scale-95 sm:w-auto"
             >
               Book an Assessment
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
               href={clinic.phoneHref}
-              className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white px-8 py-4 text-base font-semibold text-forest shadow-soft transition-colors hover:border-forest/40 active:scale-95"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-forest/20 bg-white px-8 py-4 text-base font-semibold text-forest shadow-soft transition-colors hover:border-forest/40 active:scale-95 sm:w-auto"
             >
               <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
               Call {clinic.phoneDisplay}
@@ -1095,7 +1095,7 @@ function ServicesPage() {
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-8 py-4 text-base font-semibold text-emerald-800 shadow-soft transition-colors hover:bg-emerald-600 hover:text-white active:scale-95"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-8 py-4 text-base font-semibold text-emerald-800 shadow-soft transition-colors hover:bg-emerald-600 hover:text-white active:scale-95 sm:w-auto"
             >
               <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
               WhatsApp Us
