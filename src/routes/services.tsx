@@ -604,7 +604,7 @@ function ServicesPage() {
       {/* Services Grid */}
       <section className="relative overflow-hidden bg-cream py-16 sm:py-24">
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="grid gap-8 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2 md:gap-8">
             {filteredServices.map((service, i) => {
               const Icon = ICONS[service.icon] ?? Leaf;
               return (
@@ -713,7 +713,7 @@ function ServicesPage() {
           <div className="mt-14 grid gap-8 lg:grid-cols-2">
             {/* Level I Card */}
             <Reveal delay={0.1}>
-              <div className="flex h-full flex-col justify-between rounded-4xl border border-beige bg-white p-8 sm:p-10 shadow-soft transition-all duration-300 hover:shadow-lift">
+              <div className="flex h-full flex-col justify-between rounded-4xl border border-beige bg-white p-6 sm:p-10 shadow-soft transition-all duration-300 hover:shadow-lift">
                 <div>
                   <div className="flex items-center justify-between gap-4">
                     <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sage-soft text-forest">
@@ -769,7 +769,7 @@ function ServicesPage() {
 
             {/* Level II Card */}
             <Reveal delay={0.2}>
-              <div className="flex h-full flex-col justify-between rounded-4xl border border-gold/30 bg-gradient-to-br from-white via-white to-gold/5 p-8 sm:p-10 shadow-soft transition-all duration-300 hover:shadow-lift">
+              <div className="flex h-full flex-col justify-between rounded-4xl border border-gold/30 bg-gradient-to-br from-white via-white to-gold/5 p-6 sm:p-10 shadow-soft transition-all duration-300 hover:shadow-lift">
                 <div>
                   <div className="flex items-center justify-between gap-4">
                     <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/20 text-gold-deep">
