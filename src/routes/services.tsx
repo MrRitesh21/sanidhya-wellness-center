@@ -609,12 +609,12 @@ function ServicesPage() {
               const Icon = ICONS[service.icon] ?? Leaf;
               return (
                 <Reveal key={service.id} delay={0.06 * (i % 2)}>
-                  <article className="group flex h-full flex-col justify-between rounded-3xl border border-beige bg-white p-8 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift">
+                  <article className="group flex h-full flex-col justify-between rounded-3xl border border-beige bg-white p-5 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift sm:p-8">
                     <div>
                       {/* Card Header */}
-                      <div className="flex items-start justify-between gap-4">
-                        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-sage-soft text-forest transition-colors duration-300 group-hover:bg-forest group-hover:text-ivory">
-                          <Icon className="h-6 w-6" aria-hidden="true" />
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sage-soft text-forest transition-colors duration-300 group-hover:bg-forest group-hover:text-ivory sm:h-14 sm:w-14">
+                          <Icon className="h-5 w-5 sm:h-6 sm:w-6" aria-hidden="true" />
                         </span>
                         <div className="flex items-center gap-1.5 rounded-full bg-ivory px-3 py-1 text-xs font-medium text-forest">
                           <Clock className="h-3.5 w-3.5 text-gold-deep" aria-hidden="true" />
@@ -622,11 +622,11 @@ function ServicesPage() {
                         </div>
                       </div>
 
-                      <h3 className="mt-5 font-display text-2xl font-semibold text-forest">
+                      <h3 className="mt-4 font-display text-xl font-semibold text-forest sm:mt-5 sm:text-2xl">
                         {service.title}
                       </h3>
 
-                      <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+                      <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground sm:mt-3 sm:text-base">
                         {service.description}
                       </p>
 
