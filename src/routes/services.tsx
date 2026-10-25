@@ -557,23 +557,45 @@ function ServicesPage() {
               </p>
             </Reveal>
 
-            {/* Filter Tabs */}
-            <Reveal delay={0.15} className="mt-10 flex flex-wrap justify-center gap-2">
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={cn(
-                    "rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300",
-                    activeCategory === cat.id
-                      ? "bg-primary text-primary-foreground shadow-soft"
-                      : "border border-forest/15 bg-white/70 text-forest hover:bg-white",
-                  )}
-                >
-                  {cat.label}
-                </button>
-              ))}
+            {/* Filter Tabs — swipeable chips row on mobile, centered wrap on desktop */}
+            <Reveal delay={0.15} className="mt-10">
+              <div
+                className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-x-visible sm:px-0 sm:pb-0"
+                role="tablist"
+                aria-label="Filter services by category"
+              >
+                {CATEGORIES.map((cat) => {
+                  const count =
+                    cat.id === "all"
+                      ? DETAILED_SERVICES.length
+                      : DETAILED_SERVICES.filter((s) => s.category === cat.id).length;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setActiveCategory(cat.id)}
+                      className={cn(
+                        "flex min-h-[44px] shrink-0 snap-start items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-300 sm:px-5",
+                        activeCategory === cat.id
+                          ? "bg-primary text-primary-foreground shadow-soft"
+                          : "border border-forest/15 bg-white/70 text-forest hover:bg-white",
+                      )}
+                    >
+                      {cat.label}
+                      <span
+                        className={cn(
+                          "rounded-full px-1.5 text-[0.7rem] font-bold tabular-nums",
+                          activeCategory === cat.id
+                            ? "bg-white/25 text-primary-foreground"
+                            : "bg-sage-soft/80 text-forest/80",
+                        )}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </Reveal>
           </div>
         </div>
