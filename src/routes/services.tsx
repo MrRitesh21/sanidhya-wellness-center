@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { clinic, services, whatsappLink, type ServiceItem } from "@/lib/clinic";
 import { LeafSprig, Reveal, SectionHeading } from "@/components/site/primitives";
+import { ClinicalCases } from "@/components/site/ClinicalCases";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/services")({
@@ -1066,6 +1067,9 @@ function ServicesPage() {
           </div>
         </div>
       </section>
+
+      {/* Real Clinical Transformations & Evidence */}
+      <ClinicalCases />
 
       {/* The 4-Step Healing Journey */}
       <section className="relative overflow-hidden bg-forest py-20 sm:py-28 text-ivory">

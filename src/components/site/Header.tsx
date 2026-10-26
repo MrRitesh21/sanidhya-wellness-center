@@ -8,12 +8,19 @@ import { EASE } from "./primitives";
 import { openBookingModal } from "@/lib/bookingModal";
 import { CLINIC_LOGO_SRC } from "./logoAsset";
 
-const NAV = [
+type NavItem = {
+  label: string;
+  href: "/" | "/about" | "/services" | "/results" | "/contact" | "/booking";
+  hash?: string;
+};
+
+const NAV: readonly NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
+  { label: "Clinical Results", href: "/results" },
   { label: "Contact", href: "/contact" },
-] as const;
+];
 
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
   if (tone === "light") {
@@ -120,16 +127,9 @@ export function Header() {
 
         <nav aria-label="Main navigation" className="hidden items-center gap-7 lg:flex">
           {NAV.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn(
-                  "group relative text-sm font-medium transition-colors hover:text-gold-deep",
-                  isActive ? "text-gold-deep font-semibold" : "text-forest",
-                )}
-              >
+            const isActive = !item.hash && pathname === item.href;
+            const content = (
+              <>
                 {item.label}
                 <span
                   aria-hidden="true"
@@ -138,6 +138,31 @@ export function Header() {
                     isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
                   )}
                 />
+              </>
+            );
+
+            if (item.hash) {
+              return (
+                <a
+                  key={item.label}
+                  href={`/#${item.hash}`}
+                  className="group relative text-sm font-medium transition-colors hover:text-gold-deep text-forest"
+                >
+                  {content}
+                </a>
+              );
+            }
+
+            return (
+              <Link
+                key={item.label}
+                to={item.href}
+                className={cn(
+                  "group relative text-sm font-medium transition-colors hover:text-gold-deep",
+                  isActive ? "text-gold-deep font-semibold" : "text-forest",
+                )}
+              >
+                {content}
               </Link>
             );
           })}
@@ -225,10 +250,10 @@ export function Header() {
           >
             <nav aria-label="Mobile navigation" className="space-y-1">
               {NAV.map((item, index) => {
-                const isActive = pathname === item.href;
+                const isActive = !item.hash && pathname === item.href;
                 return (
                   <motion.div
-                    key={item.href}
+                    key={item.label}
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{
@@ -237,18 +262,28 @@ export function Header() {
                       ease: "easeOut",
                     }}
                   >
-                    <Link
-                      to={item.href}
-                      onClick={closeMenu}
-                      className={cn(
-                        "flex min-h-[52px] items-center rounded-2xl px-4 font-display text-2xl transition-colors duration-150",
-                        isActive
-                          ? "bg-sage-soft/70 text-forest font-semibold shadow-xs"
-                          : "text-forest hover:bg-forest/5 active:text-gold-deep",
-                      )}
-                    >
-                      {item.label}
-                    </Link>
+                    {item.hash ? (
+                      <a
+                        href={`/#${item.hash}`}
+                        onClick={closeMenu}
+                        className="flex min-h-[52px] items-center rounded-2xl px-4 font-display text-2xl transition-colors duration-150 text-forest hover:bg-forest/5 active:text-gold-deep"
+                      >
+                        {item.label}
+                      </a>
+                    ) : (
+                      <Link
+                        to={item.href}
+                        onClick={closeMenu}
+                        className={cn(
+                          "flex min-h-[52px] items-center rounded-2xl px-4 font-display text-2xl transition-colors duration-150",
+                          isActive
+                            ? "bg-sage-soft/70 text-forest font-semibold shadow-xs"
+                            : "text-forest hover:bg-forest/5 active:text-gold-deep",
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    )}
                   </motion.div>
                 );
               })}
