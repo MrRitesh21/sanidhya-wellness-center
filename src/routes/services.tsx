@@ -759,6 +759,39 @@ function ServicesPage() {
             })}
           </div>
 
+          {filteredServices.length === 0 ? (
+            <Reveal>
+              <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-beige bg-white p-10 text-center shadow-soft">
+                <Search className="mx-auto h-8 w-8 text-gold-deep" aria-hidden="true" />
+                <h3 className="mt-4 font-display text-xl font-semibold text-forest sm:text-2xl">
+                  No services found
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {isSearching
+                    ? `Nothing matches “${query.trim()}” in this category. Try a different word — or ask us directly on the phone.`
+                    : "No services are listed in this category yet. Try another category."}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("");
+                    setActiveCategory("all");
+                  }}
+                  className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep"
+                >
+                  Show all services
+                </button>
+              </div>
+            </Reveal>
+          ) : (
+            isSearching && (
+              <p className="mt-8 text-center text-sm font-medium text-muted-foreground" role="status">
+                Showing {filteredServices.length} {filteredServices.length === 1 ? "service" : "services"}{" "}
+                matching “{query.trim()}”
+              </p>
+            )
+          )}
+
           {/* Advisory Notice */}
           <Reveal delay={0.15}>
             <div className="mx-auto mt-12 flex max-w-3xl items-start gap-3.5 rounded-3xl border border-beige bg-white/80 p-5 shadow-soft">
