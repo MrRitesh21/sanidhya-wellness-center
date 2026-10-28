@@ -559,11 +559,20 @@ const STEPS = [
 
 function ServicesPage() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [query, setQuery] = useState("");
 
-  const filteredServices =
-    activeCategory === "all"
-      ? DETAILED_SERVICES
-      : DETAILED_SERVICES.filter((s) => s.category === activeCategory);
+  const queryWords = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const matchesQuery = (s: ServiceDetail) => {
+    if (queryWords.length === 0) return true;
+    const haystack =
+      `${s.title} ${s.description} ${s.benefits.join(" ")} ${SEARCH_KEYWORDS[s.id] ?? ""}`.toLowerCase();
+    return queryWords.every((w) => haystack.includes(w));
+  };
+
+  const filteredServices = DETAILED_SERVICES.filter(
+    (s) => (activeCategory === "all" || s.category === activeCategory) && matchesQuery(s),
+  );
+  const isSearching = queryWords.length > 0;
 
   return (
     <div className="pt-24 sm:pt-28">
