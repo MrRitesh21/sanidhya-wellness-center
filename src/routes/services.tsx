@@ -605,8 +605,41 @@ function ServicesPage() {
               </p>
             </Reveal>
 
+            {/* Search — everyday + Hindi/Hinglish keyword friendly */}
+            <Reveal delay={0.12} className="mt-8">
+              <div className="mx-auto max-w-xl">
+                <label htmlFor="service-search" className="sr-only">
+                  Search services
+                </label>
+                <div className="relative">
+                  <Search
+                    className="pointer-events-none absolute left-4 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-gold-deep"
+                    aria-hidden="true"
+                  />
+                  <input
+                    id="service-search"
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search — e.g. “kamar dard”, “neend”, steam, yoga…"
+                    className="min-h-[48px] w-full rounded-full border border-forest/15 bg-white/85 py-3 pl-11 pr-11 text-sm text-charcoal shadow-soft outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-forest/40 focus:bg-white [&::-webkit-search-cancel-button]:hidden"
+                  />
+                  {query && (
+                    <button
+                      type="button"
+                      onClick={() => setQuery("")}
+                      aria-label="Clear search"
+                      className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-beige/70 hover:text-forest"
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </Reveal>
+
             {/* Filter Tabs — swipeable chips row on mobile, centered wrap on desktop */}
-            <Reveal delay={0.15} className="mt-10">
+            <Reveal delay={0.15} className="mt-6">
               <div
                 className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-x-visible sm:px-0 sm:pb-0"
                 role="tablist"
