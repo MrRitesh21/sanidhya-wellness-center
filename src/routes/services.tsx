@@ -559,11 +559,20 @@ const STEPS = [
 
 function ServicesPage() {
   const [activeCategory, setActiveCategory] = useState<string>("all");
+  const [query, setQuery] = useState("");
 
-  const filteredServices =
-    activeCategory === "all"
-      ? DETAILED_SERVICES
-      : DETAILED_SERVICES.filter((s) => s.category === activeCategory);
+  const queryWords = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const matchesQuery = (s: ServiceDetail) => {
+    if (queryWords.length === 0) return true;
+    const haystack =
+      `${s.title} ${s.description} ${s.benefits.join(" ")} ${SEARCH_KEYWORDS[s.id] ?? ""}`.toLowerCase();
+    return queryWords.every((w) => haystack.includes(w));
+  };
+
+  const filteredServices = DETAILED_SERVICES.filter(
+    (s) => (activeCategory === "all" || s.category === activeCategory) && matchesQuery(s),
+  );
+  const isSearching = queryWords.length > 0;
 
   return (
     <div className="pt-24 sm:pt-28">
@@ -596,8 +605,41 @@ function ServicesPage() {
               </p>
             </Reveal>
 
+            {/* Search — everyday + Hindi/Hinglish keyword friendly */}
+            <Reveal delay={0.12} className="mt-8">
+              <div className="mx-auto max-w-xl">
+                <label htmlFor="service-search" className="sr-only">
+                  Search services
+                </label>
+                <div className="relative">
+                  <Search
+                    className="pointer-events-none absolute left-4 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-gold-deep"
+                    aria-hidden="true"
+                  />
+                  <input
+                    id="service-search"
+                    type="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search — e.g. “kamar dard”, “neend”, steam, yoga…"
+                    className="min-h-[48px] w-full rounded-full border border-forest/15 bg-white/85 py-3 pl-11 pr-11 text-sm text-charcoal shadow-soft outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-forest/40 focus:bg-white [&::-webkit-search-cancel-button]:hidden"
+                  />
+                  {query && (
+                    <button
+                      type="button"
+                      onClick={() => setQuery("")}
+                      aria-label="Clear search"
+                      className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-beige/70 hover:text-forest"
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </Reveal>
+
             {/* Filter Tabs — swipeable chips row on mobile, centered wrap on desktop */}
-            <Reveal delay={0.15} className="mt-10">
+            <Reveal delay={0.15} className="mt-6">
               <div
                 className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-x-visible sm:px-0 sm:pb-0"
                 role="tablist"
@@ -716,6 +758,39 @@ function ServicesPage() {
               );
             })}
           </div>
+
+          {filteredServices.length === 0 ? (
+            <Reveal>
+              <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-beige bg-white p-10 text-center shadow-soft">
+                <Search className="mx-auto h-8 w-8 text-gold-deep" aria-hidden="true" />
+                <h3 className="mt-4 font-display text-xl font-semibold text-forest sm:text-2xl">
+                  No services found
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {isSearching
+                    ? `Nothing matches “${query.trim()}” in this category. Try a different word — or ask us directly on the phone.`
+                    : "No services are listed in this category yet. Try another category."}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("");
+                    setActiveCategory("all");
+                  }}
+                  className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep"
+                >
+                  Show all services
+                </button>
+              </div>
+            </Reveal>
+          ) : (
+            isSearching && (
+              <p className="mt-8 text-center text-sm font-medium text-muted-foreground" role="status">
+                Showing {filteredServices.length} {filteredServices.length === 1 ? "service" : "services"}{" "}
+                matching “{query.trim()}”
+              </p>
+            )
+          )}
 
           {/* Advisory Notice */}
           <Reveal delay={0.15}>
