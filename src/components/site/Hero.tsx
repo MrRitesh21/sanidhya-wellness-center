@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowRight, ArrowUpRight, MapPin, MessageCircle, Phone } from "lucide-react";
-import heroImg from "@/assets/hero-wellness.jpg";
+import heroMassage from "@/assets/hero-massage.jpg";
+import heroYoga from "@/assets/hero-yoga.jpg";
+import heroHerbs from "@/assets/hero-herbs.jpg";
+import heroAcupressure from "@/assets/hero-acupressure.jpg";
 import { clinic, getOpenStatus, whatsappLink } from "@/lib/clinic";
 import { EASE, FloatingLeaf, LeafSprig, fadeUp, staggerContainer } from "./primitives";
 import { Stars } from "./Stars";
 import { openBookingModal } from "@/lib/bookingModal";
+
+/**
+ * Service-themed hero background images. Every image is composed with its
+ * subject on the RIGHT third and an intentionally calm, empty LEFT side so
+ * the headline, copy and CTAs remain fully readable.
+ */
+const HERO_SLIDES = [heroMassage, heroYoga, heroHerbs, heroAcupressure];
+const SLIDE_INTERVAL_MS = 6500;
 
 export function Hero() {
   // Open/closed is computed after mount to avoid SSR/client text mismatch.
@@ -14,6 +25,18 @@ export function Hero() {
   useEffect(() => {
     setStatus(getOpenStatus().label);
   }, []);
+
+  const reduceMotion = useReducedMotion();
+  const [slide, setSlide] = useState(0);
+  useEffect(() => {
+    if (reduceMotion || HERO_SLIDES.length < 2) return;
+    const id = window.setInterval(
+      () => setSlide((s) => (s + 1) % HERO_SLIDES.length),
+      SLIDE_INTERVAL_MS,
+    );
+    return () => window.clearInterval(id);
+  }, [reduceMotion]);
+
 
   const { scrollY } = useScroll();
   const bgY = useTransform(scrollY, [0, 800], [0, 90]);
@@ -24,17 +47,27 @@ export function Hero() {
       id="top"
       className="relative flex min-h-[100svh] items-center overflow-hidden bg-ivory"
     >
-      {/* Layered background: photograph + organic overlays */}
+      {/* Layered background: rotating service photographs + organic overlays */}
       <motion.div style={{ y: bgY }} className="absolute inset-0" aria-hidden="true">
-        <img
-          src={heroImg}
-          alt=""
-          width={1920}
-          height={1280}
-          fetchPriority="high"
-          className="h-[115%] w-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/88 to-ivory/25" />
+        {HERO_SLIDES.map((src, i) => (
+          <motion.img
+            key={src}
+            src={src}
+            alt=""
+            width={1920}
+            height={1280}
+            fetchPriority={i === 0 ? "high" : undefined}
+            animate={{ opacity: i === slide ? 1 : 0, scale: i === slide ? 1 : 1.04 }}
+            initial={false}
+            transition={
+              i === slide
+                ? { opacity: { duration: 1.4, ease: "easeInOut" }, scale: { duration: 8, ease: "linear" } }
+                : { duration: 1.4, ease: "easeInOut" }
+            }
+            className="absolute inset-0 h-[115%] w-full object-cover object-center"
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/88 to-ivory/20" />
         <div className="absolute inset-0 bg-gradient-to-b from-ivory/70 via-transparent to-ivory" />
       </motion.div>
 
