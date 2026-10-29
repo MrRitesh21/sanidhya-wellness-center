@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowRight, ArrowUpRight, MapPin, MessageCircle, Phone } from "lucide-react";
 import heroMassage from "@/assets/hero-massage.jpg";
 import heroYoga from "@/assets/hero-yoga.jpg";
