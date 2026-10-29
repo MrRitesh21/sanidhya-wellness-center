@@ -1,0 +1,32 @@
+# Sanidhya Naturopathy Center
+
+> Sanidhya Naturopathy Center is a naturopathy centre in Sector I, Jankipuram, Lucknow, Uttar Pradesh, India. It offers natural wellness consultations and traditional natural therapies, with a 4.7/5 rating from 48 Google reviews.
+
+- Address: H-D/98, Sector I Main Road, Sector I, Janki Vihar Colony, Jankipuram, Lucknow, Uttar Pradesh 226021, India
+- Phone: +91 94150 26684
+- Opening hours: Monday–Saturday 10:00 AM–9:30 PM; Sunday 10:00 AM–2:00 PM (Asia/Kolkata)
+- Accessibility: wheelchair-accessible entrance and parking
+- Google Maps: https://www.google.com/maps/place/?q=place_id:ChIJJ80omK1XmTkRSp7MzWn02MU
+- Google Reviews: https://search.google.com/local/reviews?placeid=ChIJJ80omK1XmTkRSp7MzWn02MU
+
+## Services
+
+- Naturopathy consultations and holistic wellness planning
+- Hydrotherapy (hip baths, spinal sprays, compresses)
+- Mud therapy (solar-prepared)
+- Herbal steam bath
+- Acupressure and Sujok reflexology
+- Therapeutic yoga, Yoga Nidra and guided meditation
+- Diet and nutrition guidance
+- Usui Reiki Level I and Level II certificate courses
+
+## Pages
+
+- Home: /
+- About: /about
+- Services & Therapies: /services
+- Clinical Results: /results
+- Contact & Location: /contact
+- Book an Appointment: /booking
+
+Sanidhya Naturopathy Center does not claim to cure diseases and does not replace conventional medical treatment; suitability of any therapy is confirmed directly with the clinic during consultation.

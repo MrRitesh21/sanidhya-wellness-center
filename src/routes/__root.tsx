@@ -141,8 +141,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@type": "MedicalBusiness",
           name: "Sanidhya Naturopathy Center",
+          alternateName: ["Sanidhya Naturopathy Centre", "Sanidhya Naturopathy Center Jankipuram"],
           description:
-            "Find Sanidhya Naturopathy Center in Sector I, Jankipuram, Lucknow. View location, opening hours, contact details, and appointment enquiry options.",
+            "Sanidhya Naturopathy Center is a naturopathy centre in Sector I, Jankipuram, Lucknow offering natural wellness consultations and traditional therapies including hydrotherapy, mud therapy, herbal steam bath, acupressure, sujok, yoga and Reiki training.",
           telephone: "+919415026684",
           address: {
             "@type": "PostalAddress",
@@ -152,6 +153,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             postalCode: "226021",
             addressCountry: "IN",
           },
+          areaServed: [
+            { "@type": "Place", name: "Jankipuram, Lucknow" },
+            { "@type": "City", name: "Lucknow" },
+          ],
+          hasMap: "https://www.google.com/maps/place/?q=place_id:ChIJJ80omK1XmTkRSp7MzWn02MU",
+          sameAs: [
+            "https://www.google.com/maps/place/?q=place_id:ChIJJ80omK1XmTkRSp7MzWn02MU",
+            "https://search.google.com/local/reviews?placeid=ChIJJ80omK1XmTkRSp7MzWn02MU",
+          ],
           aggregateRating: {
             "@type": "AggregateRating",
             ratingValue: "4.7",
