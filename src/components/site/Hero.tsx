@@ -47,17 +47,27 @@ export function Hero() {
       id="top"
       className="relative flex min-h-[100svh] items-center overflow-hidden bg-ivory"
     >
-      {/* Layered background: photograph + organic overlays */}
+      {/* Layered background: rotating service photographs + organic overlays */}
       <motion.div style={{ y: bgY }} className="absolute inset-0" aria-hidden="true">
-        <img
-          src={heroImg}
-          alt=""
-          width={1920}
-          height={1280}
-          fetchPriority="high"
-          className="h-[115%] w-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/88 to-ivory/25" />
+        {HERO_SLIDES.map((src, i) => (
+          <motion.img
+            key={src}
+            src={src}
+            alt=""
+            width={1920}
+            height={1280}
+            fetchPriority={i === 0 ? "high" : undefined}
+            animate={{ opacity: i === slide ? 1 : 0, scale: i === slide ? 1 : 1.04 }}
+            initial={false}
+            transition={
+              i === slide
+                ? { opacity: { duration: 1.4, ease: "easeInOut" }, scale: { duration: 8, ease: "linear" } }
+                : { duration: 1.4, ease: "easeInOut" }
+            }
+            className="absolute inset-0 h-[115%] w-full object-cover object-center"
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/88 to-ivory/20" />
         <div className="absolute inset-0 bg-gradient-to-b from-ivory/70 via-transparent to-ivory" />
       </motion.div>
 
