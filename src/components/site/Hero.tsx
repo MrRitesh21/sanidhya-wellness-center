@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowRight, ArrowUpRight, MapPin, MessageCircle, Phone } from "lucide-react";
-import heroImg from "@/assets/hero-wellness.jpg";
+import heroMassage from "@/assets/hero-massage.jpg";
+import heroYoga from "@/assets/hero-yoga.jpg";
+import heroHerbs from "@/assets/hero-herbs.jpg";
+import heroAcupressure from "@/assets/hero-acupressure.jpg";
 import { clinic, getOpenStatus, whatsappLink } from "@/lib/clinic";
 import { EASE, FloatingLeaf, LeafSprig, fadeUp, staggerContainer } from "./primitives";
 import { Stars } from "./Stars";
 import { openBookingModal } from "@/lib/bookingModal";
+
+/**
+ * Service-themed hero background images. Every image is composed with its
+ * subject on the RIGHT third and an intentionally calm, empty LEFT side so
+ * the headline, copy and CTAs remain fully readable.
+ */
+const HERO_SLIDES = [heroMassage, heroYoga, heroHerbs, heroAcupressure];
+const SLIDE_INTERVAL_MS = 6500;
 
 export function Hero() {
   // Open/closed is computed after mount to avoid SSR/client text mismatch.
@@ -14,6 +25,18 @@ export function Hero() {
   useEffect(() => {
     setStatus(getOpenStatus().label);
   }, []);
+
+  const reduceMotion = useReducedMotion();
+  const [slide, setSlide] = useState(0);
+  useEffect(() => {
+    if (reduceMotion || HERO_SLIDES.length < 2) return;
+    const id = window.setInterval(
+      () => setSlide((s) => (s + 1) % HERO_SLIDES.length),
+      SLIDE_INTERVAL_MS,
+    );
+    return () => window.clearInterval(id);
+  }, [reduceMotion]);
+
 
   const { scrollY } = useScroll();
   const bgY = useTransform(scrollY, [0, 800], [0, 90]);
