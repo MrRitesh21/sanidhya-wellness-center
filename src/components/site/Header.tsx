@@ -10,13 +10,14 @@ import { CLINIC_LOGO_SRC } from "./logoAsset";
 
 type NavItem = {
   label: string;
-  href: "/" | "/about" | "/services" | "/results" | "/contact" | "/booking";
+  href: "/" | "/about" | "/doctors" | "/services" | "/results" | "/contact" | "/booking";
   hash?: string;
 };
 
 const NAV: readonly NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
+  { label: "Doctors", href: "/doctors" },
   { label: "Services", href: "/services" },
   { label: "Clinical Results", href: "/results" },
   { label: "Contact", href: "/contact" },
@@ -125,7 +126,7 @@ export function Header() {
       >
         <Logo />
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-7 lg:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-4 xl:flex 2xl:gap-7">
           {NAV.map((item) => {
             const isActive = !item.hash && pathname === item.href;
             const content = (
@@ -209,7 +210,7 @@ export function Header() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="relative flex h-11 w-11 touch-manipulation items-center justify-center rounded-full text-forest transition-colors hover:bg-forest/10 active:scale-95 lg:hidden"
+            className="relative flex h-11 w-11 touch-manipulation items-center justify-center rounded-full text-forest transition-colors hover:bg-forest/10 active:scale-95 xl:hidden"
           >
             <div className="relative h-6 w-6">
               <span
@@ -246,7 +247,7 @@ export function Header() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             style={{ willChange: "transform, opacity" }}
-            className="fixed inset-x-0 bottom-0 top-16 z-[60] flex flex-col justify-between overflow-y-auto overscroll-contain bg-ivory px-5 pb-14 pt-6 shadow-2xl lg:hidden"
+            className="fixed inset-x-0 bottom-0 top-16 z-[60] flex flex-col justify-between overflow-y-auto overscroll-contain bg-ivory px-5 pb-14 pt-6 shadow-2xl xl:hidden"
           >
             <nav aria-label="Mobile navigation" className="space-y-1">
               {NAV.map((item, index) => {
