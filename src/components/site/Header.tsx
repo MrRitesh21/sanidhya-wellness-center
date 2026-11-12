@@ -55,7 +55,7 @@ export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
   return (
     <Link
       to="/"
-      className="group flex items-center gap-2.5 sm:gap-3 transition-opacity hover:opacity-95"
+      className="group flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-95 sm:gap-3"
       aria-label="Sanidhya Naturopathy Center — Home"
     >
       <img
@@ -120,13 +120,13 @@ export function Header() {
     >
       <div
         className={cn(
-          "mx-auto flex max-w-6xl items-center justify-between px-4 transition-[height] duration-200 sm:px-6",
+          "mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-[height] duration-200 sm:px-6",
           scrolled || open ? "h-16" : "h-16 sm:h-20",
         )}
       >
         <Logo />
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-4 xl:flex 2xl:gap-7">
+        <nav aria-label="Main navigation" className="hidden shrink-0 items-center gap-4 xl:flex 2xl:gap-7">
           {NAV.map((item) => {
             const isActive = !item.hash && pathname === item.href;
             const content = (
@@ -169,7 +169,7 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {/* Desktop Call Direct Button */}
           <a
             href={clinic.phoneHref}
