@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { ArrowRight, ArrowUpRight, MapPin, MessageCircle, Phone } from "lucide-react";
+import { ArrowRight, MessageCircle, Phone } from "lucide-react";
 import heroMassage from "@/assets/hero-massage.jpg";
 import heroYoga from "@/assets/hero-yoga.jpg";
 import heroHerbs from "@/assets/hero-herbs.jpg";
 import heroAcupressure from "@/assets/hero-acupressure.jpg";
 import practitionerPortrait from "@/assets/clinic-practitioner-portrait.jpg";
-import { clinic, getOpenStatus, whatsappLink } from "@/lib/clinic";
+import { clinic, whatsappLink } from "@/lib/clinic";
 import { EASE, FloatingLeaf, LeafSprig, fadeUp, staggerContainer } from "./primitives";
 import { Stars } from "./Stars";
 import { openBookingModal } from "@/lib/bookingModal";
@@ -21,12 +21,6 @@ const HERO_SLIDES = [heroMassage, heroYoga, heroHerbs, heroAcupressure];
 const SLIDE_INTERVAL_MS = 6500;
 
 export function Hero() {
-  // Open/closed is computed after mount to avoid SSR/client text mismatch.
-  const [status, setStatus] = useState<string | null>(null);
-  useEffect(() => {
-    setStatus(getOpenStatus().label);
-  }, []);
-
   const reduceMotion = useReducedMotion();
   const [slide, setSlide] = useState(0);
   useEffect(() => {
