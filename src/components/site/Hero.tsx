@@ -6,6 +6,7 @@ import heroMassage from "@/assets/hero-massage.jpg";
 import heroYoga from "@/assets/hero-yoga.jpg";
 import heroHerbs from "@/assets/hero-herbs.jpg";
 import heroAcupressure from "@/assets/hero-acupressure.jpg";
+import practitionerPortrait from "@/assets/clinic-practitioner-portrait.jpg";
 import { clinic, getOpenStatus, whatsappLink } from "@/lib/clinic";
 import { EASE, FloatingLeaf, LeafSprig, fadeUp, staggerContainer } from "./primitives";
 import { Stars } from "./Stars";
@@ -209,45 +210,30 @@ export function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Floating location card */}
+          {/* Practitioner portrait */}
           <motion.div style={{ y: cardY }} className="relative lg:justify-self-end">
             <motion.div
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-              className="relative"
+              className="relative w-full max-w-sm"
             >
-              <LeafSprig className="absolute -right-4 -top-12 hidden h-14 w-28 text-sage md:block" />
-              <div className="relative w-full max-w-sm rounded-3xl border border-white/70 bg-white/80 p-6 shadow-lift backdrop-blur-md">
-                <div className="flex items-start gap-4">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sage-soft text-forest">
-                    <MapPin className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                  <div>
-                    <p className="font-display text-xl font-semibold text-forest">
-                      Visit us in Jankipuram
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                      {clinic.address.line1}, {clinic.address.line2}, {clinic.address.area},{" "}
-                      {clinic.address.city} {clinic.address.pin}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center gap-2.5 rounded-2xl bg-ivory px-4 py-3 text-sm">
-                  <span className="h-2 w-2 shrink-0 rounded-full bg-gold" aria-hidden="true" />
-                  <span className="font-medium text-charcoal">
-                    {status ?? "Mon–Sat 10 AM–9:30 PM · Sun 10 AM–2 PM"}
-                  </span>
-                </div>
-                <a
-                  href={clinic.mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-forest transition-colors hover:text-gold-deep"
-                >
-                  Get Directions
-                  <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-                </a>
+              <LeafSprig className="absolute -right-4 -top-8 z-10 hidden h-14 w-28 text-sage md:block" />
+              <img
+                src={practitionerPortrait}
+                alt="Practitioner at Sanidhya Naturopathy Center"
+                width={816}
+                height={816}
+                decoding="async"
+                className="relative aspect-[4/5] w-full rounded-2xl border border-white/70 object-cover object-center shadow-lift"
+              />
+              <div className="mt-4 border-t border-white/70 pt-3 text-right">
+                <p className="font-display text-xl font-semibold text-forest">
+                  Sanidhya Naturopathy Center
+                </p>
+                <p className="mt-1 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                  Jankipuram · Lucknow
+                </p>
               </div>
             </motion.div>
           </motion.div>
