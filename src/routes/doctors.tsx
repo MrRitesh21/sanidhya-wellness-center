@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, HeartHandshake, Leaf, MessageCircle, Phone } from "lucide-react";
+import { ArrowRight, HeartHandshake, Leaf, MessageCircle, Phone, Sparkles, Stethoscope, ShieldCheck } from "lucide-react";
 import practitionerPortrait from "@/assets/clinic-practitioner-portrait.jpg";
 import { clinic, whatsappLink } from "@/lib/clinic";
+import { useClinicData } from "@/lib/clinicSync";
+import { DEFAULT_DOCTOR } from "@/lib/appointment";
 import { LeafSprig, Reveal } from "@/components/site/primitives";
 
 const PAGE_TITLE = "Doctors & Care Team | Sanidhya Naturopathy Center Lucknow";
@@ -48,32 +50,45 @@ const CARE_PRACTICES = [
 ];
 
 function DoctorsPage() {
+  const managedClinic = useClinicData();
+
   return (
     <div className="pt-24 sm:pt-28">
       <section className="bg-ivory py-12 sm:py-20 lg:py-24">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
           <div className="order-2 lg:order-1">
             <Reveal>
-              <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
-                <span className="h-px w-8 bg-current opacity-60" aria-hidden="true" />
-                Doctors & care team
-              </p>
-              <h1 className="mt-5 max-w-xl font-display text-5xl font-medium leading-[1.06] text-forest sm:text-6xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-800 dark:border-teal-800 dark:bg-teal-950/40 dark:text-teal-300">
+                <Sparkles className="size-3.5 text-[#0d9488]" />
+                Lead Practitioner &middot; Dr. Kamal
+              </div>
+              <h1 className="mt-4 max-w-xl font-display text-5xl font-medium leading-[1.06] text-forest sm:text-6xl">
                 Thoughtful care begins with <em className="text-gold-deep">listening.</em>
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Get to know the people behind your visit at Sanidhya Naturopathy Center. Every
-                enquiry is an opportunity to share what matters to you and ask about the center’s
-                wellness approaches.
+              <div className="mt-4 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">{managedClinic.doctor_name || DEFAULT_DOCTOR.name}</h2>
+                    <p className="text-xs font-semibold text-teal-700">{managedClinic.specialization || DEFAULT_DOCTOR.specialty}</p>
+                    <p className="text-xs text-muted-foreground">{managedClinic.qualification || DEFAULT_DOCTOR.qualifications}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">OPD Fee</p>
+                    <p className="text-xl font-black text-[#0d9488]">₹{managedClinic.consultation_fee || DEFAULT_DOCTOR.consultationFee}</p>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+                Meet Dr. Kamal at Sanidhya Naturopathy Center. Every consultation is an unhurried, personalized evaluation designed to understand your constitution and health goals.
               </p>
             </Reveal>
 
-            <Reveal delay={0.12} className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <Reveal delay={0.12} className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 to="/booking"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#0d9488] px-7 py-3 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-[#0f766e]"
               >
-                Request an Appointment
+                Book OPD Appointment &darr;
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <a
@@ -85,13 +100,12 @@ function DoctorsPage() {
               </a>
             </Reveal>
 
-            <Reveal delay={0.18} className="mt-7 flex items-start gap-3 border-t border-beige pt-5">
+            <Reveal delay={0.18} className="mt-6 flex items-start gap-3 border-t border-beige pt-4">
               <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sage-soft text-forest">
-                <Leaf className="h-4 w-4" aria-hidden="true" />
+                <ShieldCheck className="h-4 w-4 text-[#0d9488]" aria-hidden="true" />
               </span>
-              <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-                Practitioner names and qualifications are shared directly by the center; no
-                unverified credentials are listed here.
+              <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
+                Verified practitioner credentials &middot; OPD Token management powered by ClinicX &middot; DPDP Act 2023 Compliant.
               </p>
             </Reveal>
           </div>

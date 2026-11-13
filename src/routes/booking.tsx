@@ -11,9 +11,11 @@ import {
   Phone,
   ShieldCheck,
   Sparkles,
+  Stethoscope,
 } from "lucide-react";
-import { Booking } from "@/components/site/Booking";
+import { OpdBookingFlow } from "@/components/site/OpdBookingFlow";
 import { clinic, formatTime, fullAddress, hours, whatsappLink } from "@/lib/clinic";
+import { useClinicData } from "@/lib/clinicSync";
 import { LeafSprig, Reveal, SectionHeading } from "@/components/site/primitives";
 import { openBookingModal } from "@/lib/bookingModal";
 
@@ -21,26 +23,26 @@ export const Route = createFileRoute("/booking")({
   head: () => ({
     meta: [
       {
-        title: "Book an Appointment | Sanidhya Naturopathy Center Lucknow",
+        title: "Doctor OPD Appointment Booking | Sanidhya Naturopathy Center Lucknow",
       },
       {
         name: "description",
         content:
-          "Schedule your naturopathy consultation at Sanidhya Naturopathy Center in Sector I Jankipuram, Lucknow. Choose a preferred date and time online or call +91 94150 26684.",
+          "Book Doctor OPD Appointment & Digital Token with Dr. Kamal (General Physician & Naturopath) at Sanidhya Naturopathy Center, Jankipuram, Lucknow. DPDP Act 2023 Compliant.",
       },
       {
         name: "keywords",
         content:
-          "Book naturopathy appointment Lucknow, Sanidhya clinic appointment Jankipuram, Naturopathy consultation booking Lucknow",
+          "Doctor OPD appointment Lucknow, Dr. Kamal consultation, Naturopathy booking Lucknow, DPDP Act 2023 compliant appointment, Sanidhya clinic appointment Jankipuram",
       },
       {
         property: "og:title",
-        content: "Book an Appointment | Sanidhya Naturopathy Center Lucknow",
+        content: "Doctor OPD Appointment Booking | Sanidhya Naturopathy Center Lucknow",
       },
       {
         property: "og:description",
         content:
-          "Reserve your consultation slot online. Gentle, personalized naturopathy guidance in Jankipuram, Lucknow.",
+          "Instant Digital OPD Token for Dr. Kamal at Sanidhya Naturopathy Center. Choose In-Clinic OPD or Online Video Consultation.",
       },
     ],
   }),
@@ -94,10 +96,12 @@ const BOOKING_FAQS = [
 ];
 
 function BookingPage() {
+  const managedClinic = useClinicData();
+
   useEffect(() => {
     // If arriving with hash or direct action, scroll directly to form
-    if (window.location.hash === "#appointment" || window.location.hash === "#booking-form") {
-      const el = document.getElementById("appointment");
+    if (window.location.hash === "#appointment" || window.location.hash === "#booking-form" || window.location.hash === "#opd-booking") {
+      const el = document.getElementById("opd-booking") || document.getElementById("appointment");
       if (el) {
         el.scrollIntoView({ behavior: "smooth" });
       }
@@ -105,12 +109,9 @@ function BookingPage() {
   }, []);
 
   const scrollToForm = () => {
-    const el = document.getElementById("appointment");
+    const el = document.getElementById("opd-booking") || document.getElementById("appointment");
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
-      setTimeout(() => {
-        document.getElementById("name")?.focus();
-      }, 400);
     } else {
       openBookingModal();
     }
@@ -132,29 +133,30 @@ function BookingPage() {
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mx-auto max-w-3xl text-center">
             <Reveal>
-              <p className="flex items-center justify-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
-                <span className="inline-block h-px w-8 bg-current opacity-60" aria-hidden="true" />
-                Schedule a Visit
-                <span className="inline-block h-px w-8 bg-current opacity-60" aria-hidden="true" />
-              </p>
+              <div className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-800 dark:border-teal-800 dark:bg-teal-950/40 dark:text-teal-300">
+                <Sparkles className="size-3.5 text-[#0d9488]" />
+                <span>OPD Token System &middot; DPDP Act 2023 Compliant</span>
+              </div>
               <h1 className="mt-4 font-display text-4xl font-medium leading-[1.15] text-forest sm:text-6xl">
-                Book Your Wellness <em className="italic text-gold-deep">Consultation</em>.
+                Book Consultation with <em className="italic text-gold-deep">{managedClinic.doctor_name || "Dr. Kamal"}</em>
               </h1>
-              <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                Choose a convenient date and time to meet with our naturopathy specialists in Sector
-                I, Jankipuram, Lucknow. We look forward to welcoming you.
+              <p className="mt-4 text-base font-semibold text-teal-800 dark:text-teal-400 sm:text-lg">
+                {managedClinic.specialization || "General Physician & Naturopathy Specialist"} &middot; Consultation Fee: ₹{managedClinic.consultation_fee || 600}
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                Reserve your consultation slot online and receive an instant digital OPD Token on WhatsApp. Zero queue wait at our center in Sector I, Jankipuram, Lucknow or join over online video consultation.
               </p>
             </Reveal>
 
             {/* Quick Contact Bar & Direct Form Opener */}
-            <Reveal delay={0.12} className="mt-8 flex flex-wrap justify-center gap-4 text-sm">
+            <Reveal delay={0.12} className="mt-8 flex flex-wrap justify-center gap-3 text-sm">
               <button
                 type="button"
                 onClick={scrollToForm}
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 font-semibold text-primary-foreground shadow-soft transition-colors hover:bg-forest-deep active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full bg-[#0d9488] px-6 py-2.5 font-semibold text-white shadow-soft transition-colors hover:bg-[#0f766e] active:scale-95"
               >
                 <Calendar className="h-4 w-4" aria-hidden="true" />
-                Fill Appointment Form &darr;
+                Select Date &amp; Slot &darr;
               </button>
               <a
                 href={clinic.phoneHref}
@@ -165,23 +167,27 @@ function BookingPage() {
               </a>
               <a
                 href={whatsappLink(
-                  "Hello Sanidhya Naturopathy Center, I would like to book an appointment.",
+                  `Hello Sanidhya Naturopathy Center, I would like to book an appointment with ${managedClinic.doctor_name || "Dr. Kamal"}.`,
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-6 py-2.5 font-semibold text-emerald-800 shadow-soft transition-colors hover:bg-emerald-600 hover:text-white"
               >
                 <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
-                WhatsApp Us
+                WhatsApp Helpdesk
               </a>
             </Reveal>
           </div>
         </div>
       </section>
 
-      {/* Booking Form Integration */}
-      <section className="relative">
-        <Booking />
+      {/* Modern Interactive OPD Booking Component */}
+      <section id="appointment" className="relative bg-gradient-to-b from-ivory to-cream py-12 sm:py-16">
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+          <Reveal>
+            <OpdBookingFlow />
+          </Reveal>
+        </div>
       </section>
 
       {/* First-time Visitor Guidance & Practical Info */}
