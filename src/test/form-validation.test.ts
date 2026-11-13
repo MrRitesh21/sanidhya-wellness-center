@@ -169,6 +169,9 @@ describe("Zod validation rules across forms", () => {
   });
 
   it("dispatches open-booking-modal event when openBookingModal is called", () => {
+    if (typeof window === "undefined") {
+      (globalThis as any).window = globalThis;
+    }
     let fired = false;
     const listener = () => {
       fired = true;
