@@ -184,6 +184,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           ],
         }),
       },
+      {
+        src: "https://clinicx.digiwil.com/widget.js",
+        async: true,
+        "data-clinic": "sanidhya-naturopathy-center",
+        "data-mode": "none",
+      },
     ],
   }),
   shellComponent: RootShell,

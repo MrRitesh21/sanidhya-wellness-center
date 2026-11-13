@@ -111,6 +111,7 @@ export const appointmentFormSchema = z
       .string()
       .trim()
       .refine(isValidIndianMobile, "Enter a valid 10-digit Indian mobile number"),
+    email: z.string().trim().email("Please enter a valid email address").optional().or(z.literal("")),
     ageGroup: z.enum(["adult", "child"]).default("adult"),
     gender: z.enum(["male", "female", "other", "prefer_not_to_say"]).optional(),
     message: z.string().trim().max(500, "Additional message must not exceed 500 characters").optional(),
@@ -147,6 +148,7 @@ export function buildAppointmentApiPayload(data: AppointmentFormData, consentAt:
     clinic: BOOKING_CLINIC_SLUG,
     name: data.name.trim(),
     phone: normalizeIndianMobile(data.mobile),
+    email: data.email?.trim() || undefined,
     date: data.date,
     time: data.time,
     appointment_type: data.appointmentType,

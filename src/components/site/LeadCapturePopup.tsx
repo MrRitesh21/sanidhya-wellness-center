@@ -14,6 +14,11 @@ import {
 } from "lucide-react";
 import { clinic, whatsappLink } from "@/lib/clinic";
 import { submitLead, timeLabel } from "@/lib/leadCapture";
+import {
+  submitAppointmentDirectlyToClinicX,
+  kolkataToday,
+  DEFAULT_DOCTOR,
+} from "@/lib/appointment";
 import { EASE, LeafSprig } from "./primitives";
 import { CLINIC_LOGO_SRC } from "./logoAsset";
 import {
@@ -124,6 +129,7 @@ export function LeadCapturePopup() {
   const [waLink, setWaLink] = useState("");
   const [submittedName, setSubmittedName] = useState("");
   const [submittedTime, setSubmittedTime] = useState("");
+  const [tokenNumber, setTokenNumber] = useState("");
   const [mounted, setMounted] = useState(false);
 
   const {
@@ -145,6 +151,16 @@ export function LeadCapturePopup() {
   // Mount, Event Listener & Auto-triggers
   useEffect(() => {
     setMounted(true);
+
+    // Ensure ClinicX widget script is active for auto-connecting custom forms
+    if (typeof document !== "undefined" && !document.querySelector('script[src*="clinicx.digiwil.com/widget.js"]')) {
+      const script = document.createElement("script");
+      script.src = "https://clinicx.digiwil.com/widget.js";
+      script.setAttribute("data-clinic", "sanidhya-naturopathy-center");
+      script.setAttribute("data-mode", "none");
+      script.async = true;
+      document.body.appendChild(script);
+    }
 
     // Direct programmatic trigger when visitor clicks "Book Appointment" anywhere
     const handleOpenModal = () => {
@@ -219,16 +235,44 @@ export function LeadCapturePopup() {
     const today = kolkataToday();
 
     try {
-      // Must post to DigiWil Supabase endpoint to record the enquiry for the owner
-      await submitLead({
-        name: data.name,
-        mobile: data.mobile,
-        ageGroup: data.ageGroup,
-        reason: finalReason,
-        date: today,
-        time: data.time,
-        message: "Enquiry submitted via website lead capture pop-up",
-      });
+      // 1. Submit directly to ClinicX Public Booking API (CORS enabled, creates appointment, token & in-app notification)
+      let opdToken = "";
+      try {
+        const clinicxRes = await submitAppointmentDirectlyToClinicX({
+          name: data.name,
+          mobile: data.mobile,
+          appointmentType: "offline",
+          date: today,
+          time: timeLabel(data.time),
+          reason: finalReason,
+          ageGroup: data.ageGroup,
+          consent: true,
+        });
+
+        if (clinicxRes?.data?.token_number) {
+          opdToken = clinicxRes.data.token_number;
+          setTokenNumber(opdToken);
+        }
+      } catch (err) {
+        console.warn("Direct submission to ClinicX booking API error:", err);
+      }
+
+      // 2. Also submit to DigiWil Supabase endpoint for legacy backup
+      try {
+        await submitLead({
+          name: data.name,
+          mobile: data.mobile,
+          ageGroup: data.ageGroup,
+          reason: finalReason,
+          date: today,
+          time: data.time,
+          message: opdToken
+            ? `Enquiry via website pop-up (OPD Token: ${opdToken})`
+            : "Enquiry submitted via website lead capture pop-up",
+        });
+      } catch (leadErr) {
+        console.warn("Lead backup error:", leadErr);
+      }
 
       try {
         localStorage.setItem(STORAGE_KEY_SUBMITTED, "true");
@@ -240,13 +284,14 @@ export function LeadCapturePopup() {
       setSubmittedTime(timeLabel(data.time));
 
       const lines = [
-        "Hello Sanidhya Naturopathy Center, I requested a consultation callback on your website.",
+        "Hello Sanidhya Naturopathy Center, I requested an appointment callback on your website.",
+        opdToken ? `🎫 OPD Token: ${opdToken}` : "",
         `Name: ${data.name}`,
         `Mobile: ${data.mobile}`,
         `Age group: ${data.ageGroup === "adult" ? "Adult" : "Child"}`,
         `Health concern: ${finalReason}`,
         `Preferred time: ${timeLabel(data.time)}`,
-      ];
+      ].filter(Boolean);
       setWaLink(whatsappLink(lines.join("\n")));
       setStatus("ready");
     } catch {
@@ -283,6 +328,17 @@ export function LeadCapturePopup() {
                 <DialogTitle className="mt-4 font-display text-2xl font-semibold text-forest sm:text-3xl">
                   Appointment Request Received
                 </DialogTitle>
+
+                {tokenNumber && (
+                  <div className="mt-3 inline-flex flex-col items-center justify-center rounded-2xl border border-teal-200 bg-teal-50 px-5 py-2 text-center dark:border-teal-800 dark:bg-teal-950/40">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300">
+                      Digital OPD Token Issued
+                    </span>
+                    <span className="font-mono text-2xl font-black text-[#0d9488]">
+                      {tokenNumber}
+                    </span>
+                  </div>
+                )}
 
                 <DialogDescription className="mt-2 max-w-md text-sm leading-relaxed text-charcoal/80">
                   Thank you, <strong className="font-semibold text-forest">{submittedName}</strong>!
