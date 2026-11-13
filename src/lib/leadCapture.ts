@@ -22,6 +22,7 @@ export type LeadInput = {
   date: string;
   time: string;
   message?: string | undefined;
+  appointmentType?: "offline" | "online";
 };
 
 /** Formats a "YYYY-MM-DD" date as e.g. "Mon, 2 Nov 2026" (en-IN). */
@@ -53,6 +54,9 @@ export function timeLabel(value: string): string {
 export function buildLeadPayload(data: LeadInput) {
   const time = timeLabel(data.time);
   const messageParts = [data.reason];
+  if (data.appointmentType) {
+    messageParts.push(`Appointment type: ${data.appointmentType === "offline" ? "In-clinic" : "Online"}`);
+  }
   if (data.message) messageParts.push(`Additional note: ${data.message}`);
   return {
     name: data.name,
