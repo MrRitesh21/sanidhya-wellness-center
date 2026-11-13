@@ -13,6 +13,6 @@
 
 ## Lead capture
 
-- The appointment enquiry form (src/components/site/Booking.tsx) posts every submission to the clinic's DigiWil leads table via `src/lib/leadCapture.ts` (endpoint + page id live there). Never revert it to a local-only "prepare a WhatsApp message" flow — enquiries must be stored so the owner sees them. The key used is the embed's publishable key and is safe in client code.
+- Appointment requests use the dedicated `/booking` page and a Zod-validated TanStack server function that submits to the clinic booking API and copies the enquiry to its existing leads table; never replace this with a local-only WhatsApp flow.
 
 - Use separate TanStack leaf routes for distinct clinic pages; keep `/about` for the center's philosophy and `/doctors` for practitioner information so each has its own shareable page and metadata.
