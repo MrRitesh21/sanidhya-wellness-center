@@ -238,13 +238,21 @@ export function LeadCapturePopup() {
       // 1. Submit directly to ClinicX Public Booking API (CORS enabled, creates appointment, token & in-app notification)
       let opdToken = "";
       try {
+        const cleanSlotTime =
+          data.time === "morning"
+            ? "10:00 AM"
+            : data.time === "afternoon"
+            ? "02:00 PM"
+            : "06:00 PM";
+
         const clinicxRes = await submitAppointmentDirectlyToClinicX({
           name: data.name,
           mobile: data.mobile,
           appointmentType: "offline",
           date: today,
-          time: timeLabel(data.time),
+          time: cleanSlotTime,
           reason: finalReason,
+          message: `Preferred Callback Window: ${timeLabel(data.time)}`,
           ageGroup: data.ageGroup,
           consent: true,
         });
