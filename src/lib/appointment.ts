@@ -139,8 +139,21 @@ export const appointmentFormSchema = z
 export type AppointmentFormData = z.infer<typeof appointmentFormSchema>;
 
 export function generateLocalOpdToken(): string {
-  const rand = Math.floor(100 + Math.random() * 900);
-  return `OPD-${rand}`;
+  try {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(new Date());
+      const storedDate = localStorage.getItem("clinicx_token_date");
+      let currentToken = parseInt(localStorage.getItem("clinicx_last_token") || "100", 10);
+      if (storedDate !== today || isNaN(currentToken) || currentToken < 100) {
+        currentToken = 100;
+      }
+      const nextToken = currentToken + 1;
+      localStorage.setItem("clinicx_token_date", today);
+      localStorage.setItem("clinicx_last_token", String(nextToken));
+      return `OPD-${nextToken}`;
+    }
+  } catch {}
+  return "OPD-101";
 }
 
 export function buildAppointmentApiPayload(data: AppointmentFormData, consentAt: string) {
