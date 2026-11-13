@@ -30,6 +30,8 @@ import {
   kolkataToday,
   normalizeIndianMobile,
   isValidIndianMobile,
+  submitAppointmentDirectlyToClinicX,
+  generateLocalOpdToken,
   type AppointmentFormData,
   type BookingResultData,
 } from "@/lib/appointment";
@@ -75,6 +77,9 @@ export function OpdBookingFlow({ onSuccess, className = "" }: OpdBookingFlowProp
   tomorrowObj.setDate(tomorrowObj.getDate() + 1);
   const tomorrowStr = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(tomorrowObj);
 
+  // Mode selector: Interactive 4-step wizard vs Official ClinicX Direct Form
+  const [activeFormTab, setActiveFormTab] = useState<"wizard" | "direct">("wizard");
+
   // Check if selected date is Sunday
   const isSunday = new Date(`${selectedDate}T00:00:00.000Z`).getUTCDay() === 0;
 
@@ -84,6 +89,45 @@ export function OpdBookingFlow({ onSuccess, className = "" }: OpdBookingFlowProp
       setSelectedTime("");
     }
   }, [isSunday, selectedTime]);
+
+  // Listen to ClinicX official widget booking success events & ensure widget connector is loaded
+  useEffect(() => {
+    const handleClinicXSuccess = (e: any) => {
+      const detail = e?.detail;
+      if (detail && detail.success) {
+        const token = detail.token_number || generateLocalOpdToken();
+        const conf: BookingResultData = {
+          appointment_id: detail.appointment_id || `apt_${Date.now()}`,
+          token_number: token,
+          clinic_name: detail.clinic_name || managedClinic.clinic_name || "Sanidhya Naturopathy Center",
+          doctor_name: detail.doctor_name || managedClinic.doctor_name || DEFAULT_DOCTOR.name,
+          whatsapp_confirmation: detail.whatsapp_confirmation,
+          is_offline_fallback: false,
+        };
+        setBookingResult(conf);
+        setStep(4);
+        setActiveFormTab("wizard");
+        if (onSuccess) onSuccess(conf);
+        toast.success(`OPD Token ${token} generated & synced directly to ClinicX!`);
+      }
+    };
+
+    window.addEventListener("clinicx:booking_success", handleClinicXSuccess);
+
+    // Inject ClinicX Auto-Submit Connector script if not already present
+    if (!document.querySelector('script[src*="clinicx.digiwil.com/widget.js"]')) {
+      const script = document.createElement("script");
+      script.src = "https://clinicx.digiwil.com/widget.js";
+      script.setAttribute("data-clinic", "sanidhya-naturopathy-center");
+      script.setAttribute("data-mode", "none");
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    return () => {
+      window.removeEventListener("clinicx:booking_success", handleClinicXSuccess);
+    };
+  }, [managedClinic, onSuccess]);
 
   const handleNextToStep2 = () => {
     setFormError("");
@@ -140,20 +184,43 @@ export function OpdBookingFlow({ onSuccess, className = "" }: OpdBookingFlowProp
         consent: true,
       };
 
-      const res = await submitFn({ data: payload });
+      // 1. Permanent Direct Browser API Submission to ClinicX (No intermediate proxy dependency)
+      let bookingData: BookingResultData | null = null;
+      try {
+        const directRes = await submitAppointmentDirectlyToClinicX(payload);
+        if (directRes && directRes.data && !directRes.data.is_offline_fallback) {
+          bookingData = directRes.data;
+        }
+      } catch (directErr) {
+        console.warn("Direct submission to ClinicX booking API notice:", directErr);
+      }
 
-      if (res && res.booking && res.booking.data) {
-        setBookingResult(res.booking.data);
+      // 2. Server function backup if direct fetch did not establish connection
+      if (!bookingData) {
+        try {
+          const res = await submitFn({ data: payload });
+          if (res?.booking?.data) {
+            bookingData = res.booking.data;
+          }
+        } catch (serverErr) {
+          console.warn("ServerFn fallback notice:", serverErr);
+        }
+      }
+
+      if (bookingData) {
+        setBookingResult(bookingData);
         setStep(4);
-        if (onSuccess) onSuccess(res.booking.data);
-        toast.success(`OPD Token ${res.booking.data.token_number} generated successfully!`);
+        if (onSuccess) onSuccess(bookingData);
+        toast.success(`OPD Token ${bookingData.token_number} generated & synced to ClinicX!`);
+        // Background sync to leads CRM
+        void submitFn({ data: payload }).catch(() => {});
       } else {
         throw new Error("Unable to generate appointment token.");
       }
     } catch (err: any) {
       console.error("Booking submission error:", err);
       // Fallback local resilience
-      const fallbackToken = `OPD-${Math.floor(100 + Math.random() * 900)}`;
+      const fallbackToken = generateLocalOpdToken();
       const fallbackData: BookingResultData = {
         appointment_id: `apt_local_${Date.now()}`,
         token_number: fallbackToken,
@@ -268,6 +335,36 @@ export function OpdBookingFlow({ onSuccess, className = "" }: OpdBookingFlowProp
             );
           })}
         </div>
+
+        {/* View Toggle: Guided OPD Wizard vs ClinicX Direct Form */}
+        {step !== 4 && (
+          <div className="mt-5 flex items-center justify-center">
+            <div className="inline-flex rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
+              <button
+                type="button"
+                onClick={() => setActiveFormTab("wizard")}
+                className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                  activeFormTab === "wizard"
+                    ? "bg-white text-[#0d9488] shadow-sm dark:bg-slate-900 dark:text-teal-300"
+                    : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                }`}
+              >
+                Guided OPD Flow (Tokens &amp; Slots)
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveFormTab("direct")}
+                className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                  activeFormTab === "direct"
+                    ? "bg-white text-[#0d9488] shadow-sm dark:bg-slate-900 dark:text-teal-300"
+                    : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                }`}
+              >
+                ClinicX Quick Form
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {formError && (
@@ -277,9 +374,131 @@ export function OpdBookingFlow({ onSuccess, className = "" }: OpdBookingFlowProp
         </div>
       )}
 
+      {/* Official ClinicX Custom Website Booking Form (No Iframe) */}
+      {activeFormTab === "direct" && step !== 4 && (
+        <motion.div
+          key="direct-form"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="mx-auto max-w-lg rounded-2xl border border-slate-200 bg-slate-50/60 p-6 dark:border-slate-800 dark:bg-slate-800/40 sm:p-8"
+        >
+          <form
+            id="clinicx-booking-form"
+            action="https://clinicx.digiwil.com/api/public/submit-booking"
+            method="POST"
+            data-clinic="sanidhya-naturopathy-center"
+            style={{ maxWidth: "520px", width: "100%", margin: "0 auto", boxSizing: "border-box" }}
+          >
+            <input type="hidden" name="clinic" value="sanidhya-naturopathy-center" />
+
+            <div style={{ marginBottom: "20px", textAlign: "left" }}>
+              <h3 style={{ margin: "0 0 6px 0", fontSize: "20px", fontWeight: 700, color: "#0f172a" }}>
+                Book an In-Clinic or Video Consultation
+              </h3>
+              <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>
+                Fill your details below. Directly integrated with ClinicX for instant doctor confirmation.
+              </p>
+            </div>
+
+            {/* Patient Name Field */}
+            <div style={{ marginBottom: "14px", textAlign: "left" }}>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
+                Full Name *
+              </label>
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder="e.g. Ramesh Verma"
+                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+
+            {/* Phone / WhatsApp Field */}
+            <div style={{ marginBottom: "14px", textAlign: "left" }}>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
+                Phone / WhatsApp Number *
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                required
+                placeholder="e.g. 9876543210"
+                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+
+            {/* Email Address (Optional) */}
+            <div style={{ marginBottom: "14px", textAlign: "left" }}>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
+                Email Address
+              </label>
+              <input
+                type="email"
+                name="email"
+                placeholder="e.g. name@example.com"
+                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+
+            {/* Consultation Type */}
+            <div style={{ marginBottom: "14px", textAlign: "left" }}>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
+                Consultation Type
+              </label>
+              <select
+                name="appointment_type"
+                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", background: "#fff", boxSizing: "border-box" }}
+              >
+                <option value="offline">In-Clinic Visit</option>
+                <option value="online">Video Consultation</option>
+              </select>
+            </div>
+
+            {/* Preferred Appointment Date */}
+            <div style={{ marginBottom: "14px", textAlign: "left" }}>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
+                Preferred Date
+              </label>
+              <input
+                type="date"
+                name="date"
+                defaultValue={todayStr}
+                min={todayStr}
+                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+
+            {/* Symptoms or Message */}
+            <div style={{ marginBottom: "18px", textAlign: "left" }}>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
+                Reason for Visit / Problem
+              </label>
+              <textarea
+                name="problem"
+                rows={2}
+                placeholder="Briefly describe your symptoms or concern..."
+                style={{ width: "100%", padding: "10px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box", resize: "vertical" }}
+              ></textarea>
+            </div>
+
+            <input type="hidden" name="dpdp_consent" value="true" />
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              style={{ width: "100%", padding: "14px 20px", fontSize: "15px", fontWeight: 600, backgroundColor: "#0d9488", color: "#ffffff", border: "none", borderRadius: "10px", cursor: "pointer", transition: "opacity 0.2s" }}
+            >
+              Book Appointment (Submit to ClinicX)
+            </button>
+          </form>
+        </motion.div>
+      )}
+
       <AnimatePresence mode="wait">
         {/* ================= STEP 1: DOCTOR & MODE SELECTION ================= */}
-        {step === 1 && (
+        {activeFormTab === "wizard" && step === 1 && (
           <motion.div
             key="step1"
             initial={{ opacity: 0, y: 12 }}
@@ -422,7 +641,7 @@ export function OpdBookingFlow({ onSuccess, className = "" }: OpdBookingFlowProp
         )}
 
         {/* ================= STEP 2: DATE & REAL-TIME SLOT PICKER ================= */}
-        {step === 2 && (
+        {activeFormTab === "wizard" && step === 2 && (
           <motion.div
             key="step2"
             initial={{ opacity: 0, y: 12 }}
@@ -601,7 +820,7 @@ export function OpdBookingFlow({ onSuccess, className = "" }: OpdBookingFlowProp
         )}
 
         {/* ================= STEP 3: PATIENT INFORMATION & DPDP ACT 2023 COMPLIANCE ================= */}
-        {step === 3 && (
+        {activeFormTab === "wizard" && step === 3 && (
           <motion.form
             key="step3"
             onSubmit={handleSubmit}

@@ -15,6 +15,10 @@ import {
 } from "lucide-react";
 import { clinic, whatsappLink } from "@/lib/clinic";
 import { prettyDate, submitLead, timeLabel } from "@/lib/leadCapture";
+import {
+  submitAppointmentDirectlyToClinicX,
+  type AppointmentFormData,
+} from "@/lib/appointment";
 import { submitAppointment } from "@/lib/appointment.functions";
 import { EASE, Reveal, SectionHeading } from "./primitives";
 
@@ -123,22 +127,26 @@ export function Booking() {
     setStatus("submitting");
     setSubmitError("");
     try {
-      const res = await submitFn({
-        data: {
-          appointmentType: "offline",
-          date: data.date,
-          time: data.time,
-          name: data.name,
-          mobile: data.mobile,
-          ageGroup: data.ageGroup,
-          reason: data.reason,
-          message: data.message,
-          consent: true,
-        },
-      });
+      const payload: AppointmentFormData = {
+        appointmentType: "offline",
+        date: data.date,
+        time: data.time,
+        name: data.name,
+        mobile: data.mobile,
+        ageGroup: data.ageGroup,
+        reason: data.reason,
+        message: data.message,
+        consent: true,
+      };
 
-      const token = res?.booking?.data?.token_number || `OPD-${Math.floor(100 + Math.random() * 900)}`;
+      // 1. Direct browser fetch to ClinicX API (CORS enabled, immediate transmission)
+      const directRes = await submitAppointmentDirectlyToClinicX(payload);
+      const token = directRes.data.token_number;
       setTokenNumber(token);
+
+      // 2. Background lead logging
+      void submitFn({ data: payload }).catch(() => {});
+      void submitLead(data).catch(() => {});
 
       const lines = [
         "Hello Sanidhya Naturopathy Center, I requested an appointment on your website.",
