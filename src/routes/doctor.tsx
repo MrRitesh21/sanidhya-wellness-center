@@ -94,6 +94,7 @@ function DoctorPage() {
             <Reveal delay={0.12} className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 to="/booking"
+                preload="render"
                 className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-gold px-7 text-sm font-semibold text-forest-deep shadow-lift transition-all duration-300 hover:bg-gold-deep hover:text-ivory active:scale-[0.98]"
               >
                 Book OPD Appointment

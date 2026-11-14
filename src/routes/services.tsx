@@ -611,6 +611,7 @@ function ServicesPage() {
           <Reveal delay={0.18} className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               to="/booking"
+              preload="render"
               className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-7 text-sm font-semibold text-forest-deep shadow-lift transition-all duration-300 hover:bg-gold-deep hover:text-ivory active:scale-[0.98]"
             >
               Book Doctor Consultation

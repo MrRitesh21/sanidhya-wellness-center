@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -212,11 +213,30 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function TopProgressBar() {
+  const isNavigating = useRouterState({
+    select: (s) => s.status === "pending",
+  });
+
+  if (!isNavigating) return null;
+
+  return (
+    <div
+      role="progressbar"
+      aria-label="Loading page"
+      className="fixed left-0 top-0 z-[9999] h-1 w-full overflow-hidden bg-forest/20 pointer-events-none"
+    >
+      <div className="h-full w-full bg-gradient-to-r from-gold via-emerald-400 to-gold animate-pulse" />
+    </div>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
+      <TopProgressBar />
       <div className="flex min-h-screen flex-col bg-ivory font-sans text-charcoal antialiased selection:bg-sage-soft selection:text-forest pb-[calc(env(safe-area-inset-bottom,0px)+4.5rem)] sm:pb-0">
         <Header />
         <main id="main-content" className="flex-1">

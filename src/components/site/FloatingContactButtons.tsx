@@ -51,6 +51,7 @@ export function FloatingContactButtons() {
 
           <Link
             to="/booking"
+            preload="render"
             className="flex flex-[1.1] min-h-[46px] items-center justify-center gap-1.5 rounded-full bg-primary py-2 text-xs font-bold text-primary-foreground shadow-sm active:scale-95 transition-transform"
           >
             <Sparkles className="h-3.5 w-3.5 text-gold" />
@@ -107,6 +108,7 @@ export function FloatingContactButtons() {
         >
           <Link
             to="/booking"
+            preload="render"
             aria-label="Book an Appointment"
             className="flex items-center gap-2.5 rounded-full border border-gold/40 bg-forest px-4 py-3 text-sm font-semibold text-ivory shadow-lift transition-all hover:bg-forest-deep focus:outline-none focus:ring-2 focus:ring-gold/60 sm:px-5 sm:py-3.5"
           >

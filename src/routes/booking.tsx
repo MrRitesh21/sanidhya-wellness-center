@@ -53,8 +53,57 @@ export const Route = createFileRoute("/booking")({
       },
     ],
   }),
+  pendingMs: 80,
+  pendingComponent: BookingPagePending,
   component: BookingPage,
 });
+
+function BookingPagePending() {
+  return (
+    <div className="pt-24 sm:pt-28">
+      {/* Hero Header Skeleton */}
+      <section className="relative overflow-hidden bg-forest py-16 text-ivory sm:py-24">
+        <LeafSprig className="absolute -right-8 top-10 h-28 w-56 text-ivory/10" />
+        <LeafSprig className="absolute bottom-6 left-6 h-20 w-40 -scale-x-100 text-ivory/10" />
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-forest-deep/70 blur-3xl"
+        />
+
+        <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6">
+          <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold">
+            <Sparkles className="h-3.5 w-3.5" />
+            Doctor OPD Appointments · Jankipuram, Lucknow
+          </span>
+
+          <h1 className="mt-6 font-display text-4xl font-semibold leading-tight text-ivory sm:text-5xl lg:text-6xl">
+            Book Your <br />
+            <em className="italic text-gold">Doctor Consultation</em>
+          </h1>
+
+          <p className="mt-4 mx-auto max-w-2xl text-base leading-relaxed text-ivory/80 sm:text-lg">
+            Opening Doctor OPD booking portal...
+          </p>
+        </div>
+      </section>
+
+      {/* Main Booking Flow Card Skeleton */}
+      <section className="bg-ivory pb-16 pt-10 sm:pb-20 sm:pt-12">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6">
+          <div className="min-h-[460px] rounded-3xl border border-beige bg-white p-8 shadow-soft flex flex-col items-center justify-center text-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sage-soft text-forest">
+              <Sparkles className="h-7 w-7 text-gold-deep animate-pulse" />
+            </div>
+            <div>
+              <p className="font-display text-2xl font-bold text-forest">Preparing Doctor OPD Flow</p>
+              <p className="mt-1 text-sm text-muted-foreground">Securing your direct token reservation...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
 
 const FAQS = [
   {

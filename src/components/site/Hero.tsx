@@ -145,6 +145,7 @@ export function Hero() {
             >
               <Link
                 to="/booking"
+                preload="render"
                 className="group relative inline-flex min-h-[52px] items-center justify-center gap-2.5 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-lift transition-all duration-300 hover:bg-forest-deep active:scale-95 sm:w-auto"
               >
                 <span>Book OPD Appointment</span>

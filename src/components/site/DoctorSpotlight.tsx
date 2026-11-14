@@ -159,6 +159,7 @@ export function DoctorSpotlight() {
               <div className="flex flex-wrap items-center gap-3.5 sm:gap-4">
                 <Link
                   to="/booking"
+                  preload="render"
                   className="inline-flex min-h-[50px] items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-primary-foreground shadow-soft transition-all duration-300 hover:bg-forest-deep active:scale-95"
                 >
                   <CalendarCheck className="h-4 w-4" />

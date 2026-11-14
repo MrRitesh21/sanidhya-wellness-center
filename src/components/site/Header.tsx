@@ -196,6 +196,7 @@ export function Header() {
 
           <Link
             to="/booking"
+            preload="render"
             className={cn(
               "hidden items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-all duration-300 hover:bg-forest-deep active:scale-[0.98] sm:inline-flex",
             )}
@@ -298,6 +299,7 @@ export function Header() {
             >
               <Link
                 to="/booking"
+                preload="render"
                 onClick={closeMenu}
                 className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft transition-transform active:scale-[0.98]"
               >
