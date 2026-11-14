@@ -82,23 +82,30 @@ export async function fetchLiveClinicConfig(): Promise<ManagedClinicData> {
 }
 
 export function useClinicData(): ManagedClinicData {
-  const [data, setData] = useState<ManagedClinicData>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (cached) return JSON.parse(cached);
-      } catch {}
-    }
-    return INITIAL_DATA;
-  });
+  const [data, setData] = useState<ManagedClinicData>(INITIAL_DATA);
 
   useEffect(() => {
     let mounted = true;
+
+    // Read cached data safely after client hydration completes
+    try {
+      if (typeof window !== "undefined") {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && typeof parsed === "object") {
+            setData(parsed);
+          }
+        }
+      }
+    } catch {}
+
     fetchLiveClinicConfig().then((live) => {
       if (mounted && live) {
         setData(live);
       }
     });
+
     return () => {
       mounted = false;
     };

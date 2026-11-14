@@ -197,7 +197,7 @@ export function Footer() {
 
           {/* Bottom Bar */}
           <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-ivory/10 pt-8 text-xs text-ivory/60 sm:flex-row">
-            <p>
+            <p suppressHydrationWarning>
               © {currentYear} {clinic.name}. All rights reserved.
             </p>
             <div className="flex items-center gap-6">

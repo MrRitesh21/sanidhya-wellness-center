@@ -437,7 +437,7 @@ export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }
                 )}
 
                 {/* Slot Selector: Morning & Evening */}
-                <div className="mt-4 space-y-3">
+                <div className="mt-4 space-y-3" suppressHydrationWarning>
                   <div>
                     <div className="flex items-center justify-between">
                       <p className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5">
