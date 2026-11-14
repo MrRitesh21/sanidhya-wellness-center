@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Hero } from "@/components/site/Hero";
 import { About } from "@/components/site/About";
+import { DoctorSpotlight } from "@/components/site/DoctorSpotlight";
 import { Services } from "@/components/site/Services";
 import { ClinicalCases } from "@/components/site/ClinicalCases";
 import { Approach } from "@/components/site/Approach";
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/")({
       {
         name: "keywords",
         content:
-          "Naturopathy centre in Jankipuram Lucknow, Naturopathy center Lucknow, Natural wellness clinic Jankipuram, Holistic wellness consultation Lucknow, Hydrotherapy Lucknow, Mud therapy Lucknow, Steam bath Jankipuram, Acupressure Lucknow, Sujok Lucknow, Yoga classes Jankipuram, Reiki course Lucknow",
+          "Naturopathy centre in Jankipuram Lucknow, Naturopathy center Lucknow, Natural wellness clinic Jankipuram, Holistic wellness consultation Lucknow, Hydrotherapy Lucknow, Mud therapy Lucknow, Steam bath Jankipuram, Acupressure Lucknow, Sujok Lucknow, Yoga classes Jankipuram, Reiki course Lucknow, Dr Kamal consultation",
       },
       { property: "og:title", content: HOMEPAGE_TITLE },
       { property: "og:description", content: HOMEPAGE_DESCRIPTION },
@@ -43,10 +44,11 @@ function Index() {
     <>
       <Hero />
       <About />
+      <DoctorSpotlight />
       <Services />
       <ClinicalCases />
-      <Approach />
       <Reviews />
+      <Approach />
       <Booking />
       <LocationHours />
       <FAQ />

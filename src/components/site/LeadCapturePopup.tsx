@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { AnimatePresence, motion } from "motion/react";
 import {
+  CalendarCheck,
   CheckCircle2,
   Loader2,
   MessageCircle,
@@ -21,6 +23,7 @@ import {
 } from "@/lib/appointment";
 import { EASE, LeafSprig } from "./primitives";
 import { CLINIC_LOGO_SRC } from "./logoAsset";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -136,6 +139,7 @@ export function LeadCapturePopup() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<PopupFormData>({
     resolver: zodResolver(popupSchema),
@@ -458,7 +462,7 @@ export function LeadCapturePopup() {
                     </div>
                   </div>
 
-                  {/* Health Concern Selection */}
+                  {/* Health Concern Selection with Quick Chips */}
                   <div>
                     <label htmlFor="popup-concern" className={labelCls}>
                       Primary Health Concern <span className="text-gold-deep">*</span>
@@ -480,6 +484,34 @@ export function LeadCapturePopup() {
                         {errors.concern.message}
                       </p>
                     )}
+
+                    {/* Quick 1-tap concern selector */}
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      {[
+                        "Back & Joint Pain Relief",
+                        "Cervical Spondylosis",
+                        "Sciatica",
+                        "Slip Disc",
+                        "Digestive & Gut Health",
+                        "Stress, Fatigue & Sleep",
+                        "Hydrotherapy & Steam Bath Enquiry",
+                        "Reiki Healing & Training Courses",
+                      ].map((item) => (
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() => setValue("concern", item, { shouldValidate: true })}
+                          className={cn(
+                            "rounded-full border px-2 py-0.5 text-[0.68rem] font-medium transition-colors",
+                            selectedConcern === item
+                              ? "border-forest bg-forest text-primary-foreground font-semibold"
+                              : "border-forest/15 bg-ivory/80 text-forest hover:bg-forest/10",
+                          )}
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Optional Custom Note if 'Other' is picked */}
@@ -635,6 +667,17 @@ export function LeadCapturePopup() {
                       aria-hidden="true"
                     />
                     <span>Enquiries are sent securely to our clinic inbox. No spam.</span>
+                  </div>
+
+                  <div className="pt-1 text-center">
+                    <Link
+                      to="/booking"
+                      onClick={() => setOpen(false)}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-800 hover:text-forest transition-colors underline underline-offset-4"
+                    >
+                      <Sparkles className="h-3.5 w-3.5 text-[#0d9488]" />
+                      <span>Prefer to pick an exact OPD time slot? Open Full Calendar &rarr;</span>
+                    </Link>
                   </div>
                 </form>
               </motion.div>

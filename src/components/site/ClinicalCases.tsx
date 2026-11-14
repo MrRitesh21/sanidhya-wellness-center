@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   CheckCircle2,
   Clock,
@@ -260,14 +261,14 @@ export function ClinicalCases() {
 
                       {/* Action CTAs */}
                       <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-beige pt-6">
-                        <button
-                          type="button"
-                          onClick={() => openBookingModal()}
+                        <Link
+                          to="/booking"
+                          search={{ reason: caseItem.title }}
                           className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-primary px-6 text-xs sm:text-sm font-semibold text-primary-foreground shadow-soft transition-all duration-300 hover:bg-forest-deep hover:shadow-lift active:scale-[0.98]"
                         >
                           Book Doctor Consultation
                           <ArrowRight className="h-3.5 w-3.5" />
-                        </button>
+                        </Link>
                         <a
                           href={whatsappLink(caseItem.enquiryMessage)}
                           target="_blank"

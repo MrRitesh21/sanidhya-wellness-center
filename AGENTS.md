@@ -15,4 +15,4 @@
 
 - Appointment requests use the dedicated `/booking` page and a Zod-validated TanStack server function that submits to the clinic booking API and copies the enquiry to its existing leads table; never replace this with a local-only WhatsApp flow.
 
-- Use separate TanStack leaf routes for distinct clinic pages; keep `/about` for the center's philosophy and `/doctors` for practitioner information so each has its own shareable page and metadata.
+- Use separate TanStack leaf routes for distinct clinic pages; keep `/about` for the center's philosophy and `/doctor` for practitioner information so each has its own shareable page and metadata.

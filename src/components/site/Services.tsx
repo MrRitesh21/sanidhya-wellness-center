@@ -150,10 +150,11 @@ export function Services() {
                   </p>
                   <Link
                     to="/booking"
+                    search={{ reason: service.title }}
                     className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-deep transition-colors hover:text-forest"
                     aria-label={`Enquire about ${service.title}`}
                   >
-                    Enquire about this
+                    Book consultation for this
                     <ArrowRight
                       className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
                       aria-hidden="true"
@@ -167,13 +168,13 @@ export function Services() {
 
         <Reveal delay={0.12}>
           <div className="mt-12 flex flex-wrap justify-center gap-3.5 sm:gap-4">
-            <button
-              type="button"
-              onClick={() => openBookingModal()}
+            <Link
+              to="/booking"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep active:scale-[0.98]"
             >
-              Book Consultation Now
-            </button>
+              <Sparkles className="h-4 w-4 text-gold" />
+              Book Consultation &amp; OPD Token
+            </Link>
             <a
               href={whatsappLink(
                 "Hello Sanidhya Naturopathy Center, I would like to consult regarding therapies.",

@@ -111,10 +111,6 @@ export function Booking() {
   const [minDate, setMinDate] = useState("");
   const submitFn = useServerFn(submitAppointment);
 
-  useEffect(() => {
-    setMinDate(kolkataToday());
-  }, []);
-
   const {
     register,
     handleSubmit,
@@ -122,6 +118,17 @@ export function Booking() {
     setValue,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  useEffect(() => {
+    setMinDate(kolkataToday());
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const prefill = params.get("reason") || params.get("service") || params.get("concern");
+      if (prefill && prefill.trim()) {
+        setValue("reason", prefill.trim(), { shouldValidate: true });
+      }
+    }
+  }, [setValue]);
 
   const onSubmit = async (data: FormData) => {
     setStatus("submitting");
@@ -195,13 +202,13 @@ export function Booking() {
       />
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHeading
-          eyebrow="Appointment enquiry"
+          eyebrow="Appointment enquiry & OPD Token"
           title={
             <>
-              Request an <em className="italic text-gold-deep">Appointment</em>
+              Book Doctor OPD <em className="italic text-gold-deep">Consultation</em>
             </>
           }
-          description="Share a few details and we'll help you reach the clinic — every appointment is confirmed personally by the centre."
+          description="Instant Digital Token generation with Dr. Kamal. Pay ₹600 at the clinic on arrival with zero queue waiting. DPDP Act 2023 Compliant."
         />
 
         <div className="mt-14 grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">

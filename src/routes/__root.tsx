@@ -217,7 +217,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col bg-ivory font-sans text-charcoal antialiased selection:bg-sage-soft selection:text-forest pb-14 sm:pb-0">
+      <div className="flex min-h-screen flex-col bg-ivory font-sans text-charcoal antialiased selection:bg-sage-soft selection:text-forest pb-[calc(env(safe-area-inset-bottom,0px)+4.5rem)] sm:pb-0">
         <Header />
         <main id="main-content" className="flex-1">
           <Outlet />

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Accessibility, Clock, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Accessibility, ArrowRight, Clock, MapPin, MessageCircle, Phone } from "lucide-react";
 import aboutImg from "@/assets/about-clinic.jpg";
 import { clinic, fullAddress, whatsappLink } from "@/lib/clinic";
 import { LeafSprig, Reveal, SectionHeading } from "./primitives";
@@ -77,13 +77,13 @@ export function About() {
             </Reveal>
 
             <Reveal delay={0.26} className="mt-10 flex flex-wrap gap-3.5 sm:gap-4">
-              <button
-                type="button"
-                onClick={() => openBookingModal()}
+              <Link
+                to="/booking"
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep active:scale-[0.98]"
               >
                 Request an Appointment
-              </button>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
               <a
                 href={whatsappLink(
                   "Hello Sanidhya Naturopathy Center, I would like to enquire about treatments and consultations.",

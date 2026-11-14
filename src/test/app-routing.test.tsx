@@ -20,9 +20,9 @@ describe("App routing", () => {
     expect(matches.at(-1)?.routeId).toBe("/about");
   });
 
-  it("matches a page for /doctors", () => {
-    const matches = router.matchRoutes("/doctors");
-    expect(matches.at(-1)?.routeId).toBe("/doctors");
+  it("matches a page for /doctor", () => {
+    const matches = router.matchRoutes("/doctor");
+    expect(matches.at(-1)?.routeId).toBe("/doctor");
   });
 
   it("matches a page for /services", () => {

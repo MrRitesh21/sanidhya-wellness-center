@@ -6,11 +6,11 @@ import { useClinicData } from "@/lib/clinicSync";
 import { DEFAULT_DOCTOR } from "@/lib/appointment";
 import { LeafSprig, Reveal } from "@/components/site/primitives";
 
-const PAGE_TITLE = "Doctors & Care Team | Sanidhya Naturopathy Center Lucknow";
+const PAGE_TITLE = "Doctor & Care Team | Sanidhya Naturopathy Center Lucknow";
 const PAGE_DESCRIPTION =
-  "Meet the care team at Sanidhya Naturopathy Center in Jankipuram, Lucknow. Learn about its listening-first approach and enquire directly about a consultation.";
+  "Meet Dr. Kamal and the care team at Sanidhya Naturopathy Center in Jankipuram, Lucknow. Learn about our listening-first approach and enquire directly about a consultation.";
 
-export const Route = createFileRoute("/doctors")({
+export const Route = createFileRoute("/doctor")({
   head: () => ({
     meta: [
       { title: PAGE_TITLE },
@@ -18,14 +18,14 @@ export const Route = createFileRoute("/doctors")({
       { property: "og:title", content: PAGE_TITLE },
       { property: "og:description", content: PAGE_DESCRIPTION },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/doctors" },
+      { property: "og:url", content: "/doctor" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: PAGE_TITLE },
       { name: "twitter:description", content: PAGE_DESCRIPTION },
     ],
-    links: [{ rel: "canonical", href: "/doctors" }],
+    links: [{ rel: "canonical", href: "/doctor" }],
   }),
-  component: DoctorsPage,
+  component: DoctorPage,
 });
 
 const CARE_PRACTICES = [
@@ -49,7 +49,7 @@ const CARE_PRACTICES = [
   },
 ];
 
-function DoctorsPage() {
+function DoctorPage() {
   const managedClinic = useClinicData();
 
   return (
@@ -88,9 +88,20 @@ function DoctorsPage() {
                 to="/booking"
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#0d9488] px-7 py-3 text-sm font-semibold text-white shadow-soft transition-colors hover:bg-[#0f766e]"
               >
-                Book OPD Appointment &darr;
+                Book OPD Appointment
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
+              <a
+                href={whatsappLink(
+                  `Hello Sanidhya Naturopathy Center, I would like to consult with ${managedClinic.doctor_name || DEFAULT_DOCTOR.name}.`,
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-6 py-3 text-sm font-semibold text-emerald-900 transition-colors hover:bg-emerald-600 hover:text-white"
+              >
+                <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                WhatsApp Enquiry
+              </a>
               <a
                 href={clinic.phoneHref}
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-forest/20 bg-white/70 px-6 py-3 text-sm font-semibold text-forest transition-colors hover:bg-white"

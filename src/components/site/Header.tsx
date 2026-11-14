@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { Menu, MessageCircle, Phone, X } from "lucide-react";
+import { CalendarCheck, Menu, MessageCircle, Phone, Sparkles, X } from "lucide-react";
 import { clinic, whatsappLink } from "@/lib/clinic";
 import { cn } from "@/lib/utils";
 import { EASE } from "./primitives";
@@ -10,14 +10,14 @@ import { CLINIC_LOGO_SRC } from "./logoAsset";
 
 type NavItem = {
   label: string;
-  href: "/" | "/about" | "/doctors" | "/services" | "/results" | "/contact" | "/booking";
+  href: "/" | "/about" | "/doctor" | "/services" | "/results" | "/contact" | "/booking";
   hash?: string;
 };
 
 const NAV: readonly NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Doctors", href: "/doctors" },
+  { label: "Doctor", href: "/doctor" },
   { label: "Services", href: "/services" },
   { label: "Clinical Results", href: "/results" },
   { label: "Contact", href: "/contact" },
@@ -194,15 +194,15 @@ export function Header() {
             <span>WhatsApp</span>
           </a>
 
-          <button
-            type="button"
-            onClick={() => openBookingModal()}
+          <Link
+            to="/booking"
             className={cn(
               "hidden items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-soft transition-all duration-300 hover:bg-forest-deep active:scale-[0.98] sm:inline-flex",
             )}
           >
-            Book Appointment
-          </button>
+            <Sparkles className="h-3.5 w-3.5 text-gold" aria-hidden="true" />
+            <span>Book Appointment</span>
+          </Link>
 
           <button
             type="button"
@@ -296,19 +296,28 @@ export function Header() {
               transition={{ delay: 0.12, duration: 0.2, ease: "easeOut" }}
               className="mt-8 space-y-3 pt-6 border-t border-beige"
             >
+              <Link
+                to="/booking"
+                onClick={closeMenu}
+                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft transition-transform active:scale-[0.98]"
+              >
+                <Sparkles className="h-4 w-4 text-gold" aria-hidden="true" />
+                Book OPD Appointment
+              </Link>
               <button
                 type="button"
                 onClick={() => {
                   closeMenu();
                   openBookingModal();
                 }}
-                className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground shadow-soft transition-transform active:scale-[0.98]"
+                className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full border border-forest/20 bg-white/80 px-6 text-sm font-semibold text-forest transition-colors hover:bg-forest/5 active:scale-[0.98]"
               >
-                Book Appointment
+                <CalendarCheck className="h-4 w-4 text-gold-deep" aria-hidden="true" />
+                Request Callback / Quick Modal
               </button>
               <a
                 href={clinic.phoneHref}
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-forest/20 bg-white/80 px-6 text-base font-semibold text-forest transition-colors hover:bg-forest/5 active:scale-[0.98]"
+                className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full border border-forest/15 bg-white/60 px-6 text-sm font-semibold text-forest transition-colors hover:bg-forest/5 active:scale-[0.98]"
               >
                 <Phone className="h-4 w-4 text-gold-deep" aria-hidden="true" />
                 Call {clinic.phoneDisplay}
@@ -319,7 +328,7 @@ export function Header() {
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-[#25D366] px-6 text-base font-bold text-white shadow-sm transition-all hover:bg-[#20bd5a] active:scale-[0.98]"
+                className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full border border-emerald-500/30 bg-[#25D366] px-6 text-sm font-bold text-white shadow-sm transition-all hover:bg-[#20bd5a] active:scale-[0.98]"
               >
                 <MessageCircle className="h-4 w-4 fill-white text-white" />
                 Chat on WhatsApp

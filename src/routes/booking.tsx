@@ -20,6 +20,11 @@ import { LeafSprig, Reveal, SectionHeading } from "@/components/site/primitives"
 import { openBookingModal } from "@/lib/bookingModal";
 
 export const Route = createFileRoute("/booking")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    reason: typeof search.reason === "string" ? search.reason : undefined,
+    service: typeof search.service === "string" ? search.service : undefined,
+    concern: typeof search.concern === "string" ? search.concern : undefined,
+  }),
   head: () => ({
     meta: [
       {
@@ -97,6 +102,8 @@ const BOOKING_FAQS = [
 
 function BookingPage() {
   const managedClinic = useClinicData();
+  const search = Route.useSearch();
+  const prefilledReason = search.reason || search.service || search.concern || "";
 
   useEffect(() => {
     // If arriving with hash or direct action, scroll directly to form
@@ -185,7 +192,7 @@ function BookingPage() {
       <section id="appointment" className="relative bg-gradient-to-b from-ivory to-cream py-12 sm:py-16">
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
           <Reveal>
-            <OpdBookingFlow />
+            <OpdBookingFlow initialReason={prefilledReason} />
           </Reveal>
         </div>
       </section>

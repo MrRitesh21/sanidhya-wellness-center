@@ -124,14 +124,13 @@ function ResultsPage() {
           </Reveal>
 
           <Reveal delay={0.2} className="mt-8 flex flex-wrap justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => openBookingModal()}
+            <Link
+              to="/booking"
               className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-7 text-sm font-semibold text-forest-deep shadow-lift transition-all duration-300 hover:bg-gold-deep hover:text-ivory active:scale-[0.98]"
             >
               Book Doctor Consultation
               <ArrowRight className="h-4 w-4" />
-            </button>
+            </Link>
             <a
               href={whatsappLink(
                 "Hello Sanidhya Naturopathy Center, I saw your clinical cases and would like to consult the doctor.",
@@ -223,14 +222,13 @@ function ResultsPage() {
           />
 
           <Reveal delay={0.12} className="mt-8 flex flex-wrap justify-center gap-4">
-            <button
-              type="button"
-              onClick={() => openBookingModal()}
+            <Link
+              to="/booking"
               className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-8 text-sm font-semibold text-forest-deep shadow-lift transition-colors hover:bg-gold-deep hover:text-ivory active:scale-[0.98]"
             >
               Book Clinic Appointment
               <ArrowRight className="h-4 w-4" />
-            </button>
+            </Link>
             <a
               href={clinic.phoneHref}
               className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-ivory/20 bg-white/10 px-7 text-sm font-semibold text-ivory backdrop-blur-sm transition-colors hover:bg-white/20 active:scale-[0.98]"

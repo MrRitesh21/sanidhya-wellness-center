@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { MessageCircle, Phone, Sparkles } from "lucide-react";
+import { CalendarCheck, MessageCircle, Phone, Sparkles } from "lucide-react";
 import { clinic, whatsappLink } from "@/lib/clinic";
-import { openBookingModal } from "@/lib/bookingModal";
 
 export function FloatingContactButtons() {
   const [mounted, setMounted] = useState(false);
@@ -25,11 +25,11 @@ export function FloatingContactButtons() {
       {!menuOpen && (
         <div
           id="mobile-bottom-bar"
-          className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-2 border-t border-beige/80 bg-white/95 px-3 py-2.5 shadow-lift backdrop-blur-md sm:hidden"
+          className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-2 border-t border-beige/80 bg-white/95 px-3 pt-2.5 pb-[calc(env(safe-area-inset-bottom,0px)+0.6rem)] shadow-lift backdrop-blur-md sm:hidden"
         >
           <a
             href={clinic.phoneHref}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-forest/20 bg-forest/5 py-2.5 text-xs font-semibold text-forest active:scale-95 transition-transform"
+            className="flex flex-1 min-h-[46px] items-center justify-center gap-1.5 rounded-full border border-forest/20 bg-forest/5 py-2 text-xs font-semibold text-forest active:scale-95 transition-transform"
             aria-label={`Call ${clinic.phoneDisplay}`}
           >
             <Phone className="h-3.5 w-3.5 text-gold-deep" />
@@ -42,21 +42,20 @@ export function FloatingContactButtons() {
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-full border border-emerald-500/30 bg-[#25D366] py-2.5 text-xs font-bold text-white shadow-sm active:scale-95 transition-transform"
+            className="flex flex-1 min-h-[46px] items-center justify-center gap-1.5 rounded-full border border-emerald-500/30 bg-[#25D366] py-2 text-xs font-bold text-white shadow-sm active:scale-95 transition-transform"
             aria-label="Chat on WhatsApp"
           >
             <MessageCircle className="h-3.5 w-3.5 fill-white text-white" />
             <span>WhatsApp</span>
           </a>
 
-          <button
-            type="button"
-            onClick={() => openBookingModal()}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-primary py-2.5 text-xs font-semibold text-primary-foreground shadow-sm active:scale-95 transition-transform"
+          <Link
+            to="/booking"
+            className="flex flex-[1.1] min-h-[46px] items-center justify-center gap-1.5 rounded-full bg-primary py-2 text-xs font-bold text-primary-foreground shadow-sm active:scale-95 transition-transform"
           >
             <Sparkles className="h-3.5 w-3.5 text-gold" />
-            <span>Book</span>
-          </button>
+            <span>Book Token</span>
+          </Link>
         </div>
       )}
 
@@ -99,22 +98,24 @@ export function FloatingContactButtons() {
           <span className="tracking-wide">WhatsApp Us</span>
         </motion.a>
 
-        {/* Floating Book Appointment Trigger */}
-        <motion.button
-          type="button"
-          onClick={() => openBookingModal()}
+        {/* Floating Book Appointment Trigger Linking to /booking */}
+        <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.96 }}
-          aria-label="Book an Appointment"
-          className="flex items-center gap-2.5 rounded-full border border-gold/40 bg-forest px-4 py-3 text-sm font-semibold text-ivory shadow-lift transition-all hover:bg-forest-deep focus:outline-none focus:ring-2 focus:ring-gold/60 sm:px-5 sm:py-3.5"
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold/20 text-gold">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-          </span>
-          <span className="tracking-wide">Book Appointment</span>
-        </motion.button>
+          <Link
+            to="/booking"
+            aria-label="Book an Appointment"
+            className="flex items-center gap-2.5 rounded-full border border-gold/40 bg-forest px-4 py-3 text-sm font-semibold text-ivory shadow-lift transition-all hover:bg-forest-deep focus:outline-none focus:ring-2 focus:ring-gold/60 sm:px-5 sm:py-3.5"
+          >
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold/20 text-gold">
+              <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+            </span>
+            <span className="tracking-wide">Book OPD Token</span>
+          </Link>
+        </motion.div>
       </div>
     </>
   );

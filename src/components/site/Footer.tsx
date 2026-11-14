@@ -95,8 +95,8 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/doctors" className="transition-colors hover:text-gold">
-                    Doctors & Care Team
+                  <Link to="/doctor" className="transition-colors hover:text-gold">
+                    Doctor & Care Team
                   </Link>
                 </li>
                 <li>
@@ -115,13 +115,12 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <button
-                    type="button"
-                    onClick={() => openBookingModal()}
+                  <Link
+                    to="/booking"
                     className="font-semibold text-gold transition-colors hover:text-ivory"
                   >
-                    Book Appointment
-                  </button>
+                    Book OPD Appointment
+                  </Link>
                 </li>
                 <li>
                   <a
