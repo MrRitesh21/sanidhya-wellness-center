@@ -17,6 +17,7 @@ import { clinic, whatsappLink } from "@/lib/clinic";
 import { prettyDate, submitLead, timeLabel } from "@/lib/leadCapture";
 import {
   submitAppointmentDirectlyToClinicX,
+  isSlotInPast,
   type AppointmentFormData,
 } from "@/lib/appointment";
 import { submitAppointment } from "@/lib/appointment.functions";
@@ -78,6 +79,16 @@ const schema = z
       .optional(),
   })
   .superRefine((data, ctx) => {
+    const today = kolkataToday();
+    if (data.date && data.date < today) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["date"],
+        message: "Please choose today or a future date.",
+      });
+      return;
+    }
+
     if (data.date && data.time) {
       const day = new Date(`${data.date}T00:00:00`).getDay();
       if (day === 0 && data.time !== "morning") {
@@ -85,6 +96,14 @@ const schema = z
           code: z.ZodIssueCode.custom,
           path: ["time"],
           message: "Sundays are 10:00 AM – 2:00 PM, so only the morning slot is available.",
+        });
+      }
+
+      if (data.date === today && isSlotInPast(data.date, data.time)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["time"],
+          message: "This consultation window has already passed for today. Please select an upcoming slot.",
         });
       }
     }
@@ -116,8 +135,11 @@ export function Booking() {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  const chosenDate = watch("date");
 
   useEffect(() => {
     setMinDate(kolkataToday());
@@ -546,11 +568,15 @@ export function Booking() {
                           <option value="" disabled>
                             Select a time
                           </option>
-                          {TIME_OPTIONS.map((t) => (
-                            <option key={t.value} value={t.value}>
-                              {t.label}
-                            </option>
-                          ))}
+                          {TIME_OPTIONS.map((t) => {
+                            const isPast = chosenDate === kolkataToday() ? isSlotInPast(chosenDate, t.value) : false;
+                            return (
+                              <option key={t.value} value={t.value} disabled={isPast}>
+                                {t.label}
+                                {isPast ? " (Closed for today)" : ""}
+                              </option>
+                            );
+                          })}
                         </select>
                         {errors.time && (
                           <p className={errorCls} role="alert">

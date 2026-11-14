@@ -7,6 +7,10 @@ import {
   normalizeIndianMobile,
   DEFAULT_DOCTOR,
   BOOKING_CLINIC_SLUG,
+  kolkataToday,
+  isSlotInPast,
+  isSlotBookable,
+  parseSlotTimeToMinutes,
 } from "@/lib/appointment";
 
 describe("Doctor OPD Appointment System & DPDP Act 2023 Compliance", () => {
@@ -126,5 +130,36 @@ describe("Doctor OPD Appointment System & DPDP Act 2023 Compliance", () => {
   it("generates a valid OPD Token format for local resilience", () => {
     const token = generateLocalOpdToken();
     expect(token).toMatch(/^OPD-\d{3}$/);
+  });
+
+  it("rejects booking dates in the past", () => {
+    const pastResult = appointmentFormSchema.safeParse({
+      appointmentType: "offline",
+      date: "2020-01-01",
+      time: "10:30 AM",
+      name: "Ramesh Verma",
+      mobile: "9876543210",
+      reason: "Backache",
+      consent: true,
+    });
+    expect(pastResult.success).toBe(false);
+  });
+
+  it("correctly identifies past slots and bookable slots", () => {
+    const today = kolkataToday();
+    // 10:00 AM is 600 minutes; 5:00 PM is 1020 minutes
+    // Mock 16:56 IST (11:26 UTC)
+    const mockTimeAfternoon = new Date("2026-11-14T11:26:00.000Z");
+    expect(isSlotInPast(today, "10:00 AM", mockTimeAfternoon)).toBe(true);
+    expect(isSlotInPast(today, "01:00 PM", mockTimeAfternoon)).toBe(true);
+    expect(isSlotInPast(today, "05:00 PM", mockTimeAfternoon)).toBe(false);
+
+    // Any slot with a past date is always in past
+    expect(isSlotInPast("2020-01-01", "10:00 AM")).toBe(true);
+    expect(isSlotBookable("2020-01-01", "10:00 AM")).toBe(false);
+
+    // Future date slots are bookable
+    expect(isSlotInPast("2030-01-01", "10:00 AM")).toBe(false);
+    expect(isSlotBookable("2030-01-01", "10:00 AM")).toBe(true);
   });
 });

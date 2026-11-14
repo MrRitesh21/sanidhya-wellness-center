@@ -95,6 +95,99 @@ export function isTodayOrFuture(value: string): boolean {
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value && value >= kolkataToday();
 }
 
+/**
+ * Converts a slot string (e.g. "10:00 AM", "05:30 PM", "morning") into total minutes from midnight.
+ */
+export function parseSlotTimeToMinutes(timeStr: string): number | null {
+  if (!timeStr) return null;
+  const normalized = timeStr.trim().toLowerCase();
+  if (normalized === "morning") return 13 * 60; // 1:00 PM (end of morning shift)
+  if (normalized === "afternoon") return 17 * 60 + 30; // 5:30 PM (end of afternoon shift)
+  if (normalized === "evening") return 21 * 60 + 30; // 9:30 PM (end of evening shift)
+
+  const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return null;
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const period = match[3].toUpperCase();
+  if (period === "PM" && hours < 12) hours += 12;
+  if (period === "AM" && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+}
+
+/**
+ * Gets the current time in Asia/Kolkata timezone in minutes from midnight.
+ */
+export function kolkataCurrentTimeMinutes(now = new Date()): number {
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(now);
+  const hourVal = parseInt(parts.find((p) => p.type === "hour")?.value || "0", 10);
+  const minuteVal = parseInt(parts.find((p) => p.type === "minute")?.value || "0", 10);
+  const safeHour = hourVal === 24 ? 0 : hourVal;
+  return safeHour * 60 + minuteVal;
+}
+
+/**
+ * Determines whether a date and time slot has already passed in Asia/Kolkata timezone.
+ */
+export function isSlotInPast(dateStr: string, timeStr: string, now = new Date()): boolean {
+  const today = kolkataToday();
+  if (dateStr < today) return true;
+  if (dateStr > today) return false;
+
+  const slotMinutes = parseSlotTimeToMinutes(timeStr);
+  if (slotMinutes === null) return false;
+  const currentMinutes = kolkataCurrentTimeMinutes(now);
+  return slotMinutes <= currentMinutes;
+}
+
+/**
+ * Determines if a slot can be booked on a specific date (not in past and meets clinic operating hours).
+ */
+export function isSlotBookable(dateStr: string, timeStr: string, now = new Date()): boolean {
+  if (dateStr < kolkataToday()) return false;
+  if (isSlotInPast(dateStr, timeStr, now)) return false;
+
+  // Sunday clinic closes at 2:00 PM; evening slots are closed
+  const dayOfWeek = new Date(`${dateStr}T00:00:00.000Z`).getUTCDay();
+  if (dayOfWeek === 0) {
+    const slotMinutes = parseSlotTimeToMinutes(timeStr);
+    if (slotMinutes !== null && slotMinutes >= 14 * 60) {
+      return false;
+    }
+    if (SHIFT_SLOTS.evening.includes(timeStr as any) || timeStr === "evening" || timeStr === "afternoon") {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Finds the earliest available future slot on a given date.
+ */
+export function getFirstAvailableSlot(dateStr: string, now = new Date()): string | null {
+  const allSlots = [...SHIFT_SLOTS.morning, ...SHIFT_SLOTS.evening];
+  for (const slot of allSlots) {
+    if (isSlotBookable(dateStr, slot, now)) {
+      return slot;
+    }
+  }
+  return null;
+}
+
+/**
+ * Checks if there are any remaining bookable slots on a given date.
+ */
+export function hasAvailableSlotsOnDate(dateStr: string, now = new Date()): boolean {
+  return getFirstAvailableSlot(dateStr, now) !== null;
+}
+
 export const appointmentFormSchema = z
   .object({
     appointmentType: z.enum(["offline", "online"]).default("offline"),
@@ -118,8 +211,28 @@ export const appointmentFormSchema = z
     consent: z.boolean().refine((value) => value === true, "DPDP Act 2023 consent is required to schedule"),
   })
   .superRefine((data, context) => {
+    const today = kolkataToday();
+    // 1. Prevent past dates
+    if (data.date < today) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["date"],
+        message: "Appointment date cannot be in the past. Please choose today or a future date.",
+      });
+      return;
+    }
+
+    // 2. Prevent past time slots for today
+    if (data.date === today && isSlotInPast(data.date, data.time)) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["time"],
+        message: "The selected time slot has already passed for today. Please select an upcoming slot.",
+      });
+    }
+
+    // 3. Sunday clinic hours restriction (10:00 AM - 2:00 PM)
     const dayOfWeek = new Date(`${data.date}T00:00:00.000Z`).getUTCDay();
-    // Sunday: Evening slots are disabled
     if (dayOfWeek === 0) {
       const isEvening =
         data.time === "evening" ||

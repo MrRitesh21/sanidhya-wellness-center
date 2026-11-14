@@ -12,15 +12,15 @@ import {
   Building2,
   Sparkles,
   ArrowRight,
-  ArrowLeft,
   Loader2,
   MessageCircle,
   CalendarPlus,
   Copy,
   Printer,
-  FileCheck2,
+  RotateCcw,
   Stethoscope,
-  Info,
+  ExternalLink,
+  MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
@@ -28,10 +28,13 @@ import {
   DEFAULT_DOCTOR,
   SHIFT_SLOTS,
   kolkataToday,
-  normalizeIndianMobile,
   isValidIndianMobile,
   submitAppointmentDirectlyToClinicX,
   generateLocalOpdToken,
+  isSlotBookable,
+  isSlotInPast,
+  getFirstAvailableSlot,
+  hasAvailableSlotsOnDate,
   type AppointmentFormData,
   type BookingResultData,
 } from "@/lib/appointment";
@@ -45,38 +48,45 @@ interface OpdBookingFlowProps {
   className?: string;
 }
 
+const COMMON_CONCERNS = [
+  "Cervical Spondylosis",
+  "Back Pain & Spine",
+  "Sciatica & Slip Disc",
+  "Varicose Veins Relief",
+  "Digestive Health & Acidity",
+  "Naturopathy Detox",
+  "Reiki Healing",
+];
+
 export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }: OpdBookingFlowProps) {
   const managedClinic = useClinicData();
   const submitFn = useServerFn(submitAppointment);
-
-  // Flow State
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [appointmentType, setAppointmentType] = useState<"offline" | "online">("offline");
-
-  // Slot Picker State
-  const [selectedDate, setSelectedDate] = useState<string>(kolkataToday());
-  const [selectedTime, setSelectedTime] = useState<string>("");
-
-  // Patient Info & DPDP State
-  const [name, setName] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [ageGroup, setAgeGroup] = useState<"adult" | "child">("adult");
-  const [gender, setGender] = useState<"male" | "female" | "other" | "prefer_not_to_say">("prefer_not_to_say");
-  const [reason, setReason] = useState(initialReason);
-  const [notes, setNotes] = useState("");
-  const [dpdpConsent, setDpdpConsent] = useState(false); // MUST NOT be pre-checked
-
-  // Submission & Confirmation State
-  const [submitting, setSubmitting] = useState(false);
-  const [formError, setFormError] = useState("");
-  const [bookingResult, setBookingResult] = useState<BookingResultData | null>(null);
-  const [tokenCopied, setTokenCopied] = useState(false);
 
   // Quick date selector helpers
   const todayStr = kolkataToday();
   const tomorrowObj = new Date();
   tomorrowObj.setDate(tomorrowObj.getDate() + 1);
   const tomorrowStr = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" }).format(tomorrowObj);
+
+  // Check if today has any remaining bookable slots
+  const todayHasSlots = hasAvailableSlotsOnDate(todayStr);
+  const defaultInitialDate = todayHasSlots ? todayStr : tomorrowStr;
+  const defaultInitialTime = getFirstAvailableSlot(defaultInitialDate) || "10:00 AM";
+
+  // Form State
+  const [appointmentType, setAppointmentType] = useState<"offline" | "online">("offline");
+  const [selectedDate, setSelectedDate] = useState<string>(defaultInitialDate);
+  const [selectedTime, setSelectedTime] = useState<string>(defaultInitialTime);
+  const [name, setName] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [reason, setReason] = useState(initialReason);
+  const [dpdpConsent, setDpdpConsent] = useState(false);
+
+  // Status & Confirmation State
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [bookingResult, setBookingResult] = useState<BookingResultData | null>(null);
+  const [tokenCopied, setTokenCopied] = useState(false);
 
   // Pre-populate health concern or service from props or URL query params
   useEffect(() => {
@@ -91,80 +101,31 @@ export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }
     }
   }, [initialReason]);
 
-  // Mode selector: Interactive 4-step wizard vs Official ClinicX Direct Form
-  const [activeFormTab, setActiveFormTab] = useState<"wizard" | "direct">("wizard");
-
   // Check if selected date is Sunday
   const isSunday = new Date(`${selectedDate}T00:00:00.000Z`).getUTCDay() === 0;
 
-  // Auto-reset time if Sunday and selected slot is evening
+  // Whenever selectedDate changes, ensure selectedTime is valid and not in the past
   useEffect(() => {
-    if (isSunday && selectedTime && SHIFT_SLOTS.evening.includes(selectedTime as any)) {
-      setSelectedTime("");
-    }
-  }, [isSunday, selectedTime]);
-
-  // Listen to ClinicX official widget booking success events & ensure widget connector is loaded
-  useEffect(() => {
-    const handleClinicXSuccess = (e: any) => {
-      const detail = e?.detail;
-      if (detail && detail.success) {
-        const token = detail.token_number || generateLocalOpdToken();
-        const conf: BookingResultData = {
-          appointment_id: detail.appointment_id || `apt_${Date.now()}`,
-          token_number: token,
-          clinic_name: detail.clinic_name || managedClinic.clinic_name || "Sanidhya Naturopathy Center",
-          doctor_name: detail.doctor_name || managedClinic.doctor_name || DEFAULT_DOCTOR.name,
-          whatsapp_confirmation: detail.whatsapp_confirmation,
-          is_offline_fallback: false,
-        };
-        setBookingResult(conf);
-        setStep(4);
-        setActiveFormTab("wizard");
-        if (onSuccess) onSuccess(conf);
-        toast.success(`OPD Token ${token} generated & synced directly to ClinicX!`);
+    if (!selectedTime || !isSlotBookable(selectedDate, selectedTime)) {
+      const nextSlot = getFirstAvailableSlot(selectedDate);
+      if (nextSlot) {
+        setSelectedTime(nextSlot);
       }
-    };
-
-    window.addEventListener("clinicx:booking_success", handleClinicXSuccess);
-
-    // Inject ClinicX Auto-Submit Connector script if not already present
-    if (!document.querySelector('script[src*="clinicx.digiwil.com/widget.js"]')) {
-      const script = document.createElement("script");
-      script.src = "https://clinicx.digiwil.com/widget.js";
-      script.setAttribute("data-clinic", "sanidhya-naturopathy-center");
-      script.setAttribute("data-mode", "none");
-      script.async = true;
-      document.body.appendChild(script);
     }
-
-    return () => {
-      window.removeEventListener("clinicx:booking_success", handleClinicXSuccess);
-    };
-  }, [managedClinic, onSuccess]);
-
-  const handleNextToStep2 = () => {
-    setFormError("");
-    setStep(2);
-  };
-
-  const handleNextToStep3 = () => {
-    if (!selectedDate) {
-      setFormError("Please select a date for your appointment.");
-      return;
-    }
-    if (!selectedTime) {
-      setFormError("Please select an available time slot.");
-      return;
-    }
-    setFormError("");
-    setStep(3);
-  };
+  }, [selectedDate, selectedTime]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
 
+    if (selectedDate < todayStr) {
+      setFormError("Appointment date cannot be in the past. Please choose today or an upcoming date.");
+      return;
+    }
+    if (!isSlotBookable(selectedDate, selectedTime)) {
+      setFormError("The selected time slot has already passed for today. Please select an upcoming slot.");
+      return;
+    }
     if (!name.trim() || name.trim().length < 2) {
       setFormError("Please enter your full name (at least 2 letters).");
       return;
@@ -178,7 +139,7 @@ export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }
       return;
     }
     if (!dpdpConsent) {
-      setFormError("Please provide affirmative consent under Section 6 of DPDP Act 2023 by checking the consent checkbox below.");
+      setFormError("Please check the DPDP Act 2023 consent checkbox to proceed.");
       const consentEl = document.getElementById("dpdp-consent");
       if (consentEl) {
         consentEl.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -189,22 +150,21 @@ export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }
 
     setSubmitting(true);
 
-    try {
-      const payload: AppointmentFormData = {
-        appointmentType,
-        date: selectedDate,
-        time: selectedTime,
-        name: name.trim(),
-        mobile: mobile.trim(),
-        ageGroup,
-        gender,
-        reason: reason.trim(),
-        message: notes.trim() || undefined,
-        consent: true,
-      };
+    const payload: AppointmentFormData = {
+      appointmentType,
+      date: selectedDate,
+      time: selectedTime,
+      name: name.trim(),
+      mobile: mobile.trim(),
+      ageGroup: "adult",
+      reason: reason.trim(),
+      consent: true,
+    };
 
-      // 1. Permanent Direct Browser API Submission to ClinicX (No intermediate proxy dependency)
+    try {
       let bookingData: BookingResultData | null = null;
+
+      // 1. Direct Browser API Submission to ClinicX
       try {
         const directRes = await submitAppointmentDirectlyToClinicX(payload);
         if (directRes && directRes.data && !directRes.data.is_offline_fallback) {
@@ -228,17 +188,14 @@ export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }
 
       if (bookingData) {
         setBookingResult(bookingData);
-        setStep(4);
         if (onSuccess) onSuccess(bookingData);
-        toast.success(`OPD Token ${bookingData.token_number} generated & synced to ClinicX!`);
-        // Background sync to leads CRM
+        toast.success(`OPD Token ${bookingData.token_number} generated!`);
         void submitFn({ data: payload }).catch(() => {});
       } else {
         throw new Error("Unable to generate appointment token.");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Booking submission error:", err);
-      // Fallback local resilience
       const fallbackToken = generateLocalOpdToken();
       const fallbackData: BookingResultData = {
         appointment_id: `apt_local_${Date.now()}`,
@@ -249,7 +206,6 @@ export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }
         whatsapp_confirmation: `Namaste ${name}, your appointment request has been recorded with OPD Token: ${fallbackToken}.`,
       };
       setBookingResult(fallbackData);
-      setStep(4);
       toast.info(`Appointment recorded with Digital Token ${fallbackToken}`);
     } finally {
       setSubmitting(false);
@@ -265,7 +221,6 @@ export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }
     }
   };
 
-  // Google Calendar Link generator
   const getGoogleCalendarUrl = () => {
     if (!bookingResult) return "#";
     const title = encodeURIComponent(`OPD Appointment with ${bookingResult.doctor_name} (${bookingResult.clinic_name})`);
@@ -273,12 +228,10 @@ export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }
       `Appointment Token: ${bookingResult.token_number}\nMode: ${appointmentType === "offline" ? "In-Clinic OPD" : "Online Video Consultation"}\nPatient: ${name}\nClinic: ${bookingResult.clinic_name}\nAddress: ${managedClinic.address}\nContact: ${managedClinic.phone}`
     );
     const location = encodeURIComponent(appointmentType === "offline" ? managedClinic.address : "WhatsApp Video Consultation");
-    // Format YYYYMMDDTHHmmss
     const cleanDate = selectedDate.replace(/-/g, "");
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${cleanDate}T050000Z/${cleanDate}T060000Z`;
   };
 
-  // WhatsApp confirmation message
   const getWhatsAppShareUrl = () => {
     if (!bookingResult) return "#";
     const msg = [
@@ -297,920 +250,531 @@ export function OpdBookingFlow({ initialReason = "", onSuccess, className = "" }
     return `https://wa.me/${clinic.whatsappNumber}?text=${encodeURIComponent(msg)}`;
   };
 
+  const handleReset = () => {
+    setBookingResult(null);
+    setName("");
+    setMobile("");
+    setReason("");
+    setDpdpConsent(false);
+    setFormError("");
+  };
+
   return (
     <div
       id="opd-booking"
-      className={`mx-auto max-w-4xl rounded-3xl border border-slate-200 bg-white/90 p-5 shadow-md backdrop-blur-md transition-all dark:border-slate-800 dark:bg-slate-900/90 sm:p-8 ${className}`}
-      style={{
-        // Theme variables for accent #0d9488
-        ["--accent" as any]: "#0d9488",
-        ["--accent-hover" as any]: "#0f766e",
-      }}
+      className={`mx-auto max-w-3xl overflow-hidden rounded-3xl border border-beige bg-white shadow-soft transition-all ${className}`}
     >
-      {/* Multi-stage Progress Stepper */}
-      <div className="mb-8 border-b border-slate-200 pb-5 dark:border-slate-800">
-        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-          <span className="flex items-center gap-1.5 text-teal-700 dark:text-teal-400">
-            <Sparkles className="size-4 text-[#0d9488]" />
-            Doctor OPD Booking Portal
-          </span>
-          <span className="rounded-full bg-teal-50 px-2.5 py-0.5 text-[11px] font-bold text-teal-800 dark:bg-teal-950/40 dark:text-teal-300 border border-teal-200 dark:border-teal-800/50">
-            DPDP Act 2023 Compliant
-          </span>
-        </div>
-
-        <div className="mt-4 grid grid-cols-4 gap-2 text-center">
-          {[
-            { num: 1, label: "Doctor & Mode" },
-            { num: 2, label: "Date & Slot" },
-            { num: 3, label: "Patient Info" },
-            { num: 4, label: "OPD Token" },
-          ].map((s) => {
-            const isActive = step === s.num;
-            const isCompleted = step > s.num;
-            return (
-              <div key={s.num} className="flex flex-col items-center">
-                <div
-                  className={`flex size-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
-                    isCompleted
-                      ? "bg-[#0d9488] text-white"
-                      : isActive
-                      ? "bg-[#0d9488] text-white ring-4 ring-teal-100 dark:ring-teal-900/40"
-                      : "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
-                  }`}
-                >
-                  {isCompleted ? <CheckCircle2 className="size-4" /> : s.num}
-                </div>
-                <span
-                  className={`mt-1.5 hidden text-[11px] font-medium sm:block ${
-                    isActive
-                      ? "font-semibold text-teal-800 dark:text-teal-300"
-                      : "text-slate-500 dark:text-slate-400"
-                  }`}
-                >
-                  {s.label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* View Toggle: Guided OPD Wizard vs ClinicX Direct Form */}
-        {step !== 4 && (
-          <div className="mt-5 flex items-center justify-center">
-            <div className="inline-flex rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
-              <button
-                type="button"
-                onClick={() => setActiveFormTab("wizard")}
-                className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                  activeFormTab === "wizard"
-                    ? "bg-white text-[#0d9488] shadow-sm dark:bg-slate-900 dark:text-teal-300"
-                    : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-                }`}
-              >
-                Guided OPD Flow (Tokens &amp; Slots)
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveFormTab("direct")}
-                className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                  activeFormTab === "direct"
-                    ? "bg-white text-[#0d9488] shadow-sm dark:bg-slate-900 dark:text-teal-300"
-                    : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-                }`}
-              >
-                ClinicX Quick Form
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {formError && (
-        <div className="mb-6 flex items-start gap-2.5 rounded-2xl border border-red-200 bg-red-50 p-4 text-xs font-medium text-red-800 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300">
-          <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-600 dark:text-red-400" />
-          <span>{formError}</span>
-        </div>
-      )}
-
-      {/* Official ClinicX Custom Website Booking Form (No Iframe) */}
-      {activeFormTab === "direct" && step !== 4 && (
-        <motion.div
-          key="direct-form"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="mx-auto max-w-lg rounded-2xl border border-slate-200 bg-slate-50/60 p-6 dark:border-slate-800 dark:bg-slate-800/40 sm:p-8"
-        >
-          <form
-            id="clinicx-booking-form"
-            action="https://clinicx.digiwil.com/api/public/submit-booking"
-            method="POST"
-            data-clinic="sanidhya-naturopathy-center"
-            style={{ maxWidth: "520px", width: "100%", margin: "0 auto", boxSizing: "border-box" }}
-          >
-            <input type="hidden" name="clinic" value="sanidhya-naturopathy-center" />
-
-            <div style={{ marginBottom: "20px", textAlign: "left" }}>
-              <h3 style={{ margin: "0 0 6px 0", fontSize: "20px", fontWeight: 700, color: "#0f172a" }}>
-                Book an In-Clinic or Video Consultation
-              </h3>
-              <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>
-                Fill your details below. Directly integrated with ClinicX for instant doctor confirmation.
-              </p>
-            </div>
-
-            {/* Patient Name Field */}
-            <div style={{ marginBottom: "14px", textAlign: "left" }}>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
-                Full Name *
-              </label>
-              <input
-                type="text"
-                name="name"
-                required
-                placeholder="e.g. Ramesh Verma"
-                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box" }}
-              />
-            </div>
-
-            {/* Phone / WhatsApp Field */}
-            <div style={{ marginBottom: "14px", textAlign: "left" }}>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
-                Phone / WhatsApp Number *
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                required
-                placeholder="e.g. 9876543210"
-                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box" }}
-              />
-            </div>
-
-            {/* Email Address (Optional) */}
-            <div style={{ marginBottom: "14px", textAlign: "left" }}>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
-                Email Address
-              </label>
-              <input
-                type="email"
-                name="email"
-                placeholder="e.g. name@example.com"
-                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box" }}
-              />
-            </div>
-
-            {/* Consultation Type */}
-            <div style={{ marginBottom: "14px", textAlign: "left" }}>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
-                Consultation Type
-              </label>
-              <select
-                name="appointment_type"
-                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", background: "#fff", boxSizing: "border-box" }}
-              >
-                <option value="offline">In-Clinic Visit</option>
-                <option value="online">Video Consultation</option>
-              </select>
-            </div>
-
-            {/* Preferred Appointment Date */}
-            <div style={{ marginBottom: "14px", textAlign: "left" }}>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
-                Preferred Date
-              </label>
-              <input
-                type="date"
-                name="date"
-                defaultValue={todayStr}
-                min={todayStr}
-                style={{ width: "100%", padding: "11px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box" }}
-              />
-            </div>
-
-            {/* Symptoms or Message */}
-            <div style={{ marginBottom: "18px", textAlign: "left" }}>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
-                Reason for Visit / Problem
-              </label>
-              <textarea
-                name="problem"
-                rows={2}
-                placeholder="Briefly describe your symptoms or concern..."
-                style={{ width: "100%", padding: "10px 14px", fontSize: "14px", border: "1.5px solid #cbd5e1", borderRadius: "10px", outline: "none", boxSizing: "border-box", resize: "vertical" }}
-              ></textarea>
-            </div>
-
-            <input type="hidden" name="dpdp_consent" value="true" />
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              style={{ width: "100%", padding: "14px 20px", fontSize: "15px", fontWeight: 600, backgroundColor: "#0d9488", color: "#ffffff", border: "none", borderRadius: "10px", cursor: "pointer", transition: "opacity 0.2s" }}
-            >
-              Book Appointment (Submit to ClinicX)
-            </button>
-          </form>
-        </motion.div>
-      )}
-
       <AnimatePresence mode="wait">
-        {/* ================= STEP 1: DOCTOR & MODE SELECTION ================= */}
-        {activeFormTab === "wizard" && step === 1 && (
-          <motion.div
-            key="step1"
-            initial={{ opacity: 0, y: 12 }}
+        {!bookingResult ? (
+          /* ================= MINIMAL UNIFIED BOOKING FORM ================= */
+          <motion.form
+            key="booking-form"
+            onSubmit={handleSubmit}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.25 }}
-            className="space-y-6"
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="divide-y divide-beige/80"
           >
-            <div>
-              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-2xl">
-                Step 1: Choose Doctor & Consultation Mode
-              </h2>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                Select your preferred mode of consultation with our chief practitioner.
-              </p>
-            </div>
-
-            {/* Doctor Summary Card */}
-            <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-teal-50/50 via-white to-slate-50 p-5 shadow-sm dark:border-slate-800 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800/60 sm:p-6">
+            {/* Header: Doctor & Consultation Overview */}
+            <div className="bg-gradient-to-r from-teal-50/70 via-ivory to-cream/50 p-6 sm:p-7">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="relative flex size-16 shrink-0 items-center justify-center rounded-2xl bg-[#0d9488] text-white shadow-md sm:size-20">
-                    <Stethoscope className="size-8" />
-                    <span className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-emerald-500 text-white ring-2 ring-white dark:ring-slate-900">
-                      ✓
-                    </span>
+                <div className="flex items-center gap-3.5">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0d9488] text-white shadow-sm">
+                    <Stethoscope className="h-6 w-6" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white sm:text-xl">
+                      <h2 className="font-display text-xl font-bold text-forest">
                         {managedClinic.doctor_name || DEFAULT_DOCTOR.name}
-                      </h3>
-                      <span className="rounded-full bg-teal-100 px-2.5 py-0.5 text-[11px] font-semibold text-teal-800 dark:bg-teal-950 dark:text-teal-300">
-                        Verified Doctor
+                      </h2>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-teal-100/80 px-2 py-0.5 text-[10px] font-bold text-teal-800">
+                        <Sparkles className="h-2.5 w-2.5 text-[#0d9488]" />
+                        OPD Token
                       </span>
                     </div>
-                    <p className="text-xs font-semibold text-teal-700 dark:text-teal-400 sm:text-sm">
+                    <p className="text-xs font-semibold text-teal-800">
                       {managedClinic.specialization || DEFAULT_DOCTOR.specialty}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {managedClinic.qualification || DEFAULT_DOCTOR.qualifications} &middot; {DEFAULT_DOCTOR.experience}
-                    </p>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-teal-200 bg-white p-3.5 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800 sm:min-w-[140px]">
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                    Consultation Fee
-                  </p>
-                  <p className="text-2xl font-black text-[#0d9488] sm:text-3xl">
-                    ₹{managedClinic.consultation_fee || DEFAULT_DOCTOR.consultationFee}
-                  </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Standard OPD</p>
+                <div className="flex items-center justify-between gap-4 rounded-xl border border-teal-200/80 bg-white/90 px-4 py-2 sm:justify-end">
+                  <div className="text-left sm:text-right">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Consultation Fee</p>
+                    <p className="text-lg font-black text-[#0d9488]">
+                      ₹{managedClinic.consultation_fee || DEFAULT_DOCTOR.consultationFee}
+                    </p>
+                  </div>
+                  <span className="rounded-md bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-800">
+                    Pay at Clinic
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Mode Selection Cards */}
-            <div className="space-y-3">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                Select Consultation Mode
-              </label>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={() => setAppointmentType("offline")}
-                  className={`group relative flex items-start gap-3.5 rounded-2xl border p-4 text-left transition-all ${
-                    appointmentType === "offline"
-                      ? "border-[#0d9488] bg-teal-50/60 ring-2 ring-[#0d9488]/30 dark:border-[#0d9488] dark:bg-teal-950/20"
-                      : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-800/40"
-                  }`}
-                >
-                  <div
-                    className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                      appointmentType === "offline"
-                        ? "bg-[#0d9488] text-white"
-                        : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-                    }`}
-                  >
-                    <Building2 className="size-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-slate-900 dark:text-white">In-Clinic OPD</span>
-                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                        Zero Queue Wait
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-                      Visit Sanidhya Center in Sector I, Jankipuram, Lucknow. Direct doctor consultation with physical assessment.
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setAppointmentType("online")}
-                  className={`group relative flex items-start gap-3.5 rounded-2xl border p-4 text-left transition-all ${
-                    appointmentType === "online"
-                      ? "border-[#0d9488] bg-teal-50/60 ring-2 ring-[#0d9488]/30 dark:border-[#0d9488] dark:bg-teal-950/20"
-                      : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-800/40"
-                  }`}
-                >
-                  <div
-                    className={`mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                      appointmentType === "online"
-                        ? "bg-[#0d9488] text-white"
-                        : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-                    }`}
-                  >
-                    <Video className="size-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-slate-900 dark:text-white">Online Video Consult</span>
-                      <span className="rounded-full bg-teal-100 px-2 py-0.5 text-[10px] font-bold text-teal-800 dark:bg-teal-950 dark:text-teal-300">
-                        WhatsApp Link
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-                      Consult Dr. Kamal from home over secure high-definition WhatsApp video call with digital prescription delivery.
-                    </p>
-                  </div>
-                </button>
+            {/* Error Banner */}
+            {formError && (
+              <div className="flex items-start gap-2.5 bg-red-50/90 px-6 py-3.5 text-xs font-medium text-red-800">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+                <span>{formError}</span>
               </div>
-            </div>
+            )}
 
-            <div className="flex justify-end pt-4">
-              <button
-                type="button"
-                onClick={handleNextToStep2}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#0d9488] px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#0f766e] focus:outline-none focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 active:scale-95"
-              >
-                Proceed to Select Date & Slot
-                <ArrowRight className="size-4" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ================= STEP 2: DATE & REAL-TIME SLOT PICKER ================= */}
-        {activeFormTab === "wizard" && step === 2 && (
-          <motion.div
-            key="step2"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.25 }}
-            className="space-y-6"
-          >
-            <div className="flex items-center justify-between">
+            {/* Section 1: Mode & Schedule */}
+            <div className="space-y-6 p-6 sm:p-7">
+              {/* Consultation Mode Selector */}
               <div>
-                <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-2xl">
-                  Step 2: Pick Appointment Date & Slot
-                </h2>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                  Select your preferred day and time for Dr. Kamal.
-                </p>
+                <label className="block text-xs font-bold uppercase tracking-wider text-charcoal/80">
+                  1. Consultation Mode
+                </label>
+                <div className="mt-2.5 grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setAppointmentType("offline")}
+                    className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${
+                      appointmentType === "offline"
+                        ? "border-[#0d9488] bg-teal-50/80 ring-2 ring-[#0d9488]/20"
+                        : "border-beige bg-ivory/40 text-charcoal hover:bg-ivory"
+                    }`}
+                  >
+                    <div
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                        appointmentType === "offline" ? "bg-[#0d9488] text-white" : "bg-white text-muted-foreground"
+                      }`}
+                    >
+                      <Building2 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-forest">In-Clinic Visit</p>
+                      <p className="text-[11px] text-muted-foreground">Jankipuram, Lucknow</p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAppointmentType("online")}
+                    className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${
+                      appointmentType === "online"
+                        ? "border-[#0d9488] bg-teal-50/80 ring-2 ring-[#0d9488]/20"
+                        : "border-beige bg-ivory/40 text-charcoal hover:bg-ivory"
+                    }`}
+                  >
+                    <div
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                        appointmentType === "online" ? "bg-[#0d9488] text-white" : "bg-white text-muted-foreground"
+                      }`}
+                    >
+                      <Video className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-forest">Online Video Consult</p>
+                      <p className="text-[11px] text-muted-foreground">WhatsApp Video Call</p>
+                    </div>
+                  </button>
+                </div>
               </div>
-              <span className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300">
-                Mode: {appointmentType === "offline" ? "In-Clinic OPD" : "Online Video"}
-              </span>
-            </div>
 
-            {/* Quick Date Selector */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                Appointment Date
-              </label>
+              {/* Date & Time Slot Picker */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-charcoal/80">
+                  2. Select Date &amp; Slot
+                </label>
 
-              <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
-                <button
-                  type="button"
-                  onClick={() => setSelectedDate(todayStr)}
-                  className={`rounded-xl border p-3 text-center transition-all ${
-                    selectedDate === todayStr
-                      ? "border-[#0d9488] bg-teal-50 font-bold text-teal-900 ring-2 ring-[#0d9488]/30 dark:bg-teal-950/40 dark:text-teal-200"
-                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300"
-                  }`}
-                >
-                  <p className="text-[11px] uppercase tracking-wider opacity-70">Quick Pick</p>
-                  <p className="text-sm font-bold">Today</p>
-                  <p className="text-[10px] text-slate-500">{todayStr}</p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setSelectedDate(tomorrowStr)}
-                  className={`rounded-xl border p-3 text-center transition-all ${
-                    selectedDate === tomorrowStr
-                      ? "border-[#0d9488] bg-teal-50 font-bold text-teal-900 ring-2 ring-[#0d9488]/30 dark:bg-teal-950/40 dark:text-teal-200"
-                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300"
-                  }`}
-                >
-                  <p className="text-[11px] uppercase tracking-wider opacity-70">Quick Pick</p>
-                  <p className="text-sm font-bold">Tomorrow</p>
-                  <p className="text-[10px] text-slate-500">{tomorrowStr}</p>
-                </button>
-
-                <div className="col-span-1 sm:col-span-2">
+                {/* Date Quick Selector */}
+                <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={!todayHasSlots}
+                    onClick={() => {
+                      if (todayHasSlots) setSelectedDate(todayStr);
+                    }}
+                    title={!todayHasSlots ? "All consultation slots for today have completed" : "Book for Today"}
+                    className={`rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all ${
+                      selectedDate === todayStr
+                        ? "border-[#0d9488] bg-[#0d9488] text-white shadow-xs"
+                        : !todayHasSlots
+                        ? "border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-60"
+                        : "border-beige bg-white text-charcoal hover:bg-sage-soft cursor-pointer"
+                    }`}
+                  >
+                    Today ({todayStr.slice(5)}){!todayHasSlots ? " · Closed" : ""}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedDate(tomorrowStr)}
+                    className={`rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
+                      selectedDate === tomorrowStr
+                        ? "border-[#0d9488] bg-[#0d9488] text-white shadow-xs"
+                        : "border-beige bg-white text-charcoal hover:bg-sage-soft"
+                    }`}
+                  >
+                    Tomorrow ({tomorrowStr.slice(5)})
+                  </button>
                   <div className="relative">
                     <input
                       type="date"
                       min={todayStr}
                       value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/30 dark:border-slate-800 dark:bg-slate-800 dark:text-white"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val && val < todayStr) {
+                          toast.error("Past dates cannot be selected. Please choose today or an upcoming date.");
+                          setSelectedDate(todayStr);
+                          return;
+                        }
+                        setSelectedDate(val);
+                      }}
+                      className="rounded-xl border border-beige bg-white px-3 py-1.5 text-xs font-semibold text-charcoal shadow-2xs focus:border-[#0d9488] focus:outline-none"
                     />
-                    <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-                      Choose any upcoming consultation date
-                    </p>
+                  </div>
+                </div>
+
+                {!todayHasSlots && selectedDate === todayStr && (
+                  <p className="mt-2 text-xs font-medium text-amber-800 bg-amber-50 rounded-xl p-2.5 border border-amber-200">
+                    All consultation slots for today have concluded. Please select Tomorrow or an upcoming date.
+                  </p>
+                )}
+
+                {/* Slot Selector: Morning & Evening */}
+                <div className="mt-4 space-y-3">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5">
+                        <Clock className="h-3 w-3 text-gold-deep" />
+                        Morning OPD (10:00 AM – 01:00 PM)
+                      </p>
+                      {selectedDate === todayStr && isSlotInPast(todayStr, "01:00 PM") && (
+                        <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                          Completed for today
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-7">
+                      {SHIFT_SLOTS.morning.map((slot) => {
+                        const isBookable = isSlotBookable(selectedDate, slot);
+                        const isSelected = selectedTime === slot;
+                        return (
+                          <button
+                            key={slot}
+                            type="button"
+                            disabled={!isBookable}
+                            onClick={() => setSelectedTime(slot)}
+                            title={!isBookable ? "This slot has already passed for today" : `Select ${slot}`}
+                            className={`rounded-xl border py-2 text-center text-xs font-semibold transition-all ${
+                              isSelected
+                                ? "border-[#0d9488] bg-[#0d9488] text-white shadow-xs"
+                                : isBookable
+                                ? "border-beige bg-ivory/60 text-charcoal hover:border-teal-400 hover:bg-white cursor-pointer"
+                                : "border-slate-200/60 bg-slate-100/70 text-slate-400 line-through cursor-not-allowed select-none opacity-45"
+                            }`}
+                          >
+                            {slot}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5">
+                        <Clock className="h-3 w-3 text-gold-deep" />
+                        Evening OPD (05:00 PM – 08:00 PM)
+                      </p>
+                      {isSunday ? (
+                        <span className="text-[10px] font-semibold text-amber-700">Closed Sundays</span>
+                      ) : selectedDate === todayStr && isSlotInPast(todayStr, "08:00 PM") ? (
+                        <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                          Completed for today
+                        </span>
+                      ) : null}
+                    </div>
+                    {isSunday ? (
+                      <p className="mt-2 rounded-xl bg-amber-50/80 p-2.5 text-xs text-amber-800">
+                        Sunday clinic closes at 2:00 PM. Please select a morning slot.
+                      </p>
+                    ) : (
+                      <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-7">
+                        {SHIFT_SLOTS.evening.map((slot) => {
+                          const isBookable = isSlotBookable(selectedDate, slot);
+                          const isSelected = selectedTime === slot;
+                          return (
+                            <button
+                              key={slot}
+                              type="button"
+                              disabled={!isBookable}
+                              onClick={() => setSelectedTime(slot)}
+                              title={!isBookable ? "This slot has already passed for today" : `Select ${slot}`}
+                              className={`rounded-xl border py-2 text-center text-xs font-semibold transition-all ${
+                                isSelected
+                                  ? "border-[#0d9488] bg-[#0d9488] text-white shadow-xs"
+                                  : isBookable
+                                  ? "border-beige bg-ivory/60 text-charcoal hover:border-teal-400 hover:bg-white cursor-pointer"
+                                  : "border-slate-200/60 bg-slate-100/70 text-slate-400 line-through cursor-not-allowed select-none opacity-45"
+                              }`}
+                            >
+                              {slot}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Patient Information */}
+            <div className="space-y-4 p-6 sm:p-7">
+              <label className="block text-xs font-bold uppercase tracking-wider text-charcoal/80">
+                3. Patient Details
+              </label>
+
+              <div className="grid gap-3.5 sm:grid-cols-2">
+                <div className="space-y-1">
+                  <label htmlFor="patient-name" className="text-xs font-semibold text-charcoal">
+                    Full Name <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      id="patient-name"
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="e.g. Ramesh Verma"
+                      className="w-full rounded-xl border border-beige bg-white py-2.5 pl-10 pr-3.5 text-sm text-charcoal placeholder:text-muted-foreground/60 focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/20"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label htmlFor="patient-mobile" className="text-xs font-semibold text-charcoal">
+                    WhatsApp Number <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      id="patient-mobile"
+                      type="tel"
+                      required
+                      maxLength={14}
+                      value={mobile}
+                      onChange={(e) => setMobile(e.target.value)}
+                      placeholder="10-digit mobile number"
+                      className="w-full rounded-xl border border-beige bg-white py-2.5 pl-10 pr-3.5 text-sm text-charcoal placeholder:text-muted-foreground/60 focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/20"
+                    />
                   </div>
                 </div>
               </div>
 
-              {isSunday && (
-                <div className="mt-2 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-300">
-                  <Info className="size-4 shrink-0 text-amber-600" />
-                  <span>Sunday clinic hours are 10:00 AM – 2:00 PM. Evening shift slots are closed.</span>
-                </div>
-              )}
-            </div>
+              {/* Health Concern / Reason */}
+              <div className="space-y-1.5 pt-1">
+                <label htmlFor="patient-reason" className="text-xs font-semibold text-charcoal">
+                  Health Concern / Reason for Visit <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="patient-reason"
+                  type="text"
+                  required
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder="e.g. Cervical pain, joint stiffness, naturopathy detox..."
+                  className="w-full rounded-xl border border-beige bg-white px-3.5 py-2.5 text-sm text-charcoal placeholder:text-muted-foreground/60 focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/20"
+                />
 
-            {/* Slot Picker: Morning Shift */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  <Clock className="size-3.5 text-[#0d9488]" />
-                  Morning Shift (10:00 AM – 01:00 PM)
-                </span>
-                <span className="text-[11px] text-slate-500">Zero queue wait</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {SHIFT_SLOTS.morning.map((slot) => {
-                  const isSelected = selectedTime === slot;
-                  return (
+                {/* Quick Concern Chips */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="text-[11px] text-muted-foreground">Quick pick:</span>
+                  {COMMON_CONCERNS.map((c) => (
                     <button
-                      key={slot}
+                      key={c}
                       type="button"
-                      onClick={() => setSelectedTime(slot)}
-                      className={`flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-xs font-semibold transition-all ${
-                        isSelected
-                          ? "border-[#0d9488] bg-[#0d9488] text-white shadow-sm ring-2 ring-[#0d9488]/40"
-                          : "border-slate-200 bg-white text-slate-700 hover:border-teal-500 hover:bg-teal-50/50 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-200"
-                      }`}
+                      onClick={() => setReason(c)}
+                      className="rounded-full border border-beige bg-ivory px-2.5 py-0.5 text-[11px] font-medium text-charcoal transition-colors hover:border-teal-400 hover:bg-teal-50 hover:text-teal-900 cursor-pointer"
                     >
-                      <span>{slot}</span>
-                      {isSelected && <CheckCircle2 className="size-3.5" />}
+                      + {c}
                     </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Slot Picker: Evening Shift */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  <Clock className="size-3.5 text-[#0d9488]" />
-                  Evening Shift (05:00 PM – 08:00 PM)
-                </span>
-                {isSunday ? (
-                  <span className="text-[11px] font-semibold text-amber-600">Closed on Sundays</span>
-                ) : (
-                  <span className="text-[11px] text-slate-500">Prime evening slots</span>
-                )}
-              </div>
-
-              {isSunday ? (
-                <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4 text-center text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-800/40">
-                  Evening OPD is closed on Sundays. Please select a morning slot or pick Monday through Saturday.
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  {SHIFT_SLOTS.evening.map((slot) => {
-                    const isSelected = selectedTime === slot;
-                    return (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setSelectedTime(slot)}
-                        className={`flex items-center justify-between rounded-xl border px-3.5 py-2.5 text-xs font-semibold transition-all ${
-                          isSelected
-                            ? "border-[#0d9488] bg-[#0d9488] text-white shadow-sm ring-2 ring-[#0d9488]/40"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-teal-500 hover:bg-teal-50/50 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-200"
-                        }`}
-                      >
-                        <span>{slot}</span>
-                        {isSelected && <CheckCircle2 className="size-3.5" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between pt-4">
-              <button
-                type="button"
-                onClick={() => setStep(1)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-200"
-              >
-                <ArrowLeft className="size-4" /> Back
-              </button>
-
-              <button
-                type="button"
-                onClick={handleNextToStep3}
-                disabled={!selectedTime}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#0d9488] px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#0f766e] disabled:cursor-not-allowed disabled:opacity-50 active:scale-95"
-              >
-                Patient Details & Consent
-                <ArrowRight className="size-4" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ================= STEP 3: PATIENT INFORMATION & DPDP ACT 2023 COMPLIANCE ================= */}
-        {activeFormTab === "wizard" && step === 3 && (
-          <motion.form
-            key="step3"
-            onSubmit={handleSubmit}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.25 }}
-            className="space-y-6"
-          >
-            <div>
-              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-2xl">
-                Step 3: Patient Information & DPDP Act 2023 Compliance
-              </h2>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                Provide patient details for appointment scheduling and token issuance.
-              </p>
-            </div>
-
-            {/* Appointment Slot Summary Reminder */}
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-teal-200 bg-teal-50/70 p-4 text-xs dark:border-teal-900/40 dark:bg-teal-950/30">
-              <div className="flex items-center gap-2 font-medium text-teal-900 dark:text-teal-200">
-                <Calendar className="size-4 text-[#0d9488]" />
-                <span>{selectedDate}</span> &middot;
-                <Clock className="size-4 text-[#0d9488]" />
-                <span>{selectedTime}</span>
-              </div>
-              <span className="font-semibold text-teal-800 dark:text-teal-300">
-                Dr. Kamal ({appointmentType === "offline" ? "In-Clinic OPD" : "Video Consult"}) &middot; ₹{managedClinic.consultation_fee}
-              </span>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {/* Full Name */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  Patient Full Name <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <User className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Ramesh Chandra Verma"
-                    className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3.5 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/30 dark:border-slate-800 dark:bg-slate-800 dark:text-white"
-                  />
+                  ))}
                 </div>
               </div>
-
-              {/* WhatsApp Mobile */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  WhatsApp Mobile Number <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-                  <input
-                    type="tel"
-                    required
-                    maxLength={14}
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    placeholder="e.g. 9876543210"
-                    className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-3.5 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/30 dark:border-slate-800 dark:bg-slate-800 dark:text-white"
-                  />
-                </div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                  Your Digital OPD Token and WhatsApp confirmation will be sent here.
-                </p>
-              </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              {/* Age Group */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  Patient Age Category
-                </label>
-                <select
-                  value={ageGroup}
-                  onChange={(e) => setAgeGroup(e.target.value as any)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/30 dark:border-slate-800 dark:bg-slate-800 dark:text-white"
-                >
-                  <option value="adult">Adult (18+ Years)</option>
-                  <option value="child">Child / Minor (&lt; 18 Years)</option>
-                </select>
-              </div>
-
-              {/* Gender */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  Gender (optional)
-                </label>
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value as any)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/30 dark:border-slate-800 dark:bg-slate-800 dark:text-white"
-                >
-                  <option value="prefer_not_to_say">Prefer not to say</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Health Concern / Problem */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                Primary Symptoms / Reason for Consultation <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                required
-                rows={2}
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                placeholder="e.g. Cervical pain, chronic digestive issues, joint stiffness, naturopathy detox guidance..."
-                className="w-full rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/30 dark:border-slate-800 dark:bg-slate-800 dark:text-white"
-              />
-              <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                <span className="text-[11px] text-slate-500 mr-1">Quick pick:</span>
-                {[
-                  "Cervical Spondylosis",
-                  "Back Pain & Spine",
-                  "Sciatica & Slip Disc",
-                  "Varicose Veins Relief",
-                  "Digestive Health & Acidity",
-                  "Hydrotherapy & Steam",
-                  "Reiki Healing",
-                ].map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setReason(c)}
-                    className="rounded-full border border-teal-200 bg-teal-50/70 px-2.5 py-0.5 text-[11px] font-medium text-teal-800 transition-colors hover:bg-teal-600 hover:text-white"
-                  >
-                    + {c}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Additional Notes (optional) */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                Previous Medical Reports / Notes (optional)
-              </label>
-              <input
-                type="text"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Any ongoing medication or reports you will bring..."
-                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 shadow-sm transition-all focus:border-[#0d9488] focus:outline-none focus:ring-2 focus:ring-[#0d9488]/30 dark:border-slate-800 dark:bg-slate-800 dark:text-white"
-              />
-            </div>
-
-            {/* ================= MANDATORY DPDP ACT 2023 COMPLIANCE CARD ================= */}
-            <div className="rounded-2xl border border-slate-300 bg-slate-50/80 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-800/60">
-              <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white">
-                <ShieldCheck className="size-5 text-[#0d9488]" />
-                <span className="text-sm">Digital Personal Data Protection (DPDP) Act 2023 Compliance</span>
-              </div>
-
-              {/* Clear Notice Box */}
-              <div className="mt-3 rounded-xl border border-teal-200/80 bg-white p-3.5 text-xs leading-relaxed text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
-                <p className="font-semibold text-teal-800 dark:text-teal-300">
-                  Notice under Section 5 &amp; 6 of DPDP Act 2023:
-                </p>
-                <p className="mt-1">
-                  Your personal data (Name, WhatsApp Contact, and Health Concern) is collected strictly for scheduling your medical consultation, issuing your Digital OPD Token, and sending healthcare appointment updates. Your health information is end-to-end encrypted and will never be shared with advertisers or third parties.
-                </p>
-              </div>
-
-              {/* Explicit Consent Checkbox (MUST NOT be pre-checked) */}
-              <div className="mt-4 flex items-start gap-3">
+            {/* Section 3: DPDP Act 2023 Consent & CTA */}
+            <div className="bg-ivory/50 p-6 sm:p-7 space-y-5">
+              <div className="flex items-start gap-3 rounded-2xl border border-beige bg-white p-3.5 shadow-2xs">
                 <input
                   type="checkbox"
                   id="dpdp-consent"
                   checked={dpdpConsent}
                   onChange={(e) => setDpdpConsent(e.target.checked)}
-                  className="mt-1 size-4 rounded border-slate-300 text-[#0d9488] focus:ring-[#0d9488] dark:border-slate-600 dark:bg-slate-700"
+                  className="mt-1 h-4 w-4 rounded border-slate-300 text-[#0d9488] focus:ring-[#0d9488] cursor-pointer"
                 />
                 <label
                   htmlFor="dpdp-consent"
-                  className="cursor-pointer text-xs font-medium leading-relaxed text-slate-800 dark:text-slate-200"
+                  className="text-xs leading-relaxed text-charcoal/90 cursor-pointer"
                 >
-                  <strong className="text-teal-800 dark:text-teal-300">Affirmative Consent:</strong> I give voluntary and affirmative consent under Section 6 of DPDP Act 2023 to Dr. Kamal / Sanidhya Naturopathy Center to process my personal data for appointment scheduling and receive my digital OPD token on WhatsApp.
+                  <strong className="text-forest">DPDP Act 2023 Consent:</strong> I voluntarily consent to Sanidhya Naturopathy Center processing my details for scheduling and token issuance. Data is encrypted and confidential.
                 </label>
               </div>
-
-              {/* Grievance & Right of Withdrawal Disclosure */}
-              <div className="mt-3 flex items-start gap-2 text-[11px] text-slate-500 dark:text-slate-400">
-                <Info className="mt-0.5 size-3.5 shrink-0 text-slate-400" />
-                <p>
-                  <strong>Right of Withdrawal:</strong> You hold the right to withdraw your consent or request data erasure at any time under Section 6(4) of the DPDP Act 2023 by contacting our Data Grievance Officer at{" "}
-                  <a href={`mailto:${managedClinic.dpdp_compliance?.officer_email || "grievance@sanidhyawellness.com"}`} className="font-medium text-[#0d9488] underline">
-                    {managedClinic.dpdp_compliance?.officer_email || "grievance@sanidhyawellness.com"}
-                  </a>{" "}
-                  or calling {managedClinic.phone}.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between pt-4">
-              <button
-                type="button"
-                onClick={() => setStep(2)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-200"
-              >
-                <ArrowLeft className="size-4" /> Back
-              </button>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#0d9488] px-8 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-[#0f766e] disabled:cursor-not-allowed disabled:opacity-50 active:scale-95"
+                className="flex min-h-[50px] w-full items-center justify-center gap-2 rounded-2xl bg-[#0d9488] px-6 text-base font-bold text-white shadow-soft transition-all hover:bg-[#0f766e] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
               >
                 {submitting ? (
                   <>
-                    <Loader2 className="size-4 animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin" />
                     Generating OPD Token...
                   </>
                 ) : (
                   <>
-                    Confirm &amp; Issue OPD Token
-                    <Sparkles className="size-4" />
+                    Confirm &amp; Issue Digital OPD Token
+                    <ArrowRight className="h-4 w-4" />
                   </>
                 )}
               </button>
+
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <ShieldCheck className="h-4 w-4 text-gold-deep" />
+                <span>Zero advance payment · Instant token generated for zero queue wait</span>
+              </div>
             </div>
           </motion.form>
-        )}
-
-        {/* ================= STEP 4: INSTANT CONFIRMATION & OPD TOKEN CARD ================= */}
-        {step === 4 && bookingResult && (
+        ) : (
+          /* ================= MINIMAL DIGITAL OPD TOKEN TICKET ================= */
           <motion.div
-            key="step4"
+            key="booking-success"
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-6"
+            transition={{ duration: 0.25 }}
+            className="p-6 sm:p-8 space-y-6"
           >
-            {/* Success Header */}
-            <div className="rounded-3xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-6 text-center shadow-sm dark:border-emerald-900/40 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950/20 sm:p-8">
-              <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-md">
-                <CheckCircle2 className="size-8" />
+            {/* Header Success Badge */}
+            <div className="text-center">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-sm">
+                <CheckCircle2 className="h-8 w-8" />
               </div>
-              <h2 className="mt-3 text-2xl font-black text-slate-900 dark:text-white sm:text-3xl">
-                Appointment Confirmed!
+              <h2 className="mt-3 font-display text-2xl font-bold text-forest sm:text-3xl">
+                Appointment Confirmed
               </h2>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                Your consultation request has been registered in the OPD queue.
+              <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                Your consultation is registered with Dr. Kamal. Your digital pass is below:
               </p>
+            </div>
 
-              {/* Prominent Digital OPD Token Badge */}
-              <div className="mx-auto mt-6 max-w-sm rounded-2xl border-2 border-dashed border-[#0d9488] bg-white p-5 shadow-sm dark:bg-slate-800">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#0d9488]">
-                  Digital OPD Token
+            {/* The Digital OPD Token Ticket */}
+            <div className="overflow-hidden rounded-3xl border-2 border-dashed border-[#0d9488]/40 bg-gradient-to-b from-teal-50/50 to-white p-6 shadow-sm">
+              <div className="flex items-center justify-between border-b border-teal-100 pb-4">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#0d9488]">
+                    Digital OPD Pass
+                  </span>
+                  <p className="font-display text-lg font-bold text-forest">{bookingResult.clinic_name}</p>
+                </div>
+                <div className="flex items-center gap-1.5 rounded-full bg-emerald-100/80 px-2.5 py-1 text-xs font-bold text-emerald-800">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Slot Reserved
+                </div>
+              </div>
+
+              {/* Large Token Badge */}
+              <div className="my-6 text-center">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Your OPD Token Number
                 </p>
-                <div className="mt-1 flex items-center justify-center gap-3">
-                  <span className="font-mono text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+                <div className="mt-1 inline-flex items-center gap-3">
+                  <span className="font-mono text-4xl font-black text-forest sm:text-5xl">
                     {bookingResult.token_number}
                   </span>
                   <button
                     type="button"
                     onClick={copyToken}
-                    className="flex size-9 items-center justify-center rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300"
-                    title="Copy OPD Token"
+                    className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-50 text-teal-800 hover:bg-teal-100 transition-colors cursor-pointer"
+                    title="Copy Token"
                   >
-                    {tokenCopied ? <CheckCircle2 className="size-4 text-emerald-600" /> : <Copy className="size-4" />}
+                    {tokenCopied ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
                   </button>
                 </div>
-                <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-emerald-600 font-semibold">
-                  <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Verified OPD Slot Reserved</span>
-                </div>
               </div>
-            </div>
 
-            {/* Appointment Summary Card */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
-              <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Consultation Summary
-              </h3>
-
-              <div className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
-                <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
-                  <p className="text-slate-500 font-medium">Doctor</p>
-                  <p className="font-bold text-slate-900 dark:text-white mt-0.5">{bookingResult.doctor_name}</p>
+              {/* Details Summary Grid */}
+              <div className="grid grid-cols-2 gap-3 rounded-2xl bg-white p-4 text-xs border border-beige sm:grid-cols-4">
+                <div>
+                  <p className="text-muted-foreground">Patient</p>
+                  <p className="font-bold text-forest mt-0.5">{name}</p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
-                  <p className="text-slate-500 font-medium">Consultation Fee</p>
+                <div>
+                  <p className="text-muted-foreground">Doctor</p>
+                  <p className="font-bold text-forest mt-0.5">{bookingResult.doctor_name}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Date &amp; Time</p>
+                  <p className="font-bold text-forest mt-0.5">{selectedDate} · {selectedTime}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">OPD Fee</p>
                   <p className="font-bold text-[#0d9488] mt-0.5">₹{managedClinic.consultation_fee} (Pay at Clinic)</p>
                 </div>
-                <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
-                  <p className="text-slate-500 font-medium">Date &amp; Time</p>
-                  <p className="font-bold text-slate-900 dark:text-white mt-0.5">{selectedDate} &middot; {selectedTime}</p>
-                </div>
-                <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
-                  <p className="text-slate-500 font-medium">Mode</p>
-                  <p className="font-bold text-slate-900 dark:text-white mt-0.5">
-                    {appointmentType === "offline" ? "In-Clinic OPD" : "Online Video Consult"}
-                  </p>
-                </div>
               </div>
 
-              <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-3 text-xs dark:border-slate-800 dark:bg-slate-800/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200">{managedClinic.clinic_name}</p>
-                  <p className="text-slate-500 mt-0.5">{managedClinic.address}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <a
-                    href={clinic.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                  >
-                    Maps Directions &rarr;
-                  </a>
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300">
-                    DPDP Consent Verified
-                  </span>
-                </div>
+              <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground border-t border-teal-100/70 pt-3">
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-3.5 w-3.5 text-gold-deep" />
+                  {managedClinic.address}
+                </span>
+                <a
+                  href={clinic.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-gold-deep hover:text-forest inline-flex items-center gap-1 cursor-pointer"
+                >
+                  Map Directions <ExternalLink className="h-3 w-3" />
+                </a>
               </div>
             </div>
 
-            {/* CTAs: WhatsApp, Google Calendar, Print Slip */}
+            {/* Quick Action CTAs */}
             <div className="grid gap-3 sm:grid-cols-2">
               <a
                 href={getWhatsAppShareUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-3.5 font-bold text-white shadow-sm transition-all hover:bg-[#20ba5a] active:scale-95"
+                className="flex min-h-[48px] items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-5 text-sm font-bold text-white shadow-xs transition-colors hover:bg-[#20ba5a] cursor-pointer"
               >
-                <MessageCircle className="size-5" />
-                Open in WhatsApp
+                <MessageCircle className="h-4 w-4" />
+                Open Confirmation on WhatsApp
               </a>
 
               <a
                 href={getGoogleCalendarUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-white px-6 py-3.5 font-semibold text-slate-800 shadow-sm transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-white active:scale-95"
+                className="flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-beige bg-white px-5 text-sm font-semibold text-charcoal shadow-xs transition-colors hover:bg-ivory cursor-pointer"
               >
-                <CalendarPlus className="size-5 text-[#0d9488]" />
+                <CalendarPlus className="h-4 w-4 text-[#0d9488]" />
                 Add to Google Calendar
               </a>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div className="flex items-center justify-between border-t border-beige pt-4">
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-forest transition-colors cursor-pointer"
               >
-                <Printer className="size-4" /> Print / Save OPD Slip
+                <Printer className="h-4 w-4" /> Print / Save Slip
               </button>
 
               <button
                 type="button"
-                onClick={() => {
-                  setStep(1);
-                  setBookingResult(null);
-                  setSelectedTime("");
-                  setDpdpConsent(false);
-                }}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#0d9488] hover:underline"
+                onClick={handleReset}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0d9488] hover:underline cursor-pointer"
               >
-                Book Another Appointment &rarr;
+                <RotateCcw className="h-3.5 w-3.5" /> Book Another Consultation
               </button>
             </div>
           </motion.div>
