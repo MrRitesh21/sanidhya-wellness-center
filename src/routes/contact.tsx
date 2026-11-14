@@ -20,6 +20,7 @@ import {
   Phone,
   Send,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 import { clinic, formatTime, fullAddress, getOpenStatus, hours, whatsappLink } from "@/lib/clinic";
 import { submitLead } from "@/lib/leadCapture";
@@ -164,49 +165,71 @@ function ContactPage() {
   return (
     <div className="pt-24 sm:pt-28">
       {/* Hero Header */}
-      <section className="relative overflow-hidden bg-ivory py-16 sm:py-24">
+      <section className="relative overflow-hidden bg-forest py-20 text-ivory sm:py-28">
+        <LeafSprig className="absolute -right-8 top-10 h-28 w-56 text-ivory/10" />
+        <LeafSprig className="absolute bottom-6 left-6 h-20 w-40 -scale-x-100 text-ivory/10" />
         <div
           aria-hidden="true"
-          className="absolute -right-32 top-10 h-96 w-96 rounded-full bg-sage-soft/50 blur-3xl"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute -left-32 bottom-0 h-96 w-96 rounded-full bg-beige/60 blur-3xl"
+          className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-forest-deep/70 blur-3xl"
         />
 
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="mx-auto max-w-3xl text-center">
-            <Reveal>
-              <p className="flex items-center justify-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
-                <span className="inline-block h-px w-8 bg-current opacity-60" aria-hidden="true" />
-                Find & Connect With Us
-                <span className="inline-block h-px w-8 bg-current opacity-60" aria-hidden="true" />
-              </p>
-              <h1 className="mt-4 font-display text-4xl font-medium leading-[1.15] text-forest sm:text-6xl">
-                Contact & Visit <em className="italic text-gold-deep">Our Center</em>.
-              </h1>
-              <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                We are conveniently located in Sector I, Jankipuram, Lucknow. Reach out by phone,
-                message, or visit us in person.
-              </p>
+        <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
+          <Reveal>
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold">
+              <MapPin className="h-3.5 w-3.5 text-gold" />
+              Find &amp; Connect With Us
+            </span>
+          </Reveal>
+
+          <Reveal delay={0.08} className="mt-6">
+            <h1 className="font-display text-4xl font-semibold leading-tight text-ivory sm:text-5xl lg:text-6xl">
+              Contact &amp; Visit <br />
+              <em className="italic text-gold">Our Center</em>
+            </h1>
+          </Reveal>
+
+          <Reveal delay={0.14} className="mt-5">
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-ivory/80 sm:text-lg">
+              We are conveniently located in Sector I, Jankipuram, Lucknow. Reach out by phone, WhatsApp, or visit us in person.
+            </p>
+          </Reveal>
+
+          {/* Live Open Status Pill */}
+          {status && (
+            <Reveal delay={0.18} className="mt-7 flex justify-center">
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-ivory/20 bg-white/10 px-5 py-2 text-xs font-semibold text-ivory backdrop-blur-md">
+                <span
+                  className={cn(
+                    "h-2.5 w-2.5 rounded-full animate-pulse",
+                    status.open ? "bg-emerald-400" : "bg-amber-400",
+                  )}
+                  aria-hidden="true"
+                />
+                <span>{status.label}</span>
+              </div>
             </Reveal>
+          )}
 
-            {/* Live Open Status Pill */}
-            {status && (
-              <Reveal delay={0.12} className="mt-8 flex justify-center">
-                <div className="inline-flex items-center gap-3 rounded-full border border-beige bg-white/90 px-6 py-2.5 text-sm font-semibold shadow-soft">
-                  <span
-                    className={cn(
-                      "h-2.5 w-2.5 rounded-full animate-pulse",
-                      status.open ? "bg-emerald-600" : "bg-amber-500",
-                    )}
-                    aria-hidden="true"
-                  />
-                  <span className="text-forest">{status.label}</span>
-                </div>
-              </Reveal>
-            )}
-          </div>
+          <Reveal delay={0.22} className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              to="/booking"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-7 text-sm font-semibold text-forest-deep shadow-lift transition-all duration-300 hover:bg-gold-deep hover:text-ivory active:scale-[0.98]"
+            >
+              Book OPD Appointment
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href={whatsappLink(
+                "Hello Sanidhya Naturopathy Center, I would like to get in touch.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-ivory/25 bg-white/10 px-6 text-sm font-semibold text-ivory backdrop-blur-sm transition-colors hover:bg-white/20 active:scale-[0.98]"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-400" />
+              Chat on WhatsApp
+            </a>
+          </Reveal>
         </div>
       </section>
 

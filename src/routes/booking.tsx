@@ -13,7 +13,7 @@ import {
 import { OpdBookingFlow } from "@/components/site/OpdBookingFlow";
 import { clinic, fullAddress, whatsappLink } from "@/lib/clinic";
 import { useClinicData } from "@/lib/clinicSync";
-import { Reveal } from "@/components/site/primitives";
+import { LeafSprig, Reveal } from "@/components/site/primitives";
 import {
   Accordion,
   AccordionContent,
@@ -85,19 +85,33 @@ function BookingPage() {
   const prefilledReason = search.reason || search.service || search.concern || "";
 
   return (
-    <div className="pt-24 sm:pt-28 bg-ivory">
-      {/* Minimal Header */}
-      <section className="py-8 sm:py-12 text-center">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+    <div className="pt-24 sm:pt-28">
+      {/* Hero Header */}
+      <section className="relative overflow-hidden bg-forest py-16 text-ivory sm:py-24">
+        <LeafSprig className="absolute -right-8 top-10 h-28 w-56 text-ivory/10" />
+        <LeafSprig className="absolute bottom-6 left-6 h-20 w-40 -scale-x-100 text-ivory/10" />
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-forest-deep/70 blur-3xl"
+        />
+
+        <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6">
           <Reveal>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-teal-200/80 bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-800">
-              <Sparkles className="h-3 w-3 text-[#0d9488]" />
-              <span>Doctor OPD Appointments · Jankipuram, Lucknow</span>
-            </div>
-            <h1 className="mt-3 font-display text-3xl font-medium tracking-tight text-forest sm:text-5xl">
-              Book Your <em className="italic text-gold-deep">Consultation</em>
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold">
+              <Sparkles className="h-3.5 w-3.5" />
+              Doctor OPD Appointments · Jankipuram, Lucknow
+            </span>
+          </Reveal>
+
+          <Reveal delay={0.08} className="mt-6">
+            <h1 className="font-display text-4xl font-semibold leading-tight text-ivory sm:text-5xl lg:text-6xl">
+              Book Your <br />
+              <em className="italic text-gold">Doctor Consultation</em>
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+          </Reveal>
+
+          <Reveal delay={0.14} className="mt-4">
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-ivory/80 sm:text-lg">
               Consult with Dr. Kamal &middot; ₹{managedClinic.consultation_fee || 600} Fee (Pay at Clinic) &middot; Instant Digital OPD Token
             </p>
           </Reveal>
@@ -105,7 +119,7 @@ function BookingPage() {
       </section>
 
       {/* Main Minimal Booking Flow Card */}
-      <section className="pb-16 sm:pb-20">
+      <section className="bg-ivory pb-16 pt-10 sm:pb-20 sm:pt-12">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <Reveal delay={0.06}>
             <OpdBookingFlow initialReason={prefilledReason} />

@@ -115,61 +115,61 @@ function AboutPage() {
   return (
     <div className="pt-24 sm:pt-28">
       {/* Hero Header */}
-      <section className="relative overflow-hidden bg-ivory py-16 sm:py-24">
+      <section className="relative overflow-hidden bg-forest py-20 text-ivory sm:py-28">
+        <LeafSprig className="absolute -right-8 top-10 h-28 w-56 text-ivory/10" />
+        <LeafSprig className="absolute bottom-6 left-6 h-20 w-40 -scale-x-100 text-ivory/10" />
         <div
           aria-hidden="true"
-          className="absolute -right-32 top-10 h-96 w-96 rounded-full bg-sage-soft/50 blur-3xl"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute -left-32 bottom-0 h-96 w-96 rounded-full bg-beige/60 blur-3xl"
+          className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-forest-deep/70 blur-3xl"
         />
 
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="mx-auto max-w-3xl text-center">
-            <Reveal>
-              <p className="flex items-center justify-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
-                <span className="inline-block h-px w-8 bg-current opacity-60" aria-hidden="true" />
-                About Our Center
-                <span className="inline-block h-px w-8 bg-current opacity-60" aria-hidden="true" />
-              </p>
-              <h1 className="mt-4 font-display text-4xl font-medium leading-[1.15] text-forest sm:text-6xl">
-                Natural Healing, Guided by <em className="italic text-gold-deep">Compassion</em>.
-              </h1>
-              <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                Located in Sector I, Jankipuram, Lucknow, Sanidhya Naturopathy Center was
-                established to provide a tranquil sanctuary where individuals can rediscover health
-                through the innate wisdom of nature.
-              </p>
-            </Reveal>
+        <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
+          <Reveal>
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold">
+              <Leaf className="h-3.5 w-3.5" />
+              About Our Philosophy &amp; Center
+            </span>
+          </Reveal>
 
-            <Reveal delay={0.15} className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link
-                to="/booking"
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground shadow-soft transition-colors duration-300 hover:bg-forest-deep active:scale-95"
-              >
-                Schedule a Consultation
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-              <a
-                href={whatsappLink(
-                  "Hello Sanidhya Naturopathy Center, I would like to know more about the clinic.",
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-6 py-3.5 text-base font-semibold text-emerald-800 transition-colors hover:bg-emerald-600 hover:text-white active:scale-95"
-              >
-                <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
-                WhatsApp Us
-              </a>
-              <Link
-                to="/services"
-                className="inline-flex items-center gap-2 rounded-full border border-forest/20 bg-white/70 px-8 py-3.5 text-base font-semibold text-forest transition-colors duration-300 hover:border-forest/40 hover:bg-white active:scale-95"
-              >
-                Explore Services
-              </Link>
-            </Reveal>
-          </div>
+          <Reveal delay={0.08} className="mt-6">
+            <h1 className="font-display text-4xl font-semibold leading-tight text-ivory sm:text-5xl lg:text-6xl">
+              Natural Healing, Guided by <br />
+              <em className="italic text-gold">Compassion</em>
+            </h1>
+          </Reveal>
+
+          <Reveal delay={0.14} className="mt-5">
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-ivory/80 sm:text-lg">
+              Located in Sector I, Jankipuram, Lucknow, Sanidhya Naturopathy Center was established to provide a tranquil sanctuary where individuals can rediscover health through the innate wisdom of nature.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.2} className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              to="/booking"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-7 text-sm font-semibold text-forest-deep shadow-lift transition-all duration-300 hover:bg-gold-deep hover:text-ivory active:scale-[0.98]"
+            >
+              Schedule a Consultation
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+            <a
+              href={whatsappLink(
+                "Hello Sanidhya Naturopathy Center, I would like to know more about the clinic.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-ivory/25 bg-white/10 px-6 text-sm font-semibold text-ivory backdrop-blur-sm transition-colors hover:bg-white/20 active:scale-[0.98]"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-400" aria-hidden="true" />
+              WhatsApp Us
+            </a>
+            <Link
+              to="/services"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-ivory/20 bg-transparent px-6 text-sm font-semibold text-ivory transition-colors hover:bg-white/10 active:scale-[0.98]"
+            >
+              Explore Services
+            </Link>
+          </Reveal>
         </div>
       </section>
 

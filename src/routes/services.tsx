@@ -577,108 +577,131 @@ function ServicesPage() {
   return (
     <div className="pt-24 sm:pt-28">
       {/* Hero Header */}
-      <section className="relative overflow-hidden bg-ivory py-16 sm:py-24">
+      <section className="relative overflow-hidden bg-forest py-20 text-ivory sm:py-28">
+        <LeafSprig className="absolute -right-8 top-10 h-28 w-56 text-ivory/10" />
+        <LeafSprig className="absolute bottom-6 left-6 h-20 w-40 -scale-x-100 text-ivory/10" />
         <div
           aria-hidden="true"
-          className="absolute -right-32 top-10 h-96 w-96 rounded-full bg-sage-soft/50 blur-3xl"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute -left-32 bottom-0 h-96 w-96 rounded-full bg-beige/60 blur-3xl"
+          className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-forest-deep/70 blur-3xl"
         />
 
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-          <div className="mx-auto max-w-3xl text-center">
-            <Reveal>
-              <p className="flex items-center justify-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-gold-deep">
-                <span className="inline-block h-px w-8 bg-current opacity-60" aria-hidden="true" />
-                Comprehensive Holistic Care
-                <span className="inline-block h-px w-8 bg-current opacity-60" aria-hidden="true" />
-              </p>
-              <h1 className="mt-4 font-display text-4xl font-medium leading-[1.15] text-forest sm:text-6xl">
-                Services & Therapies for <em className="italic text-gold-deep">Natural Vitality</em>
-                .
-              </h1>
-              <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                Each therapy at Sanidhya Naturopathy Center is designed to harmonize your lifestyle,
-                relieve chronic tension, and support the body's self-healing mechanisms.
-              </p>
-            </Reveal>
+        <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
+          <Reveal>
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold">
+              <Sparkles className="h-3.5 w-3.5" />
+              Comprehensive Holistic Care
+            </span>
+          </Reveal>
 
-            {/* Search — everyday + Hindi/Hinglish keyword friendly */}
-            <Reveal delay={0.12} className="mt-8">
-              <div className="mx-auto max-w-xl">
-                <label htmlFor="service-search" className="sr-only">
-                  Search services
-                </label>
-                <div className="relative">
-                  <Search
-                    className="pointer-events-none absolute left-4 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-gold-deep"
-                    aria-hidden="true"
-                  />
-                  <input
-                    id="service-search"
-                    type="search"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search — e.g. “kamar dard”, “neend”, steam, yoga…"
-                    className="min-h-[48px] w-full rounded-full border border-forest/15 bg-white/85 py-3 pl-11 pr-11 text-sm text-charcoal shadow-soft outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-forest/40 focus:bg-white [&::-webkit-search-cancel-button]:hidden"
-                  />
-                  {query && (
-                    <button
-                      type="button"
-                      onClick={() => setQuery("")}
-                      aria-label="Clear search"
-                      className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-beige/70 hover:text-forest"
-                    >
-                      <X className="h-4 w-4" aria-hidden="true" />
-                    </button>
-                  )}
-                </div>
+          <Reveal delay={0.08} className="mt-6">
+            <h1 className="font-display text-4xl font-semibold leading-tight text-ivory sm:text-5xl lg:text-6xl">
+              Services &amp; Therapies for <br />
+              <em className="italic text-gold">Natural Vitality</em>
+            </h1>
+          </Reveal>
+
+          <Reveal delay={0.14} className="mt-5">
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-ivory/80 sm:text-lg">
+              Each therapy at Sanidhya Naturopathy Center is designed to harmonize your lifestyle,
+              relieve chronic tension, and support the body's natural self-healing mechanisms.
+            </p>
+          </Reveal>
+
+          {/* Quick CTA Buttons */}
+          <Reveal delay={0.18} className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link
+              to="/booking"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-7 text-sm font-semibold text-forest-deep shadow-lift transition-all duration-300 hover:bg-gold-deep hover:text-ivory active:scale-[0.98]"
+            >
+              Book Doctor Consultation
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href={whatsappLink(
+                "Hello Sanidhya Naturopathy Center, I would like to inquire about your therapy services.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-ivory/25 bg-white/10 px-6 text-sm font-semibold text-ivory backdrop-blur-sm transition-colors hover:bg-white/20 active:scale-[0.98]"
+            >
+              <MessageCircle className="h-4 w-4 text-emerald-400" />
+              Chat on WhatsApp
+            </a>
+          </Reveal>
+
+          {/* Search — everyday + Hindi/Hinglish keyword friendly */}
+          <Reveal delay={0.22} className="mt-10">
+            <div className="mx-auto max-w-xl">
+              <label htmlFor="service-search" className="sr-only">
+                Search services
+              </label>
+              <div className="relative">
+                <Search
+                  className="pointer-events-none absolute left-4 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-gold"
+                  aria-hidden="true"
+                />
+                <input
+                  id="service-search"
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search — e.g. “kamar dard”, “neend”, steam, yoga…"
+                  className="min-h-[50px] w-full rounded-full border border-ivory/25 bg-white/10 py-3 pl-11 pr-11 text-sm text-ivory placeholder:text-ivory/60 shadow-soft outline-none backdrop-blur-md transition-colors focus:border-gold focus:bg-white/15 [&::-webkit-search-cancel-button]:hidden"
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    aria-label="Clear search"
+                    className="absolute right-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-ivory/70 transition-colors hover:bg-white/20 hover:text-ivory"
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                )}
               </div>
-            </Reveal>
+            </div>
+          </Reveal>
 
-            {/* Filter Tabs — swipeable chips row on mobile, centered wrap on desktop */}
-            <Reveal delay={0.15} className="mt-6">
-              <div
-                className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-x-visible sm:px-0 sm:pb-0"
-                role="tablist"
-                aria-label="Filter services by category"
-              >
-                {CATEGORIES.map((cat) => {
-                  const count =
-                    cat.id === "all"
-                      ? DETAILED_SERVICES.length
-                      : DETAILED_SERVICES.filter((s) => s.category === cat.id).length;
-                  return (
-                    <button
-                      key={cat.id}
-                      type="button"
-                      onClick={() => setActiveCategory(cat.id)}
+          {/* Filter Tabs — swipeable chips row on mobile, centered wrap on desktop */}
+          <Reveal delay={0.26} className="mt-6">
+            <div
+              className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-x-visible sm:px-0 sm:pb-0"
+              role="tablist"
+              aria-label="Filter services by category"
+            >
+              {CATEGORIES.map((cat) => {
+                const count =
+                  cat.id === "all"
+                    ? DETAILED_SERVICES.length
+                    : DETAILED_SERVICES.filter((s) => s.category === cat.id).length;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={cn(
+                      "flex min-h-[44px] shrink-0 snap-start items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all duration-300 sm:px-5",
+                      activeCategory === cat.id
+                        ? "bg-gold text-forest-deep font-bold shadow-lift"
+                        : "border border-ivory/20 bg-white/10 text-ivory/90 backdrop-blur-sm hover:bg-white/20 hover:text-ivory",
+                    )}
+                  >
+                    {cat.label}
+                    <span
                       className={cn(
-                        "flex min-h-[44px] shrink-0 snap-start items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-300 sm:px-5",
+                        "rounded-full px-1.5 text-[0.7rem] font-bold tabular-nums",
                         activeCategory === cat.id
-                          ? "bg-primary text-primary-foreground shadow-soft"
-                          : "border border-forest/15 bg-white/70 text-forest hover:bg-white",
+                          ? "bg-forest-deep/20 text-forest-deep"
+                          : "bg-white/15 text-ivory/80",
                       )}
                     >
-                      {cat.label}
-                      <span
-                        className={cn(
-                          "rounded-full px-1.5 text-[0.7rem] font-bold tabular-nums",
-                          activeCategory === cat.id
-                            ? "bg-white/25 text-primary-foreground"
-                            : "bg-sage-soft/80 text-forest/80",
-                        )}
-                      >
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </Reveal>
-          </div>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </Reveal>
         </div>
       </section>
 
