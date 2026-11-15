@@ -197,16 +197,29 @@ export function Footer() {
 
           {/* Bottom Bar */}
           <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-ivory/10 pt-8 text-xs text-ivory/60 sm:flex-row">
-            <p suppressHydrationWarning>
-              © {currentYear} {clinic.name}. All rights reserved.
-            </p>
+            <div className="flex flex-col items-center gap-1.5 text-center sm:items-start sm:text-left">
+              <p suppressHydrationWarning>
+                © {currentYear} {clinic.name}. All rights reserved.
+              </p>
+              <p className="text-[11px] text-ivory/50">
+                Designed &amp; Managed by{" "}
+                <a
+                  href="https://digiwil.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-gold transition-colors hover:text-ivory hover:underline underline-offset-2"
+                >
+                  DigiWil
+                </a>
+              </p>
+            </div>
             <div className="flex items-center gap-6">
               <button
                 type="button"
                 onClick={() => setPrivacyOpen(true)}
                 className="transition-colors hover:text-gold underline underline-offset-4"
               >
-                Privacy Notice & Patient Ethics
+                Privacy Notice &amp; Patient Ethics
               </button>
               <a href="#top" className="transition-colors hover:text-gold">
                 Back to Top ↑
