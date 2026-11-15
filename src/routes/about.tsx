@@ -115,31 +115,35 @@ function AboutPage() {
   return (
     <div className="pt-24 sm:pt-28">
       {/* Hero Header */}
-      <section className="relative overflow-hidden bg-forest py-20 text-ivory sm:py-28">
-        <LeafSprig className="absolute -right-8 top-10 h-28 w-56 text-ivory/10" />
-        <LeafSprig className="absolute bottom-6 left-6 h-20 w-40 -scale-x-100 text-ivory/10" />
+      <section className="relative overflow-hidden bg-gradient-to-b from-cream/80 via-ivory to-cream/40 py-16 sm:py-24 border-b border-beige/70">
+        <LeafSprig className="absolute -right-8 top-8 h-28 w-56 text-forest/[0.06] pointer-events-none" />
+        <LeafSprig className="absolute bottom-4 left-6 h-20 w-40 -scale-x-100 text-forest/[0.06] pointer-events-none" />
         <div
           aria-hidden="true"
-          className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-forest-deep/70 blur-3xl"
+          className="absolute -right-24 top-0 h-96 w-96 rounded-full bg-sage-soft/45 blur-3xl pointer-events-none"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute -left-24 bottom-0 h-96 w-96 rounded-full bg-beige/60 blur-3xl pointer-events-none"
         />
 
         <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
           <Reveal>
-            <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold">
-              <Leaf className="h-3.5 w-3.5" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-forest/15 bg-white/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-forest shadow-2xs">
+              <Leaf className="h-3.5 w-3.5 text-gold-deep" />
               About Our Philosophy &amp; Center
             </span>
           </Reveal>
 
           <Reveal delay={0.08} className="mt-6">
-            <h1 className="font-display text-4xl font-semibold leading-tight text-ivory sm:text-5xl lg:text-6xl">
+            <h1 className="font-display text-4xl font-semibold leading-tight text-forest sm:text-5xl lg:text-6xl">
               Natural Healing, Guided by <br />
-              <em className="italic text-gold">Compassion</em>
+              <em className="italic text-gold-deep">Compassion</em>
             </h1>
           </Reveal>
 
           <Reveal delay={0.14} className="mt-5">
-            <p className="mx-auto max-w-2xl text-base leading-relaxed text-ivory/80 sm:text-lg">
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
               Located in Sector I, Jankipuram, Lucknow, Sanidhya Naturopathy Center was established to provide a tranquil sanctuary where individuals can rediscover health through the innate wisdom of nature.
             </p>
           </Reveal>
@@ -148,7 +152,7 @@ function AboutPage() {
             <Link
               to="/booking"
               preload="render"
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-7 text-sm font-semibold text-forest-deep shadow-lift transition-all duration-300 hover:bg-gold-deep hover:text-ivory active:scale-[0.98]"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-primary px-7 text-sm font-semibold text-primary-foreground shadow-lift transition-all duration-300 hover:bg-forest-deep active:scale-[0.98]"
             >
               Schedule a Consultation
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -159,14 +163,14 @@ function AboutPage() {
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-ivory/25 bg-white/10 px-6 text-sm font-semibold text-ivory backdrop-blur-sm transition-colors hover:bg-white/20 active:scale-[0.98]"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-emerald-600/30 bg-emerald-50 px-6 text-sm font-semibold text-emerald-900 shadow-xs transition-colors hover:bg-emerald-600 hover:text-white active:scale-[0.98]"
             >
-              <MessageCircle className="h-4 w-4 text-emerald-400" aria-hidden="true" />
+              <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
               WhatsApp Us
             </a>
             <Link
               to="/services"
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-ivory/20 bg-transparent px-6 text-sm font-semibold text-ivory transition-colors hover:bg-white/10 active:scale-[0.98]"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-forest/20 bg-white/85 px-6 text-sm font-semibold text-forest shadow-xs transition-colors hover:bg-white active:scale-[0.98]"
             >
               Explore Services
             </Link>
